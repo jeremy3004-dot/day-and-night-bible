@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { bibleTranslations } from '../constants';
 import type { Verse, BibleTranslation, TranslationDownloadProgress } from '../types';
+import { sanitizePersistedBibleState } from './persistedStateSanitizers';
 
 interface BibleState {
   currentBook: string;
@@ -19,6 +20,7 @@ interface BibleState {
   // Basic actions
   setCurrentBook: (bookId: string) => void;
   setCurrentChapter: (chapter: number) => void;
+  applySyncedReadingPosition: (readingPosition: { bookId: string; chapter: number }) => void;
   setVerses: (verses: Verse[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -48,6 +50,18 @@ export const useBibleStore = create<BibleState>()(
 
       setCurrentBook: (bookId) => set({ currentBook: bookId }),
       setCurrentChapter: (chapter) => set({ currentChapter: chapter }),
+      applySyncedReadingPosition: ({ bookId, chapter }) => {
+        const { currentBook, currentChapter } = get();
+
+        if (currentBook === bookId && currentChapter === chapter) {
+          return;
+        }
+
+        set({
+          currentBook: bookId,
+          currentChapter: chapter,
+        });
+      },
       setVerses: (verses) => set({ verses }),
       setLoading: (isLoading) => set({ isLoading }),
       setError: (error) => set({ error }),
@@ -115,6 +129,10 @@ export const useBibleStore = create<BibleState>()(
         currentChapter: state.currentChapter,
         currentTranslation: state.currentTranslation,
         translations: state.translations,
+      }),
+      merge: (persistedState, currentState) => ({
+        ...currentState,
+        ...sanitizePersistedBibleState(persistedState),
       }),
     }
   )
