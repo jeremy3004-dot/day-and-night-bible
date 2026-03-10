@@ -3,9 +3,26 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { createLazyClientAccessor } from './lazyClient';
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
-const HAS_SUPABASE_CONFIG = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim() || '';
+const SUPABASE_PUBLIC_KEY =
+  process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() ||
+  '';
+
+const hasValidSupabaseUrl = (value: string): boolean => {
+  if (!value) {
+    return false;
+  }
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const HAS_SUPABASE_CONFIG = hasValidSupabaseUrl(SUPABASE_URL) && Boolean(SUPABASE_PUBLIC_KEY);
 
 // SecureStore adapter for Supabase auth
 const ExpoSecureStoreAdapter = {
@@ -33,7 +50,7 @@ const ExpoSecureStoreAdapter = {
 
 const getSupabaseClient = createLazyClientAccessor({
   createClient: () =>
-    createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, {
       auth: {
         storage: ExpoSecureStoreAdapter,
         autoRefreshToken: true,

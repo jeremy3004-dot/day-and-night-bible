@@ -9,6 +9,7 @@ import {
   configurationAuthError,
   mapAppleAuthError,
   mapGoogleAuthError,
+  mapProviderIdTokenAuthError,
   mapSupabaseAuthError,
   providerUnavailableAuthError,
   unknownAuthError,
@@ -133,7 +134,7 @@ export const signInWithApple = async (): Promise<AuthResult> => {
     });
 
     if (error) {
-      return mapSupabaseAuthError(error);
+      return mapProviderIdTokenAuthError('apple', error);
     }
 
     if (data.user) {
@@ -164,7 +165,7 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
 
   try {
     if (!ensureGoogleSignInConfigured()) {
-      return configurationAuthError('Google sign in is not configured');
+      return providerUnavailableAuthError('Google sign in is not available on this build yet.');
     }
 
     if (Platform.OS === 'android') {
@@ -184,7 +185,7 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
     });
 
     if (error) {
-      return mapSupabaseAuthError(error);
+      return mapProviderIdTokenAuthError('google', error);
     }
 
     if (data.user) {
@@ -240,7 +241,7 @@ export const resetPassword = async (
   email: string
 ): Promise<{ success: boolean; error?: string }> => {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Supabase is not configured' };
+    return { success: false, error: 'EveryBible backend is not configured for this build yet.' };
   }
 
   try {

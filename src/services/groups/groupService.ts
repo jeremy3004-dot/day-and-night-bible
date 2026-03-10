@@ -62,7 +62,7 @@ export async function createSyncedGroup(
   }
 ): Promise<SyncedGroup> {
   if (!isSupabaseConfigured()) {
-    throw new Error('Supabase is not configured');
+    throw new Error('EveryBible backend is not configured for this build yet.');
   }
 
   const {
@@ -127,7 +127,7 @@ export async function createSyncedGroup(
 
 export async function joinSyncedGroup(joinCode: string): Promise<SyncedGroup | null> {
   if (!isSupabaseConfigured()) {
-    throw new Error('Supabase is not configured');
+    throw new Error('EveryBible backend is not configured for this build yet.');
   }
 
   const normalizedCode = joinCode.trim().toUpperCase();
@@ -148,7 +148,7 @@ export async function joinSyncedGroup(joinCode: string): Promise<SyncedGroup | n
 
 export async function leaveSyncedGroup(groupId: string): Promise<void> {
   if (!isSupabaseConfigured()) {
-    throw new Error('Supabase is not configured');
+    throw new Error('EveryBible backend is not configured for this build yet.');
   }
 
   const { error } = await supabase.rpc('leave_group', {

@@ -5,6 +5,7 @@ import {
   isSilentAuthError,
   mapAppleAuthError,
   mapGoogleAuthError,
+  mapProviderIdTokenAuthError,
   mapSupabaseAuthError,
 } from './authErrors';
 
@@ -44,4 +45,32 @@ test('mapSupabaseAuthError maps bad credentials without relying on message text'
   });
 
   assert.equal(result.code, 'invalid_credentials');
+});
+
+test('mapSupabaseAuthError maps network failures to service_unavailable', () => {
+  const result = mapSupabaseAuthError({
+    message: 'Network request failed',
+  });
+
+  assert.equal(result.code, 'service_unavailable');
+});
+
+test('mapProviderIdTokenAuthError maps disabled provider errors to provider_unavailable', () => {
+  const result = mapProviderIdTokenAuthError('google', {
+    status: 400,
+    message: 'Unsupported provider: provider is not enabled',
+  });
+
+  assert.equal(result.code, 'provider_unavailable');
+  assert.equal(result.error, 'Google sign in is not enabled on the EveryBible backend yet.');
+});
+
+test('mapProviderIdTokenAuthError maps audience mismatch to provider_unavailable', () => {
+  const result = mapProviderIdTokenAuthError('apple', {
+    status: 400,
+    message: 'Unacceptable audience in id_token',
+  });
+
+  assert.equal(result.code, 'provider_unavailable');
+  assert.equal(result.error, 'Apple sign in is using the wrong client ID for this build.');
 });

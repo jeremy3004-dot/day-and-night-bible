@@ -119,7 +119,7 @@ BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path = '';
 
 -- Trigger for profile updates
 CREATE TRIGGER update_profiles_updated_at
@@ -338,6 +338,7 @@ $$;
 CREATE OR REPLACE FUNCTION public.update_group_timestamp()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
   NEW.updated_at = NOW();

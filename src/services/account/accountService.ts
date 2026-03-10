@@ -7,7 +7,7 @@ export interface AccountActionResult {
 
 export const deleteCurrentAccount = async (): Promise<AccountActionResult> => {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Supabase is not configured' };
+    return { success: false, error: 'EveryBible backend is not configured for this build yet.' };
   }
 
   try {

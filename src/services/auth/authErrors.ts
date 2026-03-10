@@ -4,6 +4,7 @@ export type AuthErrorCode =
   | 'provider_unavailable'
   | 'in_progress'
   | 'invalid_credentials'
+  | 'service_unavailable'
   | 'unknown';
 
 export interface AuthFailure {
@@ -69,23 +70,67 @@ export const authFailure = (
 });
 
 export const configurationAuthError = (
-  error: unknown = 'Supabase is not configured'
-): AuthFailure => authFailure('configuration', error, 'Supabase is not configured');
+  error: unknown = 'EveryBible backend is not configured for this build yet.'
+): AuthFailure =>
+  authFailure('configuration', error, 'EveryBible backend is not configured for this build yet.');
 
 export const providerUnavailableAuthError = (error: unknown): AuthFailure =>
   authFailure('provider_unavailable', error);
+
+export const serviceUnavailableAuthError = (error: unknown): AuthFailure =>
+  authFailure('service_unavailable', error);
 
 export const unknownAuthError = (error: unknown, fallback?: string): AuthFailure =>
   authFailure('unknown', error, fallback);
 
 export const mapSupabaseAuthError = (error: unknown): AuthFailure => {
   const status = getErrorStatus(error);
+  const message = getErrorMessage(error, '').toLowerCase();
 
   if (status === 400 || status === 401) {
     return authFailure('invalid_credentials', error);
   }
 
+  if (
+    message.includes('network request failed') ||
+    message.includes('failed to fetch') ||
+    message.includes('fetch failed') ||
+    message.includes('network error')
+  ) {
+    return serviceUnavailableAuthError(
+      'EveryBible could not reach the backend right now. Please try again in a moment.'
+    );
+  }
+
   return unknownAuthError(error);
+};
+
+export const mapProviderIdTokenAuthError = (
+  provider: 'apple' | 'google',
+  error: unknown
+): AuthFailure => {
+  const providerName = provider === 'apple' ? 'Apple' : 'Google';
+  const status = getErrorStatus(error);
+  const message = getErrorMessage(error, '').toLowerCase();
+
+  if (
+    status === 400 &&
+    (message.includes('provider is not enabled') ||
+      message.includes('unsupported provider') ||
+      message.includes('oidc provider is not enabled'))
+  ) {
+    return providerUnavailableAuthError(
+      `${providerName} sign in is not enabled on the EveryBible backend yet.`
+    );
+  }
+
+  if (status === 400 && message.includes('unacceptable audience')) {
+    return providerUnavailableAuthError(
+      `${providerName} sign in is using the wrong client ID for this build.`
+    );
+  }
+
+  return mapSupabaseAuthError(error);
 };
 
 export const mapAppleAuthError = (error: unknown): AuthFailure => {
