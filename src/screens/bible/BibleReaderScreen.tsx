@@ -29,6 +29,7 @@ export function BibleReaderScreen() {
   const [verses, setVerses] = useState<Verse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFontSizeSheet, setShowFontSizeSheet] = useState(false);
 
   const markChapterRead = useProgressStore((state) => state.markChapterRead);
   const setCurrentBook = useBibleStore((state) => state.setCurrentBook);
@@ -38,7 +39,7 @@ export function BibleReaderScreen() {
   const currentTranslationInfo = translations.find(
     (translation) => translation.id === currentTranslation
   );
-  const { scaleValue } = useFontSize();
+  const { fontSize, scaleValue, setSize } = useFontSize();
   const { showPlayer, togglePlayer, audioAvailable, playChapter, setShowPlayer } =
     useAudioPlayer(currentTranslation);
 
@@ -50,6 +51,7 @@ export function BibleReaderScreen() {
     translation: currentTranslationInfo,
     audioAvailable: audioEnabled,
   });
+  const canAdjustFontSize = chapterPresentationMode === 'text' && verses.length > 0;
 
   useEffect(() => {
     setCurrentBook(bookId);
@@ -124,12 +126,14 @@ export function BibleReaderScreen() {
 
   const handlePrevChapter = () => {
     if (hasPrevChapter) {
+      setShowFontSizeSheet(false);
       navigation.setParams({ chapter: chapter - 1 });
     }
   };
 
   const handleNextChapter = () => {
     if (hasNextChapter) {
+      setShowFontSizeSheet(false);
       navigation.setParams({ chapter: chapter + 1 });
     }
   };
@@ -269,17 +273,54 @@ export function BibleReaderScreen() {
           </View>
         </View>
 
-        {audioEnabled && chapterPresentationMode === 'text' ? (
-          <TouchableOpacity style={styles.iconButton} onPress={togglePlayer}>
-            <Ionicons
-              name={showPlayer ? 'volume-high' : 'volume-medium-outline'}
-              size={20}
-              color={showPlayer ? colors.bibleAccent : colors.biblePrimaryText}
-            />
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              styles.secondaryIconButton,
+              {
+                borderColor: showFontSizeSheet ? colors.bibleAccent : colors.bibleDivider,
+                opacity: canAdjustFontSize ? 1 : 0.45,
+              },
+            ]}
+            onPress={() => {
+              if (!canAdjustFontSize) {
+                return;
+              }
+
+              setShowFontSizeSheet((current) => !current);
+            }}
+            disabled={!canAdjustFontSize}
+          >
+            <Text
+              style={[
+                styles.fontButtonLabel,
+                {
+                  color: showFontSizeSheet ? colors.bibleAccent : colors.biblePrimaryText,
+                },
+              ]}
+            >
+              AA
+            </Text>
           </TouchableOpacity>
-        ) : (
-          <View style={styles.iconButtonSpacer} />
-        )}
+
+          {audioEnabled && chapterPresentationMode === 'text' ? (
+            <TouchableOpacity
+              style={[
+                styles.iconButton,
+                styles.secondaryIconButton,
+                { borderColor: colors.bibleDivider },
+              ]}
+              onPress={togglePlayer}
+            >
+              <Ionicons
+                name={showPlayer ? 'volume-high' : 'volume-medium-outline'}
+                size={20}
+                color={showPlayer ? colors.bibleAccent : colors.biblePrimaryText}
+              />
+            </TouchableOpacity>
+          ) : null}
+        </View>
       </View>
 
       <ScrollView
@@ -297,6 +338,77 @@ export function BibleReaderScreen() {
           {renderContent()}
         </View>
       </ScrollView>
+
+      {showFontSizeSheet && canAdjustFontSize ? (
+        <View
+          style={[
+            styles.fontSheet,
+            {
+              backgroundColor: colors.bibleSurface,
+              borderColor: colors.bibleDivider,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.fontSheetHandle,
+              { backgroundColor: colors.bibleSecondaryText + '55' },
+            ]}
+          />
+          <Text style={[styles.fontSheetTitle, { color: colors.biblePrimaryText }]}>
+            {t('settings.fontSize')}
+          </Text>
+          <View style={styles.fontOptionRow}>
+            {(
+              [
+                { key: 'small', label: t('settings.fontSizeSmall'), sampleSize: 16 },
+                { key: 'medium', label: t('settings.fontSizeMedium'), sampleSize: 20 },
+                { key: 'large', label: t('settings.fontSizeLarge'), sampleSize: 24 },
+              ] as const
+            ).map((option) => {
+              const isSelected = fontSize === option.key;
+
+              return (
+                <TouchableOpacity
+                  key={option.key}
+                  style={[
+                    styles.fontOptionButton,
+                    {
+                      backgroundColor: isSelected
+                        ? colors.bibleControlBackground
+                        : colors.bibleBackground,
+                      borderColor: isSelected ? colors.bibleControlBackground : colors.bibleDivider,
+                    },
+                  ]}
+                  onPress={() => setSize(option.key)}
+                >
+                  <Text
+                    style={[
+                      styles.fontOptionSample,
+                      {
+                        color: isSelected ? colors.bibleBackground : colors.biblePrimaryText,
+                        fontSize: option.sampleSize,
+                      },
+                    ]}
+                  >
+                    A
+                  </Text>
+                  <Text
+                    style={[
+                      styles.fontOptionLabel,
+                      {
+                        color: isSelected ? colors.bibleBackground : colors.bibleSecondaryText,
+                      },
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      ) : null}
 
       <View style={[styles.footerShell, { borderTopColor: colors.bibleDivider }]}>
         {audioEnabled && showPlayer && chapterPresentationMode === 'text' ? (
@@ -380,8 +492,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconButtonSpacer: {
-    width: 36,
+  secondaryIconButton: {
+    borderWidth: 1,
+    borderRadius: 12,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   headerCenter: {
     flex: 1,
@@ -402,6 +520,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1,
+  },
+  fontButtonLabel: {
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 0.8,
   },
   scrollView: {
     flex: 1,
@@ -458,6 +581,44 @@ const styles = StyleSheet.create({
   },
   feedbackButtonText: {
     fontSize: 14,
+    fontWeight: '700',
+  },
+  fontSheet: {
+    borderTopWidth: 1,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+    gap: 14,
+  },
+  fontSheetHandle: {
+    width: 44,
+    height: 4,
+    borderRadius: 999,
+    alignSelf: 'center',
+  },
+  fontSheetTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  fontOptionRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  fontOptionButton: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingVertical: 14,
+    alignItems: 'center',
+    gap: 8,
+  },
+  fontOptionSample: {
+    fontWeight: '700',
+  },
+  fontOptionLabel: {
+    fontSize: 12,
     fontWeight: '700',
   },
   footerShell: {

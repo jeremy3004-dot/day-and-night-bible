@@ -24,10 +24,12 @@ import { localeSearchEngine, type LocaleLanguage } from '../../services/onboardi
 import type { PrivacyAppIconMode } from '../../types';
 import { getLocaleSetupSteps, type SetupMode, type SetupStep } from './localeSetupModel';
 
+type InitialAccessMode = 'guest' | 'signIn' | 'signUp';
+
 interface LocaleSetupFlowProps {
   mode?: SetupMode;
   onClose?: () => void;
-  onComplete?: () => void;
+  onComplete?: (result?: { accessMode?: InitialAccessMode | null }) => void;
 }
 
 const standardIconPreview = require('../../../assets/icon.png');
@@ -71,6 +73,7 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
     initialLanguage?.code ?? null
   );
   const [selectedPrivacyMode, setSelectedPrivacyMode] = useState<PrivacyAppIconMode>(privacyMode);
+  const [selectedAccessMode, setSelectedAccessMode] = useState<InitialAccessMode | null>(null);
   const [hasConfirmedPrivacySelection, setHasConfirmedPrivacySelection] = useState(
     mode !== 'initial'
   );
@@ -144,7 +147,9 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
     });
 
     syncPreferences().catch(() => {});
-    onComplete?.();
+    onComplete?.({
+      accessMode: mode === 'initial' ? selectedAccessMode : null,
+    });
   };
 
   const goToStep = (targetStep: SetupStep) => {
@@ -291,6 +296,49 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
               </View>
             ) : null}
           </View>
+        </View>
+        {isSelected ? (
+          <Ionicons name="checkmark-circle" size={24} color={colors.accentGreen} />
+        ) : null}
+      </TouchableOpacity>
+    );
+  };
+
+  const renderAccessOption = (
+    accessMode: InitialAccessMode,
+    iconName: keyof typeof Ionicons.glyphMap,
+    title: string,
+    body: string
+  ) => {
+    const isSelected = selectedAccessMode === accessMode;
+
+    return (
+      <TouchableOpacity
+        key={accessMode}
+        style={[
+          styles.optionCard,
+          {
+            backgroundColor: colors.cardBackground,
+            borderColor: isSelected ? colors.accentGreen : colors.cardBorder,
+          },
+        ]}
+        onPress={() => setSelectedAccessMode(accessMode)}
+        activeOpacity={0.9}
+      >
+        <View
+          style={[
+            styles.accessOptionIconShell,
+            {
+              backgroundColor: colors.accentGreen + '12',
+              borderColor: colors.accentGreen + '22',
+            },
+          ]}
+        >
+          <Ionicons name={iconName} size={20} color={colors.accentGreen} />
+        </View>
+        <View style={styles.optionCopy}>
+          <Text style={[styles.optionTitle, { color: colors.primaryText }]}>{title}</Text>
+          <Text style={[styles.optionMeta, { color: colors.secondaryText }]}>{body}</Text>
         </View>
         {isSelected ? (
           <Ionicons name="checkmark-circle" size={24} color={colors.accentGreen} />
@@ -466,6 +514,36 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
                 {t('onboarding.availableInterfaceLanguages')}
               </Text>
               {interfaceLanguageResults.map((language) => renderInterfaceLanguageRow(language))}
+            </View>
+          </>
+        ) : step === 'account' ? (
+          <>
+            <Text style={[styles.heroTitle, { color: colors.primaryText }]}>
+              {t('more.signInOrCreate')}
+            </Text>
+            <Text style={[styles.heroBody, { color: colors.secondaryText }]}>
+              {t('auth.signInSubtitle')}
+            </Text>
+
+            <View style={styles.listSection}>
+              {renderAccessOption(
+                'signIn',
+                'log-in-outline',
+                t('auth.signIn'),
+                t('auth.signInSubtitle')
+              )}
+              {renderAccessOption(
+                'signUp',
+                'person-add-outline',
+                t('auth.createAccount'),
+                t('auth.signUpSubtitle')
+              )}
+              {renderAccessOption(
+                'guest',
+                'phone-portrait-outline',
+                t('more.guestUser'),
+                t('more.signInToSync')
+              )}
             </View>
           </>
         ) : step === 'country' ? (
@@ -710,6 +788,10 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
                   ? selectedInterfaceLanguage
                     ? 1
                     : 0.45
+                  : step === 'account'
+                    ? selectedAccessMode
+                      ? 1
+                      : 0.45
                   : step === 'country'
                     ? selectedCountry
                       ? 1
@@ -734,6 +816,13 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
             if (step === 'interface') {
               await changeLanguage(selectedInterfaceLanguageCode);
               goToNextStep();
+              return;
+            }
+
+            if (step === 'account') {
+              if (selectedAccessMode) {
+                goToNextStep();
+              }
               return;
             }
 
@@ -768,6 +857,8 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
           disabled={
             step === 'interface'
               ? !selectedInterfaceLanguage
+              : step === 'account'
+                ? !selectedAccessMode
               : step === 'country'
                 ? !selectedCountry
                 : step === 'contentLanguage'
@@ -910,6 +1001,14 @@ const styles = StyleSheet.create({
   optionCopy: {
     flex: 1,
     gap: 4,
+  },
+  accessOptionIconShell: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   countryTitleRow: {
     flexDirection: 'row',

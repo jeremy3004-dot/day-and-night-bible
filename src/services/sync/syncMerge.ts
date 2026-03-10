@@ -195,6 +195,18 @@ export const mergePreferences = (
 
   const remoteSnapshot = mapRemotePreferences(remotePreferences);
   const remoteUpdatedAt = remotePreferences.synced_at ?? null;
+  const remoteWouldReopenOnboarding =
+    localSnapshot.preferences.onboardingCompleted && !remoteSnapshot.onboardingCompleted;
+
+  if (remoteWouldReopenOnboarding) {
+    return {
+      preferences: localSnapshot.preferences,
+      updatedAt: localSnapshot.updatedAt,
+      source: 'local',
+      changed: false,
+    };
+  }
+
   const shouldUseRemote =
     !localSnapshot.updatedAt ||
     (remoteUpdatedAt !== null && remoteUpdatedAt > localSnapshot.updatedAt);

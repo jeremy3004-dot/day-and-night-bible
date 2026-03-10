@@ -2,9 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { getLocaleSetupSteps } from './localeSetupModel';
 
-test('initial onboarding asks for interface language before nation and Bible language', () => {
+test('initial onboarding asks for interface language first and account choice second', () => {
   assert.deepEqual(getLocaleSetupSteps('initial'), [
     'interface',
+    'account',
     'country',
     'contentLanguage',
     'privacy',

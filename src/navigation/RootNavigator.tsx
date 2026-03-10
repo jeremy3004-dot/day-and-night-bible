@@ -1,12 +1,15 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { TabNavigator } from './TabNavigator';
 import { useTheme } from '../contexts/ThemeContext';
+import { flushQueuedAuthFlow, rootNavigationRef } from './rootNavigation';
 
 export function RootNavigator() {
   const { colors, isDark } = useTheme();
 
   return (
     <NavigationContainer
+      ref={rootNavigationRef}
+      onReady={flushQueuedAuthFlow}
       theme={{
         dark: isDark,
         colors: {

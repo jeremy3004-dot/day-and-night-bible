@@ -56,7 +56,7 @@ export type MoreStackParamList = {
   LocalePreferences: undefined;
   Profile: undefined;
   About: undefined;
-  Auth: undefined;
+  Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
 };
 
 // Auth Stack

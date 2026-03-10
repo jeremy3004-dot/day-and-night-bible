@@ -168,3 +168,44 @@ test('mergePreferences keeps the newer local preferences snapshot', () => {
   assert.equal(merged.preferences.language, 'fr');
   assert.equal(merged.preferences.fontSize, 'large');
 });
+
+test('mergePreferences does not let a newer incomplete remote snapshot reopen onboarding', () => {
+  const local: LocalPreferenceSnapshot = {
+    preferences: {
+      ...defaultAuthPreferences,
+      language: 'es',
+      countryCode: 'MX',
+      countryName: 'Mexico',
+      contentLanguageCode: 'es',
+      contentLanguageName: 'Spanish',
+      contentLanguageNativeName: 'Español',
+      onboardingCompleted: true,
+    },
+    updatedAt: '2026-03-10T08:00:00.000Z',
+  };
+
+  const remote: RemoteUserPreferences = {
+    id: 'prefs-2',
+    user_id: 'user-1',
+    font_size: 'medium',
+    theme: 'dark',
+    language: 'en',
+    country_code: null,
+    country_name: null,
+    content_language_code: null,
+    content_language_name: null,
+    content_language_native_name: null,
+    onboarding_completed: false,
+    notifications_enabled: false,
+    reminder_time: null,
+    synced_at: '2026-03-10T09:00:00.000Z',
+  };
+
+  const merged = mergePreferences(local, remote);
+
+  assert.equal(merged.source, 'local');
+  assert.equal(merged.preferences.onboardingCompleted, true);
+  assert.equal(merged.preferences.language, 'es');
+  assert.equal(merged.preferences.countryCode, 'MX');
+  assert.equal(merged.preferences.contentLanguageCode, 'es');
+});

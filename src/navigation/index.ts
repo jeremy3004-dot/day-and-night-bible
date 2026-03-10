@@ -1,5 +1,6 @@
 export * from './types';
 export * from './RootNavigator';
+export * from './rootNavigation';
 export * from './TabNavigator';
 export * from './HomeStack';
 export * from './BibleStack';

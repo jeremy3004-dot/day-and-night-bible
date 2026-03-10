@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import * as SplashScreen from 'expo-splash-screen';
-import { RootNavigator } from './src/navigation';
+import { RootNavigator, openAuthFlow, type PendingAuthMode } from './src/navigation';
 import { initBibleData } from './src/services/bible';
 import { useAuthStore, usePrivacyStore } from './src/stores';
 import { ErrorBoundary, PrivacyLockScreen } from './src/components';
@@ -19,7 +19,11 @@ void SplashScreen.preventAutoHideAsync().catch((error) => {
   console.error('Failed to keep splash screen visible:', error);
 });
 
-function LoadingScreen() {
+interface LoadingScreenProps {
+  onInitialAuthRequest: (mode: PendingAuthMode | null) => void;
+}
+
+function LoadingScreen({ onInitialAuthRequest }: LoadingScreenProps) {
   const [isReady, setIsReady] = useState(false);
   const warmupCancelRef = useRef<(() => void) | null>(null);
   const initializeAuth = useAuthStore((state) => state.initialize);
@@ -110,7 +114,17 @@ function LoadingScreen() {
   }
 
   if (!preferences.onboardingCompleted) {
-    return <LocaleSetupFlow mode="initial" />;
+    return (
+      <LocaleSetupFlow
+        mode="initial"
+        onComplete={(result) => {
+          const accessMode = result?.accessMode;
+          onInitialAuthRequest(
+            accessMode === 'signIn' ? 'SignIn' : accessMode === 'signUp' ? 'SignUp' : null
+          );
+        }}
+      />
+    );
   }
 
   if (isPrivacyLocked) {
@@ -134,14 +148,45 @@ export default function App() {
 
 function AppContent() {
   const { isDark } = useTheme();
+  const onboardingCompleted = useAuthStore((state) => state.preferences.onboardingCompleted);
+  const pendingInitialAuthModeRef = useRef<PendingAuthMode | null>(null);
+  const onboardingCompletedRef = useRef(onboardingCompleted);
   useSync();
   usePrivacyLock();
+
+  useEffect(() => {
+    onboardingCompletedRef.current = onboardingCompleted;
+  }, [onboardingCompleted]);
+
+  useEffect(() => {
+    if (!onboardingCompleted || !pendingInitialAuthModeRef.current) {
+      return;
+    }
+
+    const mode = pendingInitialAuthModeRef.current;
+    pendingInitialAuthModeRef.current = null;
+    openAuthFlow(mode);
+  }, [onboardingCompleted]);
 
   return (
     <>
       <StatusBar style={isDark ? 'light' : 'dark'} />
       <ErrorBoundary>
-        <LoadingScreen />
+        <LoadingScreen
+          onInitialAuthRequest={(mode) => {
+            if (!mode) {
+              pendingInitialAuthModeRef.current = null;
+              return;
+            }
+
+            if (onboardingCompletedRef.current) {
+              openAuthFlow(mode);
+              return;
+            }
+
+            pendingInitialAuthModeRef.current = mode;
+          }}
+        />
       </ErrorBoundary>
     </>
   );
