@@ -2,7 +2,6 @@ import * as bibleDb from './bibleDatabase';
 import { bibleBooks, getBookById } from '../../constants';
 import type { BibleTranslation, DailyScripture, DailyScriptureReference, Verse } from '../../types';
 import { shouldLoadDailyScriptureText } from './dailyScripture';
-import { loadBSBData } from './bsbData';
 import { buildDailyScripture } from './presentation';
 
 let isInitialized = false;
@@ -14,9 +13,8 @@ export async function isBibleDataReady(): Promise<boolean> {
     return true;
   }
 
-  await bibleDb.initDatabase();
-  const count = await bibleDb.getVerseCount();
-  const ready = count >= MIN_READY_VERSE_COUNT;
+  const status = await bibleDb.inspectBundledDatabaseStatus(MIN_READY_VERSE_COUNT);
+  const ready = status.ready;
 
   if (ready) {
     isInitialized = true;
@@ -34,49 +32,26 @@ export async function initBibleData(): Promise<void> {
   }
 
   initPromise = (async () => {
-    await bibleDb.initDatabase();
+    try {
+      await bibleDb.initDatabase(MIN_READY_VERSE_COUNT);
+      const count = await bibleDb.getVerseCount();
 
-    // Check if we already have data
-    const count = await bibleDb.getVerseCount();
+      if (count < MIN_READY_VERSE_COUNT) {
+        throw new Error(
+          `[Bible] Bundled database is not ready (${count}/${MIN_READY_VERSE_COUNT})`
+        );
+      }
 
-    if (count < MIN_READY_VERSE_COUNT) {
-      // Load full BSB data
-      await loadFullBSBData();
+      isInitialized = true;
+    } catch (error) {
+      isInitialized = false;
+      throw error;
+    } finally {
+      initPromise = null;
     }
-
-    isInitialized = true;
   })();
 
   return initPromise;
-}
-
-async function loadFullBSBData(): Promise<void> {
-  try {
-    // Clear any existing partial data
-    await bibleDb.clearVerses();
-
-    // Load processed BSB data
-    const bsbData = await loadBSBData();
-
-    // Convert to our verse format and insert in batches
-    const BATCH_SIZE = 1000;
-    const verses = bsbData.verses;
-
-    for (let i = 0; i < verses.length; i += BATCH_SIZE) {
-      const batch = verses.slice(i, i + BATCH_SIZE).map((v) => ({
-        bookId: v.b,
-        chapter: v.c,
-        verse: v.v,
-        text: v.t,
-        heading: v.h,
-      }));
-
-      await bibleDb.insertVerses(batch);
-    }
-  } catch (error) {
-    console.error('[Bible] Failed to load BSB data:', error);
-    throw error;
-  }
 }
 
 export async function getChapter(bookId: string, chapter: number): Promise<Verse[]> {

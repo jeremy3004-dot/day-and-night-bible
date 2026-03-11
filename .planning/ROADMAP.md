@@ -2,104 +2,138 @@
 
 ## Overview
 
-This roadmap treats EveryBible as a brownfield mobile product that already has most of its feature surface in code, but still needs a disciplined pass to align startup, sync, onboarding, reading/audio polish, learn flows, and release safety. The goal is not to reinvent the app; it is to turn the existing foundation into a coherent, dependable v1.0 baseline that GSD can plan and execute phase by phase.
+Milestone 1 is complete: the app now has a trustworthy v1 baseline for startup, auth, sync, reading, audio, discipleship, and release delivery. Milestone 2 is a new roadmap focused on productization: better retention loops, premium Scripture UX, stronger Learn and group flows, more scalable content systems, and the platform foundations needed for growth.
 
-## Phases
+This roadmap keeps the brownfield posture. The app already contains meaningful capability; the work now is to remove the most visible “not finished yet” seams, speed up the surfaces people open most, and add the data, analytics, and monetization hooks needed for a durable business.
 
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+## Phase Status Key
 
-Decimal phases appear between their surrounding integers in numeric order.
+- Phases 1-5: executed baseline work from Milestone 1
+- Phases 6-11: active Milestone 2 roadmap
+- Decimal phases remain reserved for inserted urgent work
 
-- [ ] **Phase 1: Startup And Backend Hardening** - Make boot, auth, and sync behavior predictable across real devices and builds
-- [ ] **Phase 2: Onboarding And Preference Cohesion** - Align first-run locale setup, privacy, and settings into one reliable user loop
-- [ ] **Phase 3: Core Reading And Audio Polish** - Finish the read/listen experience the product is judged by every day
-- [ ] **Phase 4: Discipleship And Group Rollout** - Wire the learn surface fully and unify local and synced group behavior
-- [ ] **Phase 5: Release Hardening And Distribution** - Add the checks and config alignment needed for confident TestFlight and store releases
+## Completed Baseline Phases
+
+- [x] **Phase 1: Startup And Backend Hardening**
+- [x] **Phase 2: Onboarding And Preference Cohesion**
+- [x] **Phase 3: Core Reading And Audio Polish**
+- [x] **Phase 4: Discipleship And Group Rollout**
+- [x] **Phase 5: Release Hardening And Distribution**
+
+## Active Milestone 2 Phases
+
+- [ ] **Phase 6: Scripture Data And Daily Rhythm** - Replace brittle runtime Bible seeding with a bundled indexed data layer, then turn Home into a premium “today” hub
+- [ ] **Phase 7: Premium Reader And Personal Study** - Deepen the Bible reader with better study controls, personalization, and premium interaction quality
+- [ ] **Phase 8: Guided Learn And Group Productionization** - Make Learn and group study feel complete, connected, and trustworthy in the live shell
+- [ ] **Phase 9: Audio, Sync, And Personal Library Reliability** - Make listening continuity, download ownership, and offline/sync durability feel product-grade
+- [ ] **Phase 10: Content, Localization, And Retention Systems** - Add translation/content-pack readiness, better localization coverage, and smarter reminders/recommendations
+- [ ] **Phase 11: Performance, Accessibility, Analytics, And Monetization Foundations** - Lock in scale-ready quality, insight, and premium business hooks
 
 ## Phase Details
 
-### Phase 1: Startup And Backend Hardening
-**Goal**: Make app launch, session restoration, and Supabase-backed sync reliable on device without regressing the local-first experience.
-**Depends on**: Nothing (first phase)
-**Requirements**: AUTH-01, AUTH-02, AUTH-03, SYNC-01, SYNC-02
-**Success Criteria** (what must be TRUE):
-  1. User can cold-start the app and reach the correct gate (onboarding, privacy lock, or main shell) without startup regressions.
-  2. User can sign in with the supported providers and keep the session across restarts.
-  3. Signed-in progress and preferences sync cleanly across reconnects and foreground transitions without duplicating or losing local state.
+### Phase 6: Scripture Data And Daily Rhythm
+**Goal**: Strengthen the app’s highest-traffic Scripture data path and use that stronger foundation to create a motivating daily-use home experience.
+**Depends on**: Phase 5
+**Requirements**: RHYTHM-01, RHYTHM-02, READER-04, READER-05
+**Success Criteria**:
+  1. Bible initialization uses a bundled seeded database with an atomic readiness check and recovery path for broken legacy local data.
+  2. Offline Bible search and first Bible open feel meaningfully faster and more dependable than the JSON import path.
+  3. Home gives the user one clear next action, visible momentum, and stronger cross-links into reading, audio, and discipleship.
 **Plans**: 2 plans
 
 Plans:
-- [x] 01-01: Audit and harden startup, auth initialization, and session restoration
-- [x] 01-02: Validate sync merge behavior, Supabase contracts, and device-config dependencies
+- [x] 06-01: Replace runtime Bible seeding with a bundled indexed SQLite asset and recovery-safe bootstrap
+- [x] 06-02: Redesign Home into a premium daily-rhythm dashboard with stronger momentum and next-action guidance
 
-### Phase 2: Onboarding And Preference Cohesion
-**Goal**: Make the first-run and settings experience internally consistent for language, locale, privacy, and reminders.
-**Depends on**: Phase 1
-**Requirements**: LOCL-01, LOCL-02, PRIV-01, PREF-01
-**Success Criteria** (what must be TRUE):
-  1. First-time users can complete locale and content-language setup without getting stuck or creating inconsistent preference state.
-  2. Returning users can change locale, theme, font, privacy, and reminder settings from the app without breaking their saved state.
-  3. Discreet mode relocks correctly after app backgrounding and remains understandable in settings UI.
-**Plans**: 2 plans
-
-Plans:
-- [x] 02-01: Tighten onboarding models, locale selection, and first-run state transitions
-- [x] 02-02: Unify settings, privacy, and reminder behaviors with synced preference handling
-
-### Phase 3: Core Reading And Audio Polish
-**Goal**: Make the daily scripture, browsing, reading, and listen flows feel dependable and polished both online and offline.
-**Depends on**: Phase 2
-**Requirements**: READ-01, READ-02, READ-03, READ-04, AUDIO-01, AUDIO-02, AUDIO-03
-**Success Criteria** (what must be TRUE):
-  1. User can browse, search, and open scripture offline with correct reading-position restoration.
-  2. Daily scripture and reader presentation behave predictably even when optional assets are missing or still loading.
-  3. Audio playback and audio downloads work reliably enough that a user can move between streaming and offline listening without confusion.
-**Plans**: 2 plans
-
-Plans:
-- [x] 03-01: Polish scripture browsing, reader state, and daily-scripture presentation
-- [x] 03-02: Harden audio playback, controls, and offline download UX
-
-### Phase 4: Discipleship And Group Rollout
-**Goal**: Complete the app's learn surface and make group-study behavior coherent across local and synced paths.
-**Depends on**: Phase 3
-**Requirements**: DISC-01, GROUP-01, GROUP-02
-**Success Criteria** (what must be TRUE):
-  1. User can reach discipleship lesson content from the live app shell without hidden or orphaned navigation paths.
-  2. Existing local group progress is preserved while synced group functionality is introduced or completed.
-  3. Group leaders can create/join groups and record session progress with backend rules that protect access correctly.
+### Phase 7: Premium Reader And Personal Study
+**Goal**: Turn the reader into the app’s strongest daily ritual surface.
+**Depends on**: Phase 6
+**Requirements**: READER-01, READER-02, READER-03
+**Success Criteria**:
+  1. Reader controls for translation, typography, and audio feel cohesive and low friction.
+  2. Reader architecture supports saved personal study actions such as bookmarks, highlights, and notes without breaking offline behavior.
+  3. Reader and browser loading, empty, and error states feel intentional and localized.
 **Plans**: 3 plans
 
 Plans:
-- [x] 04-01: Wire the learn navigation surface and lesson entrypoints into the active shell
-- [x] 04-02: Reconcile local group state with synced group flows and migration expectations
-- [x] 04-03: Verify group-session capture, permissions, and data-protection behavior
+- [ ] 07-01: Unify reader controls, microstates, and study affordance entrypoints
+- [ ] 07-02: Add an offline-safe personal study layer for bookmarks, highlights, and notes
+- [ ] 07-03: Polish reader/browser empty, loading, and localization coverage
 
-### Phase 5: Release Hardening And Distribution
-**Goal**: Add the release gates, regression evidence, and config alignment needed to ship confidently.
-**Depends on**: Phase 4
-**Requirements**: REL-01, REL-02
-**Success Criteria** (what must be TRUE):
-  1. Critical startup, auth, sync, reading, and audio paths have repeatable regression checks before release.
-  2. Expo config, native iOS config, and native Android config are aligned for the current release path.
-  3. TestFlight and store-bound builds can be described as ready based on evidence, not assumption.
-**Plans**: 2 plans
+### Phase 8: Guided Learn And Group Productionization
+**Goal**: Make Learn and group study feel like a real product, not a preview surface.
+**Depends on**: Phase 7
+**Requirements**: DISC-02, DISC-03, DISC-04, GROUP-03, GROUP-04, GROUP-05
+**Success Criteria**:
+  1. Learn shows clear journey progress, next lesson, and meaningful completion momentum.
+  2. Lesson content deep-links into Scripture and avoids placeholder dead ends.
+  3. Group create/join/manage/session flows feel complete and resilient under local and synced paths.
+**Plans**: 3 plans
 
 Plans:
-- [x] 05-01: Add release-focused regression checks for core user journeys
-- [x] 05-02: Align native and Expo config, build metadata, and submission readiness
+- [ ] 08-01: Rebuild Learn around guided next-step progression and visible momentum
+- [ ] 08-02: Connect lesson scripture references, richer study presentation, and home/learn reinforcement
+- [ ] 08-03: Finish group lifecycle flows, session history, and synced member continuity
+
+### Phase 9: Audio, Sync, And Personal Library Reliability
+**Goal**: Make read/listen continuity and offline ownership durable across sessions and reconnects.
+**Depends on**: Phase 8
+**Requirements**: LIB-01, LIB-02, LIB-03
+**Success Criteria**:
+  1. Audio playback ownership is centralized enough that resume, queue, and auto-advance behavior stay predictable.
+  2. Offline-versus-streaming availability is clearly expressed across reader, downloads, and library surfaces.
+  3. Progress and media sync use replayable dirty-state handling rather than fragile fire-and-forget updates.
+**Plans**: 3 plans
+
+Plans:
+- [ ] 09-01: Refactor audio playback ownership and durable resume state
+- [ ] 09-02: Build a personal library surface for recents, saved content, and download visibility
+- [ ] 09-03: Harden sync queue behavior for progress and media-related state
+
+### Phase 10: Content, Localization, And Retention Systems
+**Goal**: Make the product ready for more content, more languages, and smarter engagement loops.
+**Depends on**: Phase 9
+**Requirements**: RHYTHM-03, CONTENT-01, CONTENT-02, CONTENT-03
+**Success Criteria**:
+  1. Translation and content-pack expansion have explicit app and backend contracts instead of placeholder affordances.
+  2. Daily content, recommendations, and reminder messaging are driven by reusable data contracts.
+  3. Localization coverage reaches all live user-facing surfaces with fewer hardcoded English fallbacks.
+**Plans**: 3 plans
+
+Plans:
+- [ ] 10-01: Add content manifest contracts and additional translation/content-pack readiness
+- [ ] 10-02: Build reminder and recommendation plumbing around real next actions
+- [ ] 10-03: Complete localization coverage across live screens and states
+
+### Phase 11: Performance, Accessibility, Analytics, And Monetization Foundations
+**Goal**: Make EveryBible measurable, scalable, accessible, and premium-ready.
+**Depends on**: Phase 10
+**Requirements**: PLATFORM-01, PLATFORM-02, PLATFORM-03, BIZ-01, BIZ-02
+**Success Criteria**:
+  1. Startup and navigation performance are measured and improved on real-device critical paths.
+  2. Accessibility quality is audited and improved across Home, Bible, Learn, audio, and settings.
+  3. Analytics, release diagnostics, and entitlement hooks exist for retention experiments and premium rollout.
+**Plans**: 3 plans
+
+Plans:
+- [ ] 11-01: Add measurable performance budgets and startup/navigation optimization work
+- [ ] 11-02: Audit and improve accessibility on the core app journey
+- [ ] 11-03: Add analytics taxonomy, operational diagnostics, and premium entitlement foundations
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+**Execution Order:** 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Startup And Backend Hardening | 2/2 | Awaiting device verification | - |
-| 2. Onboarding And Preference Cohesion | 2/2 | Awaiting device verification | - |
-| 3. Core Reading And Audio Polish | 2/2 | Awaiting device verification | - |
-| 4. Discipleship And Group Rollout | 3/3 | Awaiting device verification | - |
-| 5. Release Hardening And Distribution | 2/2 | Awaiting signed-build verification | - |
+| 1. Startup And Backend Hardening | 2/2 | Complete | 2026-03-11 |
+| 2. Onboarding And Preference Cohesion | 2/2 | Complete | 2026-03-11 |
+| 3. Core Reading And Audio Polish | 2/2 | Complete | 2026-03-11 |
+| 4. Discipleship And Group Rollout | 3/3 | Complete | 2026-03-11 |
+| 5. Release Hardening And Distribution | 2/2 | Complete | 2026-03-11 |
+| 6. Scripture Data And Daily Rhythm | 2/2 | Complete | 2026-03-11 |
+| 7. Premium Reader And Personal Study | 0/3 | Planned | - |
+| 8. Guided Learn And Group Productionization | 0/3 | Planned | - |
+| 9. Audio, Sync, And Personal Library Reliability | 0/3 | Planned | - |
+| 10. Content, Localization, And Retention Systems | 0/3 | Planned | - |
+| 11. Performance, Accessibility, Analytics, And Monetization Foundations | 0/3 | Planned | - |

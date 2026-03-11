@@ -1,34 +1,140 @@
 import * as SQLite from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system/legacy';
+import { defaultDatabaseDirectory, importDatabaseFromAssetAsync } from 'expo-sqlite';
 import type { Verse } from '../../types';
+import { buildBibleSearchQuery, isBundledBibleDatabaseReady } from './bibleDataModel';
 
 let db: SQLite.SQLiteDatabase | null = null;
+const DATABASE_NAME = 'bible-bsb-v2.db';
+const DATABASE_ASSET_ID: number = require('../../../assets/databases/bible-bsb-v2.db');
+const DEFAULT_MINIMUM_READY_VERSE_COUNT = 20000;
 
-export async function initDatabase(): Promise<void> {
-  db = await SQLite.openDatabaseAsync('bible.db');
+type BibleDatabaseStatus = {
+  verseCount: number;
+  schemaVersion: number;
+  hasSearchIndex: boolean;
+  ready: boolean;
+};
 
-  // Create tables
-  await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS books (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      abbreviation TEXT,
-      testament TEXT CHECK(testament IN ('OT', 'NT')),
-      chapters INTEGER NOT NULL,
-      order_index INTEGER NOT NULL
+function getDatabasePath(): string {
+  return `${String(defaultDatabaseDirectory).replace(/\/$/, '')}/${DATABASE_NAME}`;
+}
+
+async function closeDatabase(): Promise<void> {
+  if (!db) {
+    return;
+  }
+
+  await db.closeAsync();
+  db = null;
+}
+
+async function openBundledDatabase(forceOverwrite = false): Promise<SQLite.SQLiteDatabase> {
+  await closeDatabase();
+  await importDatabaseFromAssetAsync(DATABASE_NAME, {
+    assetId: DATABASE_ASSET_ID,
+    forceOverwrite,
+  });
+  db = await SQLite.openDatabaseAsync(DATABASE_NAME);
+  await db.execAsync('PRAGMA journal_mode = WAL');
+  return db;
+}
+
+async function inspectOpenDatabase(database: SQLite.SQLiteDatabase): Promise<BibleDatabaseStatus> {
+  const countResult = await database.getFirstAsync<{ count: number }>(
+    'SELECT COUNT(*) as count FROM verses'
+  );
+  const schemaResult = await database.getFirstAsync<{ user_version: number }>(
+    'PRAGMA user_version'
+  );
+  const ftsResult = await database.getFirstAsync<{ present: number }>(
+    "SELECT COUNT(*) as present FROM sqlite_master WHERE type = 'table' AND name = 'verses_fts'"
+  );
+
+  const status = {
+    verseCount: countResult?.count ?? 0,
+    schemaVersion: schemaResult?.user_version ?? 0,
+    hasSearchIndex: (ftsResult?.present ?? 0) > 0,
+  };
+
+  return {
+    ...status,
+    ready: isBundledBibleDatabaseReady(status, DEFAULT_MINIMUM_READY_VERSE_COUNT),
+  };
+}
+
+async function ensureBundledDatabaseReady(
+  minimumReadyVerseCount: number
+): Promise<SQLite.SQLiteDatabase> {
+  try {
+    const database = await openBundledDatabase(false);
+    const status = await inspectOpenDatabase(database);
+
+    if (isBundledBibleDatabaseReady(status, minimumReadyVerseCount)) {
+      return database;
+    }
+  } catch (error) {
+    console.warn('[Bible] Bundled database check failed, attempting recovery:', error);
+  }
+
+  const recoveredDatabase = await openBundledDatabase(true);
+  const recoveredStatus = await inspectOpenDatabase(recoveredDatabase);
+
+  if (!isBundledBibleDatabaseReady(recoveredStatus, minimumReadyVerseCount)) {
+    throw new Error(
+      `[Bible] Bundled database is not ready after recovery (${recoveredStatus.verseCount} verses)`
     );
+  }
 
-    CREATE TABLE IF NOT EXISTS verses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      book_id TEXT NOT NULL,
-      chapter INTEGER NOT NULL,
-      verse INTEGER NOT NULL,
-      text TEXT NOT NULL,
-      heading TEXT,
-      FOREIGN KEY (book_id) REFERENCES books(id)
-    );
+  return recoveredDatabase;
+}
 
-    CREATE INDEX IF NOT EXISTS idx_verses_book_chapter ON verses(book_id, chapter);
-  `);
+export async function initDatabase(
+  minimumReadyVerseCount = DEFAULT_MINIMUM_READY_VERSE_COUNT
+): Promise<void> {
+  if (db) {
+    return;
+  }
+
+  await ensureBundledDatabaseReady(minimumReadyVerseCount);
+}
+
+export async function inspectBundledDatabaseStatus(
+  minimumReadyVerseCount = DEFAULT_MINIMUM_READY_VERSE_COUNT
+): Promise<BibleDatabaseStatus> {
+  const fileInfo = await FileSystem.getInfoAsync(getDatabasePath());
+
+  if (!fileInfo.exists) {
+    return {
+      verseCount: 0,
+      schemaVersion: 0,
+      hasSearchIndex: false,
+      ready: false,
+    };
+  }
+
+  let temporaryDb: SQLite.SQLiteDatabase | null = null;
+
+  try {
+    temporaryDb = db ?? (await SQLite.openDatabaseAsync(DATABASE_NAME));
+    const status = await inspectOpenDatabase(temporaryDb);
+    return {
+      ...status,
+      ready: isBundledBibleDatabaseReady(status, minimumReadyVerseCount),
+    };
+  } catch (error) {
+    console.warn('[Bible] Failed to inspect bundled database status:', error);
+    return {
+      verseCount: 0,
+      schemaVersion: 0,
+      hasSearchIndex: false,
+      ready: false,
+    };
+  } finally {
+    if (!db && temporaryDb) {
+      await temporaryDb.closeAsync();
+    }
+  }
 }
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
@@ -61,6 +167,42 @@ export async function getChapter(bookId: string, chapter: number): Promise<Verse
 
 export async function searchVerses(query: string, limit = 50): Promise<Verse[]> {
   const database = await getDatabase();
+  const ftsQuery = buildBibleSearchQuery(query.trim());
+
+  if (ftsQuery) {
+    try {
+      const indexedResults = await database.getAllAsync<{
+        id: number;
+        book_id: string;
+        chapter: number;
+        verse: number;
+        text: string;
+        heading: string | null;
+      }>(
+        `
+          SELECT v.*
+          FROM verses_fts
+          JOIN verses v ON v.id = verses_fts.rowid
+          WHERE verses_fts MATCH ?
+          ORDER BY bm25(verses_fts), v.book_id, v.chapter, v.verse
+          LIMIT ?
+        `,
+        [ftsQuery, limit]
+      );
+
+      return indexedResults.map((row) => ({
+        id: row.id,
+        bookId: row.book_id,
+        chapter: row.chapter,
+        verse: row.verse,
+        text: row.text,
+        heading: row.heading ?? undefined,
+      }));
+    } catch (error) {
+      console.warn('[Bible] Indexed search failed, falling back to LIKE search:', error);
+    }
+  }
+
   const results = await database.getAllAsync<{
     id: number;
     book_id: string;
@@ -68,7 +210,10 @@ export async function searchVerses(query: string, limit = 50): Promise<Verse[]> 
     verse: number;
     text: string;
     heading: string | null;
-  }>('SELECT * FROM verses WHERE text LIKE ? LIMIT ?', [`%${query}%`, limit]);
+  }>('SELECT * FROM verses WHERE text LIKE ? ORDER BY book_id, chapter, verse LIMIT ?', [
+    `%${query}%`,
+    limit,
+  ]);
 
   return results.map((row) => ({
     id: row.id,
@@ -102,14 +247,6 @@ export async function insertVerses(verses: Omit<Verse, 'id'>[]): Promise<void> {
 }
 
 export async function getVerseCount(): Promise<number> {
-  const database = await getDatabase();
-  const result = await database.getFirstAsync<{ count: number }>(
-    'SELECT COUNT(*) as count FROM verses'
-  );
-  return result?.count ?? 0;
-}
-
-export async function clearVerses(): Promise<void> {
-  const database = await getDatabase();
-  await database.runAsync('DELETE FROM verses');
+  const status = await inspectBundledDatabaseStatus();
+  return status.verseCount;
 }

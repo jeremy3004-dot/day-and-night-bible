@@ -12,22 +12,30 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { bibleTranslations, getBookById } from '../../constants';
 import { config } from '../../constants/config';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useProgressStore, useBibleStore } from '../../stores';
+import { useFourFieldsStore } from '../../stores/fourFieldsStore';
+import { fourFieldsCourses } from '../../data/fourFieldsCourses';
 import { getDailyScripture } from '../../services/bible';
 import { getAudioAvailability, isRemoteAudioAvailable } from '../../services/audio';
 import { CardSkeleton } from '../../components';
 import type { DailyScripture } from '../../types';
 import type { RootTabParamList } from '../../navigation/types';
+import {
+  getJourneyProgressPercent,
+  resolveHomeMomentumMetric,
+  resolveHomePrimaryAction,
+} from './homeExperienceModel';
 
 type NavigationProp = NativeStackNavigationProp<RootTabParamList>;
 
 export function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const [dailyScripture, setDailyScripture] = useState<DailyScripture | null>(null);
@@ -50,6 +58,10 @@ export function HomeScreen() {
   const getWeekCount = useProgressStore((state) => state.getWeekCount);
   const getMonthCount = useProgressStore((state) => state.getMonthCount);
   const getYearCount = useProgressStore((state) => state.getYearCount);
+  const streakDays = useProgressStore((state) => state.streakDays);
+  const getCompletedLessonsCount = useFourFieldsStore((state) => state.getCompletedLessonsCount);
+  const getTotalLessonsCount = useFourFieldsStore((state) => state.getTotalLessonsCount);
+  const getNextLesson = useFourFieldsStore((state) => state.getNextLesson);
 
   useEffect(() => {
     const interactionHandle = InteractionManager.runAfterInteractions(() => {
@@ -114,10 +126,37 @@ export function HomeScreen() {
     return t('home.goodEvening');
   };
 
+  const chaptersToday = getTodayCount();
+  const chaptersThisWeek = getWeekCount();
+  const chaptersThisMonth = getMonthCount();
+  const chaptersThisYear = getYearCount();
+  const completedLessons = getCompletedLessonsCount();
+  const totalLessons = getTotalLessonsCount();
+  const journeyProgress = getJourneyProgressPercent(completedLessons, totalLessons);
+  const nextLesson = getNextLesson();
+  const nextCourse = nextLesson
+    ? fourFieldsCourses.find((course) => course.id === nextLesson.courseId)
+    : null;
+  const nextLessonMeta = nextCourse?.lessons.find((lesson) => lesson.id === nextLesson?.lessonId);
+
   const handleContinueReading = () => {
     navigation.navigate('Bible', {
       screen: 'BibleReader',
       params: { bookId: currentBook, chapter: currentChapter },
+    });
+  };
+
+  const handleContinueJourney = () => {
+    if (nextLesson) {
+      navigation.navigate('Learn', {
+        screen: 'FourFieldsLessonView',
+        params: nextLesson,
+      });
+      return;
+    }
+
+    navigation.navigate('Learn', {
+      screen: 'FourFieldsJourney',
     });
   };
 
@@ -137,6 +176,20 @@ export function HomeScreen() {
     });
   };
 
+  const handlePrimaryAction = () => {
+    if (primaryAction === 'continue-journey') {
+      handleContinueJourney();
+      return;
+    }
+
+    if (primaryAction === 'play-daily-audio') {
+      handlePlayDailyAudio();
+      return;
+    }
+
+    handleContinueReading();
+  };
+
   const dailyReferenceLabel = dailyScripture
     ? `${getBookById(dailyScripture.bookId)?.name || dailyScripture.bookId} ${dailyScripture.chapter}${
         dailyScripture.verse ? `:${dailyScripture.verse}` : ''
@@ -153,15 +206,62 @@ export function HomeScreen() {
         })
       : null;
   const shouldShowDailyAudio =
-    dailyScripture != null &&
-    dailyAudioAvailability?.canPlayAudio &&
-    dailyScripture.kind !== 'verse-text';
+    dailyScripture != null
+      ? Boolean(dailyAudioAvailability?.canPlayAudio) && dailyScripture.kind !== 'verse-text'
+      : false;
   const dailyAudioKind =
     shouldShowDailyAudio && dailyScripture?.kind === 'empty'
       ? currentTranslationInfo?.audioGranularity === 'verse'
         ? 'verse-audio'
         : 'section-audio'
       : dailyScripture?.kind;
+  const primaryAction = resolveHomePrimaryAction({
+    chaptersToday,
+    hasNextLesson: nextLesson != null,
+    canPlayDailyAudio: shouldShowDailyAudio,
+  });
+  const momentumMetric = resolveHomeMomentumMetric({
+    streakDays,
+    weekCount: chaptersThisWeek,
+    completedLessons,
+  });
+  const heroMetricLabel =
+    momentumMetric === 'streak'
+      ? t('profile.streak')
+      : momentumMetric === 'journey'
+        ? t('harvest.fourFieldsJourney')
+        : t('home.week');
+  const heroMetricValue =
+    momentumMetric === 'streak'
+      ? streakDays
+      : momentumMetric === 'journey'
+        ? completedLessons
+        : chaptersThisWeek;
+  const heroActionLabel =
+    primaryAction === 'continue-journey'
+      ? t('harvest.continueJourney')
+      : primaryAction === 'play-daily-audio'
+        ? dailyAudioKind === 'section-audio'
+          ? t('home.playSectionOfTheDay')
+          : t('home.playVerseOfTheDay')
+        : t('home.continueReading');
+  const heroActionTitle =
+    primaryAction === 'continue-journey'
+      ? (nextLessonMeta?.title ?? t('harvest.fourFieldsJourney'))
+      : primaryAction === 'play-daily-audio'
+        ? (dailyReferenceLabel ?? t('home.defaultReference'))
+        : `${currentBookInfo?.name || 'Genesis'} ${currentChapter}`;
+  const heroActionBody =
+    primaryAction === 'continue-journey'
+      ? t('harvest.lessonsCompleted', { completed: completedLessons, total: totalLessons })
+      : primaryAction === 'play-daily-audio'
+        ? dailyAudioKind === 'section-audio'
+          ? t('home.sectionOfTheDayBody')
+          : t('home.verseAudioBody')
+        : t('home.welcome');
+  const heroGradientColors = isDark
+    ? (['#25181b', '#181b21', '#111316'] as const)
+    : (['#fff6ea', '#f6ede1', '#efe2d2'] as const);
 
   return (
     <SafeAreaView
@@ -182,7 +282,89 @@ export function HomeScreen() {
         <Text style={[styles.greeting, { color: colors.primaryText }]}>{getGreeting()}</Text>
         <Text style={[styles.subtitle, { color: colors.secondaryText }]}>{t('home.welcome')}</Text>
 
-        {/* Verse of the Day Card */}
+        <LinearGradient
+          colors={heroGradientColors}
+          style={[styles.heroCard, { borderColor: colors.cardBorder }]}
+        >
+          <View style={styles.heroTopRow}>
+            <View style={styles.heroCopy}>
+              <Text style={[styles.heroEyebrow, { color: colors.accentSecondary }]}>
+                {heroActionLabel}
+              </Text>
+              <Text style={[styles.heroTitle, { color: colors.primaryText }]}>
+                {heroActionTitle}
+              </Text>
+              <Text style={[styles.heroBody, { color: colors.secondaryText }]}>
+                {heroActionBody}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.metricBadge,
+                { borderColor: colors.cardBorder, backgroundColor: colors.overlay },
+              ]}
+            >
+              <Text style={[styles.metricBadgeValue, { color: colors.primaryText }]}>
+                {heroMetricValue}
+              </Text>
+              <Text style={[styles.metricBadgeLabel, { color: colors.secondaryText }]}>
+                {heroMetricLabel}
+              </Text>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.heroButton, { backgroundColor: colors.accentPrimary }]}
+            onPress={handlePrimaryAction}
+            activeOpacity={0.9}
+          >
+            <Text style={styles.heroButtonText}>{heroActionLabel}</Text>
+            <Ionicons name="arrow-forward" size={18} color="#fff" />
+          </TouchableOpacity>
+
+          <View style={styles.momentumRow}>
+            <View
+              style={[
+                styles.momentumPill,
+                { backgroundColor: colors.overlay, borderColor: colors.cardBorder },
+              ]}
+            >
+              <Text style={[styles.momentumValue, { color: colors.primaryText }]}>
+                {chaptersToday}
+              </Text>
+              <Text style={[styles.momentumLabel, { color: colors.secondaryText }]}>
+                {t('home.today')}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.momentumPill,
+                { backgroundColor: colors.overlay, borderColor: colors.cardBorder },
+              ]}
+            >
+              <Text style={[styles.momentumValue, { color: colors.primaryText }]}>
+                {chaptersThisWeek}
+              </Text>
+              <Text style={[styles.momentumLabel, { color: colors.secondaryText }]}>
+                {t('home.week')}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.momentumPill,
+                { backgroundColor: colors.overlay, borderColor: colors.cardBorder },
+              ]}
+            >
+              <Text style={[styles.momentumValue, { color: colors.primaryText }]}>
+                {journeyProgress}%
+              </Text>
+              <Text style={[styles.momentumLabel, { color: colors.secondaryText }]}>
+                {t('harvest.fourFieldsJourney')}
+              </Text>
+            </View>
+          </View>
+        </LinearGradient>
+
         {isLoadingVerse ? (
           <View style={styles.cardSkeleton}>
             <CardSkeleton lines={3} />
@@ -244,72 +426,68 @@ export function HomeScreen() {
           </View>
         )}
 
-        {/* Continue Reading Card */}
         <TouchableOpacity
           style={[
             styles.card,
             { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder },
           ]}
           onPress={handleContinueReading}
+          activeOpacity={0.85}
         >
-          <Text style={[styles.cardTitle, { color: colors.secondaryText }]}>
-            {t('home.continueReading')}
-          </Text>
-          <Text style={[styles.cardSubtext, { color: colors.primaryText }]}>
-            {currentBookInfo?.name || 'Genesis'} {currentChapter}
-          </Text>
-          <View style={styles.continueArrow}>
-            <Text style={[styles.continueText, { color: colors.accentGreen }]}>
-              {t('common.continue')}
-            </Text>
+          <View style={styles.sectionHeader}>
+            <View style={[styles.sectionIcon, { backgroundColor: colors.accentPrimary + '14' }]}>
+              <Ionicons name="book-outline" size={18} color={colors.accentPrimary} />
+            </View>
+            <View style={styles.sectionCopy}>
+              <Text style={[styles.cardTitle, { color: colors.secondaryText }]}>
+                {t('home.continueReading')}
+              </Text>
+              <Text style={[styles.cardSubtext, { color: colors.primaryText }]}>
+                {currentBookInfo?.name || 'Genesis'} {currentChapter}
+              </Text>
+            </View>
           </View>
+          <Text style={[styles.cardMeta, { color: colors.secondaryText }]}>
+            {t('home.chaptersRead')}: {chaptersThisMonth} {t('home.month')} / {chaptersThisYear}{' '}
+            {t('home.year')}
+          </Text>
         </TouchableOpacity>
 
-        {/* Stats Card */}
-        <View
+        <TouchableOpacity
           style={[
             styles.card,
             { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder },
           ]}
+          onPress={handleContinueJourney}
+          activeOpacity={0.85}
         >
-          <Text style={[styles.cardTitle, { color: colors.secondaryText }]}>
-            {t('home.chaptersRead')}
-          </Text>
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: colors.primaryText }]}>
-                {getTodayCount()}
-              </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                {t('home.today')}
-              </Text>
+          <View style={styles.sectionHeader}>
+            <View style={[styles.sectionIcon, { backgroundColor: colors.accentSecondary + '20' }]}>
+              <Ionicons name="sparkles-outline" size={18} color={colors.accentSecondary} />
             </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: colors.primaryText }]}>
-                {getWeekCount()}
+            <View style={styles.sectionCopy}>
+              <Text style={[styles.cardTitle, { color: colors.secondaryText }]}>
+                {t('harvest.fourFieldsJourney')}
               </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                {t('home.week')}
-              </Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: colors.primaryText }]}>
-                {getMonthCount()}
-              </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                {t('home.month')}
-              </Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: colors.primaryText }]}>
-                {getYearCount()}
-              </Text>
-              <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
-                {t('home.year')}
+              <Text style={[styles.cardSubtext, { color: colors.primaryText }]}>
+                {nextLessonMeta?.title ?? t('harvest.browseFields')}
               </Text>
             </View>
           </View>
-        </View>
+          <View style={styles.progressSection}>
+            <View style={[styles.progressTrack, { backgroundColor: colors.cardBorder }]}>
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: `${journeyProgress}%`, backgroundColor: colors.accentPrimary },
+                ]}
+              />
+            </View>
+            <Text style={[styles.progressText, { color: colors.secondaryText }]}>
+              {t('harvest.lessonsCompleted', { completed: completedLessons, total: totalLessons })}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -324,6 +502,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+    gap: 16,
   },
   greeting: {
     fontSize: 28,
@@ -332,18 +511,97 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 24,
+    marginBottom: 8,
+  },
+  heroCard: {
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 20,
+    gap: 18,
+  },
+  heroTopRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  heroCopy: {
+    flex: 1,
+  },
+  heroEyebrow: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    marginBottom: 8,
+  },
+  heroTitle: {
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  heroBody: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  metricBadge: {
+    minWidth: 90,
+    borderRadius: 18,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  metricBadgeValue: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  metricBadgeLabel: {
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  heroButton: {
+    borderRadius: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  heroButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  momentumRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  momentumPill: {
+    flex: 1,
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    gap: 4,
+  },
+  momentumValue: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  momentumLabel: {
+    fontSize: 12,
   },
   card: {
-    borderRadius: 16,
+    borderRadius: 20,
     padding: 20,
-    marginBottom: 16,
     borderWidth: 1,
+    gap: 14,
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
-    marginBottom: 12,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -360,10 +618,8 @@ const styles = StyleSheet.create({
   audioFallbackBody: {
     fontSize: 17,
     lineHeight: 26,
-    marginBottom: 12,
   },
   audioAction: {
-    marginTop: 16,
     alignSelf: 'flex-start',
     borderRadius: 999,
     paddingHorizontal: 18,
@@ -377,32 +633,45 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   cardSubtext: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  continueArrow: {
-    marginTop: 12,
-  },
-  continueText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
-    marginBottom: 4,
   },
-  statLabel: {
-    fontSize: 12,
+  cardMeta: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  sectionIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sectionCopy: {
+    flex: 1,
   },
   cardSkeleton: {
-    marginBottom: 16,
+    marginBottom: 0,
+  },
+  progressSection: {
+    gap: 8,
+  },
+  progressTrack: {
+    height: 10,
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 999,
+  },
+  progressText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 });
