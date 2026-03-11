@@ -45,8 +45,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Tighten onboarding models, locale selection, and first-run state transitions
-- [ ] 02-02: Unify settings, privacy, and reminder behaviors with synced preference handling
+- [x] 02-01: Tighten onboarding models, locale selection, and first-run state transitions
+- [x] 02-02: Unify settings, privacy, and reminder behaviors with synced preference handling
 
 ### Phase 3: Core Reading And Audio Polish
 **Goal**: Make the daily scripture, browsing, reading, and listen flows feel dependable and polished both online and offline.
@@ -99,7 +99,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Startup And Backend Hardening | 2/2 | Awaiting device verification | - |
-| 2. Onboarding And Preference Cohesion | 0/2 | Not started | - |
+| 2. Onboarding And Preference Cohesion | 2/2 | Awaiting device verification | - |
 | 3. Core Reading And Audio Polish | 0/2 | Not started | - |
 | 4. Discipleship And Group Rollout | 0/3 | Not started | - |
 | 5. Release Hardening And Distribution | 0/2 | Not started | - |

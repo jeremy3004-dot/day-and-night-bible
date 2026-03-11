@@ -3,6 +3,7 @@ import { MoreStackParamList } from './types';
 import { MoreScreen } from '../screens/more/MoreScreen';
 import { SettingsScreen } from '../screens/more/SettingsScreen';
 import { LocalePreferencesScreen } from '../screens/more/LocalePreferencesScreen';
+import { PrivacyPreferencesScreen } from '../screens/more/PrivacyPreferencesScreen';
 import { ProfileScreen } from '../screens/more/ProfileScreen';
 import { AboutScreen } from '../screens/more/AboutScreen';
 import { AuthStack } from './AuthStack';
@@ -23,6 +24,7 @@ export function MoreStack() {
       <Stack.Screen name="MoreScreen" component={MoreScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="LocalePreferences" component={LocalePreferencesScreen} />
+      <Stack.Screen name="PrivacyPreferences" component={PrivacyPreferencesScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="About" component={AboutScreen} />
       <Stack.Screen name="Auth" component={AuthStack} options={{ presentation: 'modal' }} />
