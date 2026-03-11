@@ -66,7 +66,7 @@ test('applies the branded launch storyboard name to Info.plist data', () => {
   assert.equal(rewritten.UILaunchStoryboardName, BRANDED_LAUNCH_STORYBOARD_NAME);
 });
 
-test('adds alternate icon entries to generated Info.plist data', () => {
+test('adds alternate app icon entries to generated Info.plist data', () => {
   const infoPlist = {
     CFBundleIcons: {
       CFBundlePrimaryIcon: {
@@ -79,22 +79,22 @@ test('adds alternate icon entries to generated Info.plist data', () => {
   const phoneAlternateIcons = rewritten.CFBundleIcons as {
     CFBundleAlternateIcons?: Record<
       string,
-      { CFBundleIconFiles?: string[]; UIPrerenderedIcon?: boolean }
+      { CFBundleIconName?: string; UIPrerenderedIcon?: boolean }
     >;
   };
   const ipadAlternateIcons = rewritten['CFBundleIcons~ipad'] as {
     CFBundleAlternateIcons?: Record<
       string,
-      { CFBundleIconFiles?: string[]; UIPrerenderedIcon?: boolean }
+      { CFBundleIconName?: string; UIPrerenderedIcon?: boolean }
     >;
   };
 
   assert.deepEqual(phoneAlternateIcons.CFBundleAlternateIcons?.[DISCREET_APP_ICON_NAME], {
-    CFBundleIconFiles: [DISCREET_APP_ICON_NAME],
+    CFBundleIconName: DISCREET_APP_ICON_NAME,
     UIPrerenderedIcon: false,
   });
   assert.deepEqual(ipadAlternateIcons.CFBundleAlternateIcons?.[DISCREET_APP_ICON_NAME], {
-    CFBundleIconFiles: [DISCREET_APP_ICON_NAME],
+    CFBundleIconName: DISCREET_APP_ICON_NAME,
     UIPrerenderedIcon: false,
   });
 });
