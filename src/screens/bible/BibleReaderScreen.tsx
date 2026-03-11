@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,8 +14,12 @@ import { getAudioAvailability, isRemoteAudioAvailable } from '../../services/aud
 import { useBibleStore, useProgressStore } from '../../stores';
 import { useFontSize, useAudioPlayer } from '../../hooks';
 import { VersesSkeleton, AudioFirstChapterCard, AudioPlayerBar } from '../../components';
-import type { Verse } from '../../types';
+import type { BibleTranslation, Verse } from '../../types';
 import type { BibleStackParamList, BibleReaderScreenProps } from '../../navigation/types';
+import {
+  getNextFontSizeSheetVisibility,
+  getNextTranslationSheetVisibility,
+} from './bibleReaderModel';
 
 type NavigationProp = NativeStackNavigationProp<BibleStackParamList>;
 
@@ -33,12 +37,14 @@ export function BibleReaderScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showFontSizeSheet, setShowFontSizeSheet] = useState(false);
+  const [showTranslationSheet, setShowTranslationSheet] = useState(false);
 
   const markChapterRead = useProgressStore((state) => state.markChapterRead);
   const setCurrentBook = useBibleStore((state) => state.setCurrentBook);
   const setCurrentChapter = useBibleStore((state) => state.setCurrentChapter);
   const currentTranslation = useBibleStore((state) => state.currentTranslation);
   const translations = useBibleStore((state) => state.translations);
+  const setCurrentTranslation = useBibleStore((state) => state.setCurrentTranslation);
   const currentTranslationInfo = translations.find(
     (translation) => translation.id === currentTranslation
   );
@@ -67,6 +73,7 @@ export function BibleReaderScreen() {
     audioAvailable: audioEnabled,
   });
   const canAdjustFontSize = chapterPresentationMode === 'text' && verses.length > 0;
+  const canShowTranslationSheet = config.features.multipleTranslations;
 
   useEffect(() => {
     setCurrentBook(bookId);
@@ -170,19 +177,58 @@ export function BibleReaderScreen() {
 
   const hasPrevChapter = chapter > 1;
   const hasNextChapter = chapter < book.chapters;
+  const dismissFontSizeSheetFromReader = () => {
+    setShowFontSizeSheet((current) =>
+      getNextFontSizeSheetVisibility(current, 'readerContentTap')
+    );
+  };
 
   const handlePrevChapter = () => {
     if (hasPrevChapter) {
-      setShowFontSizeSheet(false);
+      setShowFontSizeSheet((current) =>
+        getNextFontSizeSheetVisibility(current, 'chapterChange')
+      );
       navigation.setParams({ chapter: chapter - 1, focusVerse: undefined });
     }
   };
 
   const handleNextChapter = () => {
     if (hasNextChapter) {
-      setShowFontSizeSheet(false);
+      setShowFontSizeSheet((current) =>
+        getNextFontSizeSheetVisibility(current, 'chapterChange')
+      );
       navigation.setParams({ chapter: chapter + 1, focusVerse: undefined });
     }
+  };
+
+  const handleTranslationChipPress = () => {
+    setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'readerContentTap'));
+    setShowTranslationSheet((current) =>
+      getNextTranslationSheetVisibility(current, canShowTranslationSheet, 'toggleChip')
+    );
+  };
+
+  const handleCloseTranslationSheet = () => {
+    setShowTranslationSheet((current) =>
+      getNextTranslationSheetVisibility(current, canShowTranslationSheet, 'dismiss')
+    );
+  };
+
+  const handleTranslationSelect = (translation: BibleTranslation) => {
+    setShowTranslationSheet((current) =>
+      getNextTranslationSheetVisibility(current, canShowTranslationSheet, 'selectTranslation')
+    );
+
+    if (translation.isDownloaded) {
+      setCurrentTranslation(translation.id);
+      return;
+    }
+
+    Alert.alert(
+      t('common.comingSoon'),
+      t('bible.translationComingSoon', { name: translation.name }),
+      [{ text: t('common.ok') }]
+    );
   };
 
   const renderContent = () => {
@@ -322,16 +368,29 @@ export function BibleReaderScreen() {
           <Text style={[styles.title, { color: colors.biblePrimaryText }]}>
             {book.name} {chapter}
           </Text>
-          <View
+          <TouchableOpacity
             style={[
               styles.translationChip,
-              { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+              {
+                backgroundColor: colors.bibleSurface,
+                borderColor: showTranslationSheet ? colors.bibleAccent : colors.bibleDivider,
+              },
             ]}
+            onPress={handleTranslationChipPress}
+            activeOpacity={canShowTranslationSheet ? 0.85 : 1}
+            disabled={!canShowTranslationSheet}
           >
             <Text style={[styles.translationChipText, { color: colors.bibleSecondaryText }]}>
               {translationLabel}
             </Text>
-          </View>
+            {canShowTranslationSheet ? (
+              <Ionicons
+                name="chevron-down"
+                size={12}
+                color={showTranslationSheet ? colors.bibleAccent : colors.bibleSecondaryText}
+              />
+            ) : null}
+          </TouchableOpacity>
         </View>
 
         <View style={styles.headerActions}>
@@ -349,7 +408,9 @@ export function BibleReaderScreen() {
                 return;
               }
 
-              setShowFontSizeSheet((current) => !current);
+              setShowFontSizeSheet((current) =>
+                getNextFontSizeSheetVisibility(current, 'toggleButton')
+              );
             }}
             disabled={!canAdjustFontSize}
           >
@@ -388,6 +449,11 @@ export function BibleReaderScreen() {
         ref={scrollViewRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        onScrollBeginDrag={() => {
+          setShowFontSizeSheet((current) =>
+            getNextFontSizeSheetVisibility(current, 'scrollStart')
+          );
+        }}
         contentContainerStyle={[
           styles.content,
           {
@@ -396,7 +462,10 @@ export function BibleReaderScreen() {
           },
         ]}
       >
-        <View style={[styles.readerShell, { backgroundColor: colors.bibleBackground }]}>
+        <View
+          style={[styles.readerShell, { backgroundColor: colors.bibleBackground }]}
+          onTouchStart={showFontSizeSheet ? dismissFontSizeSheetFromReader : undefined}
+        >
           {renderContent()}
         </View>
       </ScrollView>
@@ -470,6 +539,119 @@ export function BibleReaderScreen() {
             })}
           </View>
         </View>
+      ) : null}
+
+      {canShowTranslationSheet ? (
+        <Modal
+          visible={showTranslationSheet}
+          transparent
+          animationType="slide"
+          onRequestClose={handleCloseTranslationSheet}
+        >
+          <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
+            <TouchableOpacity
+              style={styles.modalBackdrop}
+              activeOpacity={1}
+              onPress={handleCloseTranslationSheet}
+            />
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+              ]}
+            >
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: colors.biblePrimaryText }]}>
+                  {t('bible.selectTranslation')}
+                </Text>
+                <TouchableOpacity onPress={handleCloseTranslationSheet}>
+                  <Ionicons name="close" size={22} color={colors.bibleSecondaryText} />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={styles.translationList} showsVerticalScrollIndicator={false}>
+                {translations.map((translation) => {
+                  const isSelected = currentTranslation === translation.id;
+
+                  return (
+                    <TouchableOpacity
+                      key={translation.id}
+                      style={[
+                        styles.translationCard,
+                        {
+                          backgroundColor: isSelected
+                            ? colors.bibleElevatedSurface
+                            : colors.bibleBackground,
+                          borderColor: colors.bibleDivider,
+                        },
+                      ]}
+                      onPress={() => handleTranslationSelect(translation)}
+                      activeOpacity={0.85}
+                    >
+                      <View style={styles.translationItem}>
+                        <View style={styles.translationInfo}>
+                          <View style={styles.translationNameRow}>
+                            <Text
+                              style={[styles.translationName, { color: colors.biblePrimaryText }]}
+                            >
+                              {translation.name}
+                            </Text>
+                            <Text style={[styles.translationAbbr, { color: colors.bibleAccent }]}>
+                              {translation.abbreviation}
+                            </Text>
+                          </View>
+                          <Text
+                            style={[
+                              styles.translationDescription,
+                              { color: colors.bibleSecondaryText },
+                            ]}
+                          >
+                            {translation.description}
+                          </Text>
+                          <View style={styles.translationMeta}>
+                            <Text
+                              style={[styles.translationSize, { color: colors.bibleSecondaryText }]}
+                            >
+                              {translation.sizeInMB} MB
+                            </Text>
+                            <View style={styles.downloadedBadge}>
+                              <Ionicons
+                                name={translation.isDownloaded ? 'checkmark-circle' : 'time-outline'}
+                                size={14}
+                                color={
+                                  translation.isDownloaded
+                                    ? colors.success
+                                    : colors.bibleSecondaryText
+                                }
+                              />
+                              <Text
+                                style={[
+                                  styles.downloadedText,
+                                  {
+                                    color: translation.isDownloaded
+                                      ? colors.success
+                                      : colors.bibleSecondaryText,
+                                  },
+                                ]}
+                              >
+                                {translation.isDownloaded
+                                  ? t('bible.available')
+                                  : t('common.comingSoon')}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                        {isSelected ? (
+                          <Ionicons name="checkmark" size={22} color={colors.bibleAccent} />
+                        ) : null}
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       ) : null}
 
       <View style={[styles.footerShell, { borderTopColor: colors.bibleDivider }]}>
@@ -573,6 +755,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   translationChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     borderWidth: 1,
     borderRadius: 999,
     paddingHorizontal: 10,
@@ -649,6 +834,88 @@ const styles = StyleSheet.create({
   feedbackButtonText: {
     fontSize: 14,
     fontWeight: '700',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    flex: 1,
+  },
+  modalContent: {
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    borderWidth: 1,
+    paddingTop: 20,
+    maxHeight: '78%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    marginBottom: 12,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+  translationList: {
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+  },
+  translationCard: {
+    marginBottom: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+  },
+  translationItem: {
+    minHeight: 88,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  translationInfo: {
+    flex: 1,
+  },
+  translationNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  translationName: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  translationAbbr: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  translationDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 8,
+  },
+  translationMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  translationSize: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  downloadedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  downloadedText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   fontSheet: {
     borderTopWidth: 1,
