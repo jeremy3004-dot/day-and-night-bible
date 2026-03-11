@@ -71,10 +71,10 @@
 | AUTH-03 | Phase 1 | In verification |
 | SYNC-01 | Phase 1 | In verification |
 | SYNC-02 | Phase 1 | In verification |
-| LOCL-01 | Phase 2 | Pending |
-| LOCL-02 | Phase 2 | Pending |
-| PRIV-01 | Phase 2 | Pending |
-| PREF-01 | Phase 2 | Pending |
+| LOCL-01 | Phase 2 | In verification |
+| LOCL-02 | Phase 2 | In verification |
+| PRIV-01 | Phase 2 | In verification |
+| PREF-01 | Phase 2 | In verification |
 | READ-01 | Phase 3 | Pending |
 | READ-02 | Phase 3 | Pending |
 | READ-03 | Phase 3 | Pending |
@@ -95,4 +95,4 @@
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after Phase 1 execution evidence was recorded*
+*Last updated: 2026-03-11 after Phase 2 execution evidence was recorded*

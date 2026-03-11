@@ -54,6 +54,7 @@ export type MoreStackParamList = {
   MoreScreen: undefined;
   Settings: undefined;
   LocalePreferences: undefined;
+  PrivacyPreferences: undefined;
   Profile: undefined;
   About: undefined;
   Auth: NavigatorScreenParams<AuthStackParamList> | undefined;
@@ -102,6 +103,10 @@ export type GroupSessionScreenProps = NativeStackScreenProps<LearnStackParamList
 
 export type MoreScreenProps = NativeStackScreenProps<MoreStackParamList, 'MoreScreen'>;
 export type SettingsScreenProps = NativeStackScreenProps<MoreStackParamList, 'Settings'>;
+export type PrivacyPreferencesScreenProps = NativeStackScreenProps<
+  MoreStackParamList,
+  'PrivacyPreferences'
+>;
 export type ProfileScreenProps = NativeStackScreenProps<MoreStackParamList, 'Profile'>;
 export type AboutScreenProps = NativeStackScreenProps<MoreStackParamList, 'About'>;
 

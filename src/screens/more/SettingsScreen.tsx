@@ -12,26 +12,35 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
+import { usePrivacyStore } from '../../stores/privacyStore';
 import { useFontSize, useI18n } from '../../hooks';
 import { syncPreferences } from '../../services/sync';
 import { SUPPORTED_LANGUAGES, type LanguageCode } from '../../constants/languages';
 import { deleteCurrentAccount } from '../../services/account';
 import { localeSearchEngine } from '../../services/onboarding/localeSelection';
+import {
+  getReminderEnablePlan,
+  getReminderPickerState,
+} from '../../services/preferences/reminderPreferences';
+import type { MoreStackParamList } from '../../navigation/types';
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES = ['00', '15', '30', '45'];
+type NavigationProp = NativeStackNavigationProp<MoreStackParamList, 'Settings'>;
 
 export function SettingsScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const { colors, isDark, toggleTheme } = useTheme();
   const { t, currentLanguage, setLanguage, availableLanguages } = useI18n();
   const preferences = useAuthStore((state) => state.preferences);
   const setPreferences = useAuthStore((state) => state.setPreferences);
+  const privacyMode = usePrivacyStore((state) => state.mode);
   const { label: fontSizeLabel, increase, decrease, canIncrease, canDecrease } = useFontSize();
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
@@ -41,6 +50,30 @@ export function SettingsScreen() {
   const [selectedMinute, setSelectedMinute] = useState('00');
   const user = useAuthStore((state) => state.user);
   const signOut = useAuthStore((state) => state.signOut);
+
+  const scheduleDailyReminder = async (hour: number, minute: number) => {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: t('settings.notificationTitle'),
+        body: t('settings.notificationBody'),
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour,
+        minute,
+      },
+    });
+  };
+
+  const openTimePicker = () => {
+    const pickerState = getReminderPickerState(preferences.reminderTime, MINUTES);
+    setSelectedHour(pickerState.hour);
+    setSelectedMinute(pickerState.minute);
+    setShowTimePicker(true);
+  };
 
   const handleThemeToggle = () => {
     toggleTheme();
@@ -65,17 +98,25 @@ export function SettingsScreen() {
         return;
       }
 
-      setPreferences({ notificationsEnabled: true });
-      // Show time picker if no reminder time is set
-      if (!preferences.reminderTime) {
-        setShowTimePicker(true);
+      const enablePlan = getReminderEnablePlan(preferences.reminderTime);
+
+      if (enablePlan.type === 'schedule-existing') {
+        await scheduleDailyReminder(enablePlan.schedule.hour, enablePlan.schedule.minute);
+        setPreferences({ notificationsEnabled: true });
+        syncPreferences().catch(() => {});
+        return;
       }
-    } else {
-      // Disable notifications and cancel scheduled ones
+
+      openTimePicker();
+      return;
+    }
+
+    try {
       await Notifications.cancelAllScheduledNotificationsAsync();
       setPreferences({ notificationsEnabled: false });
+    } finally {
+      syncPreferences().catch(() => {});
     }
-    syncPreferences().catch(() => {});
   };
 
   const handleLanguageSelect = async (languageCode: LanguageCode) => {
@@ -96,26 +137,12 @@ export function SettingsScreen() {
   })();
 
   const handleTimeSelect = async () => {
+    const parsedMinute = parseInt(selectedMinute, 10);
     const timeString = `${selectedHour.toString().padStart(2, '0')}:${selectedMinute}`;
-    setPreferences({ reminderTime: timeString });
+    await scheduleDailyReminder(selectedHour, parsedMinute);
+
+    setPreferences({ notificationsEnabled: true, reminderTime: timeString });
     setShowTimePicker(false);
-
-    // Cancel existing and schedule new notification
-    await Notifications.cancelAllScheduledNotificationsAsync();
-
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: t('settings.notificationTitle'),
-        body: t('settings.notificationBody'),
-        sound: true,
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DAILY,
-        hour: selectedHour,
-        minute: parseInt(selectedMinute, 10),
-      },
-    });
-
     syncPreferences().catch(() => {});
   };
 
@@ -183,6 +210,9 @@ export function SettingsScreen() {
       setIsDeleting(false);
     }
   };
+
+  const privacyModeLabel =
+    privacyMode === 'discreet' ? t('onboarding.discreetIconTitle') : t('onboarding.standardIconTitle');
 
   return (
     <SafeAreaView
@@ -303,7 +333,7 @@ export function SettingsScreen() {
 
           <TouchableOpacity
             style={[styles.settingItem, styles.lastItem]}
-            onPress={() => navigation.navigate('LocalePreferences' as never)}
+            onPress={() => navigation.navigate('LocalePreferences')}
           >
             <View style={styles.settingLeft}>
               <Ionicons name="location-outline" size={24} color={colors.secondaryText} />
@@ -317,6 +347,31 @@ export function SettingsScreen() {
                 numberOfLines={1}
               >
                 {localeSummary}
+              </Text>
+              <Ionicons name="chevron-forward" size={20} color={colors.secondaryText} />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View
+          style={[
+            styles.settingsGroup,
+            { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder },
+          ]}
+        >
+          <TouchableOpacity
+            style={[styles.settingItem, styles.lastItem]}
+            onPress={() => navigation.navigate('PrivacyPreferences')}
+          >
+            <View style={styles.settingLeft}>
+              <Ionicons name="lock-closed-outline" size={24} color={colors.secondaryText} />
+              <Text style={[styles.settingLabel, { color: colors.primaryText }]}>
+                {t('onboarding.privacyTitle')}
+              </Text>
+            </View>
+            <View style={styles.settingRight}>
+              <Text style={[styles.settingValue, { color: colors.secondaryText }]}>
+                {privacyModeLabel}
               </Text>
               <Ionicons name="chevron-forward" size={20} color={colors.secondaryText} />
             </View>
@@ -350,7 +405,7 @@ export function SettingsScreen() {
 
           <TouchableOpacity
             style={[styles.settingItem, styles.lastItem]}
-            onPress={() => preferences.notificationsEnabled && setShowTimePicker(true)}
+            onPress={() => preferences.notificationsEnabled && openTimePicker()}
             disabled={!preferences.notificationsEnabled}
           >
             <View style={styles.settingLeft}>
