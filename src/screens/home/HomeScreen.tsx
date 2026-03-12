@@ -12,7 +12,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { bibleTranslations, getBookById } from '../../constants';
 import { config } from '../../constants/config';
@@ -28,7 +27,7 @@ type NavigationProp = NativeStackNavigationProp<RootTabParamList>;
 
 export function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const [dailyScripture, setDailyScripture] = useState<DailyScripture | null>(null);
@@ -112,10 +111,6 @@ export function HomeScreen() {
     return t('home.goodEvening');
   };
 
-  const handleOpenCreationToChrist = () => {
-    navigation.navigate('Learn', { screen: 'CourseList' });
-  };
-
   const handlePlayDailyAudio = () => {
     if (!dailyScripture || !dailyAudioAvailability?.canPlayAudio) {
       return;
@@ -157,10 +152,6 @@ export function HomeScreen() {
         ? 'verse-audio'
         : 'section-audio'
       : dailyScripture?.kind;
-  const heroGradientColors = isDark
-    ? (['#25181b', '#181b21', '#111316'] as const)
-    : (['#fff6ea', '#f6ede1', '#efe2d2'] as const);
-
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -179,42 +170,6 @@ export function HomeScreen() {
       >
         <Text style={[styles.greeting, { color: colors.primaryText }]}>{getGreeting()}</Text>
         <Text style={[styles.subtitle, { color: colors.secondaryText }]}>{t('home.welcome')}</Text>
-
-        <LinearGradient
-          colors={heroGradientColors}
-          style={[styles.heroCard, { borderColor: colors.cardBorder }]}
-        >
-          <View style={styles.heroTopRow}>
-            <View style={[styles.heroIcon, { backgroundColor: colors.accentPrimary + '14' }]}>
-              <Ionicons name="planet-outline" size={24} color={colors.accentPrimary} />
-            </View>
-            <View style={styles.heroCopy}>
-              <Text style={[styles.heroEyebrow, { color: colors.accentSecondary }]}>
-                {t('harvest.chapterPlaylistEyebrow', { defaultValue: 'Chapter Playlist' })}
-              </Text>
-              <Text style={[styles.heroTitle, { color: colors.primaryText }]}>
-                {t('harvest.creationToChristTitle', { defaultValue: 'Creation to Christ' })}
-              </Text>
-              <Text style={[styles.heroBody, { color: colors.secondaryText }]}>
-                {t('home.creationToChristHomeBody', {
-                  defaultValue:
-                    'Read and listen through the full story in order, chapter by chapter.',
-                })}
-              </Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            style={[styles.heroButton, { backgroundColor: colors.accentPrimary }]}
-            onPress={handleOpenCreationToChrist}
-            activeOpacity={0.9}
-          >
-            <Text style={styles.heroButtonText}>
-              {t('home.openCreationToChrist', { defaultValue: 'Open Creation to Christ' })}
-            </Text>
-            <Ionicons name="arrow-forward" size={18} color="#fff" />
-          </TouchableOpacity>
-        </LinearGradient>
 
         {isLoadingVerse ? (
           <View style={styles.cardSkeleton}>
