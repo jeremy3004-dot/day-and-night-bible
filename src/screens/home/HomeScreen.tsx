@@ -297,19 +297,6 @@ export function HomeScreen() {
                 {t('home.week')}
               </Text>
             </View>
-            <View
-              style={[
-                styles.momentumPill,
-                { backgroundColor: colors.overlay, borderColor: colors.cardBorder },
-              ]}
-            >
-              <Text style={[styles.momentumValue, { color: colors.primaryText }]}>
-                {journeyProgress}%
-              </Text>
-              <Text style={[styles.momentumLabel, { color: colors.secondaryText }]}>
-                {t('harvest.fourFieldsJourney')}
-              </Text>
-            </View>
           </View>
         </LinearGradient>
 
