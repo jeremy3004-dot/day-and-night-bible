@@ -376,7 +376,7 @@ export function BibleReaderScreen() {
                 styles.verseText,
                 {
                   fontSize: scaleValue(20),
-                  lineHeight: scaleValue(34),
+                  lineHeight: scaleValue(30),
                   color: colors.biblePrimaryText,
                 },
               ]}
@@ -832,15 +832,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   readerColumn: {
-    gap: 18,
+    gap: 10,
   },
   readerBlock: {
-    gap: 10,
+    gap: 6,
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: 16,
     borderColor: 'transparent',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   sectionHeading: {
     fontWeight: '700',
