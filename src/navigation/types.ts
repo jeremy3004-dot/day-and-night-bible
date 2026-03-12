@@ -15,6 +15,7 @@ export type BibleStackParamList = {
     chapter: number;
     autoplayAudio?: boolean;
     focusVerse?: number;
+    playlistId?: 'creationToChrist';
   };
   ChapterSelector: {
     bookId: string;

@@ -12,7 +12,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-11)
 Phase: 7 of 11 (Premium Reader And Personal Study)
 Plan: 0 of 3 in current phase
 Status: Phase 6 executed with verification green; Phase 7 ready to plan
-Last activity: 2026-03-11 — Completed bundled Bible data bootstrap and premium Home redesign for Phase 6
+Last activity: 2026-03-12 — Inserted urgent Creation-to-Christ playlist and reader/home UX fixes while keeping Phase 7 as active planning context
 
 Progress: [██████----] 55%
 
@@ -30,6 +30,8 @@ Progress: [██████----] 55%
 - Bible initialization now uses a bundled versioned SQLite asset with indexed search instead of destructive runtime JSON seeding.
 - Legacy empty or partial local Bible databases can recover through bundled-asset overwrite instead of remaining broken.
 - Home now behaves like a daily-rhythm dashboard with one clear primary action, visible momentum, and stronger links into reading and discipleship.
+- Creation-to-Christ now uses a richer chapter arc with clearer titles, and reader bottom navigation can advance through the full curated sequence.
+- Home now restores greeting/welcome and chapter progress stats while keeping the Creation-to-Christ CTA.
 
 ## Pending Work By Phase
 
@@ -47,6 +49,6 @@ Progress: [██████----] 55%
 
 ## Session Continuity
 
-Last session: 2026-03-12 00:25 +0545
-Stopped at: Phase 6 complete with green verification; next action is Phase 7 planning
-Resume file: `.planning/phases/06-scripture-data-and-daily-rhythm/06-02-SUMMARY.md`
+Last session: 2026-03-12 17:05 +0545
+Stopped at: Urgent Creation-to-Christ/navigation/home fixes implemented and verified in an isolated branch; next action remains Phase 7 planning
+Resume file: `.planning/phases/07-premium-reader-and-personal-study/07-00-SUMMARY.md`

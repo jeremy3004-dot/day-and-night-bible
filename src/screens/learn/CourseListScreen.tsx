@@ -8,6 +8,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
 import { useBibleStore, useProgressStore } from '../../stores';
 import {
+  creationToChristPlaylistId,
   creationToChristPlaylist,
   type CreationToChristPlaylistEntry,
 } from './creationToChristPlaylist';
@@ -34,6 +35,7 @@ export function CourseListScreen() {
         bookId: entry.bookId,
         chapter: entry.chapter,
         autoplayAudio: true,
+        playlistId: creationToChristPlaylistId,
       },
     });
   };
@@ -136,13 +138,14 @@ export function CourseListScreen() {
                 </View>
 
                 <View style={styles.rowContent}>
-                  <Text style={[styles.rowTitle, { color: colors.primaryText }]}>{reference}</Text>
+                  <Text style={[styles.rowTitle, { color: colors.primaryText }]}>{entry.title}</Text>
+                  <Text style={[styles.rowReference, { color: colors.secondaryText }]}>
+                    {reference}
+                  </Text>
                   <Text style={[styles.rowSubtitle, { color: colors.secondaryText }]}>
                     {isActive
                       ? t('harvest.nowReading', { defaultValue: 'Now open in Bible tab' })
-                      : t('harvest.playChapterSubtitle', {
-                          defaultValue: 'Open and play full chapter',
-                        })}
+                      : entry.summary}
                   </Text>
                 </View>
 
@@ -273,6 +276,10 @@ const styles = StyleSheet.create({
   rowTitle: {
     fontSize: 16,
     fontWeight: '700',
+  },
+  rowReference: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   rowSubtitle: {
     fontSize: 13,
