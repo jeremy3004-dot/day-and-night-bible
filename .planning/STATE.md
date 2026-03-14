@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** When someone opens the app, they can reliably read or listen to scripture and continue their discipleship journey even when network conditions are weak or backend features are partially unavailable.
-**Current focus:** Final device and distribution verification before milestone closeout
+**Current focus:** Manual device verification for urgent Phase 05.1 audio-only/no-text behavior before release follow-through
 
 ## Current Position
 
-Phase: 5 of 5 (Release Hardening And Distribution)
-Plan: 2 of 2 in current phase
-Status: All roadmap phases executed; awaiting final signed-build and device verification
-Last activity: 2026-03-11 — Executed Phase 5 plan 02 to add release metadata contracts, passing typecheck, and a single release verification command
+Phase: 05.1 (Audio-only downloadable Bible experience)
+Plan: 1 of 1 in current phase
+Status: Plan implemented and verified in automation; awaiting manual device verification
+Last activity: 2026-03-14 — Executed Phase 05.1 plan 01 with passing tests, lint, and updated phase summary
 
 Progress: [██████████] 100%
 
@@ -32,10 +32,11 @@ Progress: [██████████] 100%
 | 3. Core Reading And Audio Polish | 2 | n/a | n/a |
 | 4. Discipleship And Group Rollout | 3 | n/a | n/a |
 | 5. Release Hardening And Distribution | 2 | n/a | n/a |
+| 05.1 Audio-only downloadable Bible experience | 1 | n/a | n/a |
 
 **Recent Trend:**
 - Last 5 plans: 04-01, 04-02, 04-03, 05-01, 05-02
-- Trend: Stable execution with full roadmap coverage and stronger release evidence
+- Trend: Stable execution plus urgent scope insertion for no-text audio Bible validation
 
 *Updated after each plan completion*
 
@@ -55,10 +56,15 @@ Recent decisions affecting current work:
 - Phase 4: Mount the existing LearnStack directly in the root shell before attempting deeper discipleship or group rewrites
 - Phase 4: Use a read-side group repository boundary so preserved local groups stay usable while synced groups remain honest about rollout status
 - Phase 4: Route synced session completion through explicit service guards instead of letting remote groups fall through local-only mutation paths
+- Phase 05.1: Add a dedicated audio-only translation path so the app can be validated when audio exists but chapter text does not
 
 ### Pending Todos
 
-None yet.
+- Manual device verification for Phase 05.1 audio-only translation selection, download, and offline playback behavior
+
+### Roadmap Evolution
+
+- Phase 05.1 inserted after Phase 5: Audio-only downloadable Bible experience (URGENT)
 
 ### Blockers/Concerns
 
@@ -67,9 +73,10 @@ None yet.
 - Phase 3 still needs manual device validation for offline search, daily audio CTA behavior, and remote-vs-offline audio transitions
 - Phase 4 still needs manual device validation for Harvest-tab navigation, local-vs-synced group flows, and synced session completion
 - Signed builds, device checks, and distribution attachment still need manual verification before the milestone can be called shipped
+- Phase 05.1 still needs manual device verification for audio-only translation download and offline playback behavior
 
 ## Session Continuity
 
-Last session: 2026-03-11 21:30 +0545
-Stopped at: All five roadmap phases executed with automated verification green; next work is signed-build and device verification
-Resume file: .planning/phases/05-release-hardening-and-distribution/05-02-SUMMARY.md
+Last session: 2026-03-14 22:05 +0545
+Stopped at: Phase 05.1 plan 01 executed with automated verification passing; manual QA remains
+Resume file: .planning/phases/05.1-audio-only-downloadable-bible-experience/05.1-01-SUMMARY.md

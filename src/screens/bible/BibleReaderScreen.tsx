@@ -20,6 +20,7 @@ import {
   getNextFontSizeSheetVisibility,
   getNextTranslationSheetVisibility,
 } from './bibleReaderModel';
+import { getTranslationSelectionState } from './bibleTranslationModel';
 
 type NavigationProp = NativeStackNavigationProp<BibleStackParamList>;
 
@@ -48,6 +49,17 @@ export function BibleReaderScreen() {
   const currentTranslationInfo = translations.find(
     (translation) => translation.id === currentTranslation
   );
+  const getTranslationAudioAvailability = (
+    translation: Pick<BibleTranslation, 'id' | 'hasAudio' | 'downloadedAudioBooks'>,
+    targetBookId?: string
+  ) =>
+    getAudioAvailability({
+      featureEnabled: config.features.audioEnabled,
+      translationHasAudio: Boolean(translation.hasAudio),
+      remoteAudioAvailable: isRemoteAudioAvailable(translation.id),
+      downloadedAudioBooks: translation.downloadedAudioBooks,
+      bookId: targetBookId,
+    });
   const { fontSize, scaleValue, setSize } = useFontSize();
   const {
     showPlayer,
@@ -219,16 +231,27 @@ export function BibleReaderScreen() {
       getNextTranslationSheetVisibility(current, canShowTranslationSheet, 'selectTranslation')
     );
 
-    if (translation.isDownloaded) {
+    const audioAvailability = getTranslationAudioAvailability(translation, bookId);
+    const selectionState = getTranslationSelectionState({
+      isDownloaded: translation.isDownloaded,
+      hasText: translation.hasText,
+      hasAudio: translation.hasAudio,
+      canPlayAudio: audioAvailability.canPlayAudio,
+    });
+
+    if (selectionState.isSelectable) {
       setCurrentTranslation(translation.id);
       return;
     }
 
-    Alert.alert(
-      t('common.comingSoon'),
-      t('bible.translationComingSoon', { name: translation.name }),
-      [{ text: t('common.ok') }]
-    );
+    if (selectionState.reason === 'audio-unavailable') {
+      Alert.alert(t('common.error'), t('bible.audioDownloadFailed'), [{ text: t('common.ok') }]);
+      return;
+    }
+
+    Alert.alert(t('common.comingSoon'), t('bible.translationComingSoon', { name: translation.name }), [
+      { text: t('common.ok') },
+    ]);
   };
 
   const renderContent = () => {
@@ -572,6 +595,13 @@ export function BibleReaderScreen() {
               <ScrollView style={styles.translationList} showsVerticalScrollIndicator={false}>
                 {translations.map((translation) => {
                   const isSelected = currentTranslation === translation.id;
+                  const audioAvailability = getTranslationAudioAvailability(translation, bookId);
+                  const selectionState = getTranslationSelectionState({
+                    isDownloaded: translation.isDownloaded,
+                    hasText: translation.hasText,
+                    hasAudio: translation.hasAudio,
+                    canPlayAudio: audioAvailability.canPlayAudio,
+                  });
 
                   return (
                     <TouchableOpacity
@@ -616,11 +646,13 @@ export function BibleReaderScreen() {
                             </Text>
                             <View style={styles.downloadedBadge}>
                               <Ionicons
-                                name={translation.isDownloaded ? 'checkmark-circle' : 'time-outline'}
+                                name={selectionState.isSelectable ? 'checkmark-circle' : 'time-outline'}
                                 size={14}
                                 color={
-                                  translation.isDownloaded
-                                    ? colors.success
+                                  selectionState.isSelectable
+                                    ? translation.isDownloaded
+                                      ? colors.success
+                                      : colors.bibleAccent
                                     : colors.bibleSecondaryText
                                 }
                               />
@@ -628,13 +660,15 @@ export function BibleReaderScreen() {
                                 style={[
                                   styles.downloadedText,
                                   {
-                                    color: translation.isDownloaded
-                                      ? colors.success
+                                    color: selectionState.isSelectable
+                                      ? translation.isDownloaded
+                                        ? colors.success
+                                        : colors.bibleAccent
                                       : colors.bibleSecondaryText,
                                   },
                                 ]}
                               >
-                                {translation.isDownloaded
+                                {selectionState.isSelectable
                                   ? t('bible.available')
                                   : t('common.comingSoon')}
                               </Text>

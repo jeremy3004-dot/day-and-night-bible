@@ -94,7 +94,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -103,3 +103,18 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. Core Reading And Audio Polish | 2/2 | Awaiting device verification | - |
 | 4. Discipleship And Group Rollout | 3/3 | Awaiting device verification | - |
 | 5. Release Hardening And Distribution | 2/2 | Awaiting signed-build verification | - |
+| 05.1 Audio-only downloadable Bible experience | 1/1 | Awaiting device verification | - |
+
+### Phase 05.1: Audio-only downloadable Bible experience (INSERTED)
+
+**Goal:** Add a first-class audio-only Bible test path so users can download and listen even when chapter text is unavailable.
+**Requirements**: READ-04, AUDIO-03, AUDIO-04
+**Depends on:** Phase 5
+**Success Criteria** (what must be TRUE):
+  1. A selectable audio-only translation exists in-app and intentionally has no chapter text while retaining audio playback/download support.
+  2. Reader and daily-scripture surfaces present clear audio-first/no-text states instead of generic missing-content fallbacks.
+  3. Audio book/translation downloads still succeed for the audio-only translation and can be replayed offline.
+**Plans:** 1 plan
+
+Plans:
+- [x] 05.1-01: Implement and verify audio-only translation download path plus no-text UI behavior

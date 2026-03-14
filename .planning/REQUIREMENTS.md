@@ -32,6 +32,7 @@
 - [ ] **AUDIO-01**: User can stream chapter audio when a supported translation is available and the audio API is configured
 - [ ] **AUDIO-02**: User can control playback with play, pause, seek, rate, auto-advance, and sleep timer behaviors
 - [ ] **AUDIO-03**: User can download audio by book or translation and replay downloaded audio offline
+- [ ] **AUDIO-04**: User can use an audio-only translation where chapter text is unavailable and still listen or download audio with clear UI feedback
 
 ### Discipleship And Groups
 
@@ -82,6 +83,7 @@
 | AUDIO-01 | Phase 3 | In verification |
 | AUDIO-02 | Phase 3 | In verification |
 | AUDIO-03 | Phase 3 | In verification |
+| AUDIO-04 | Phase 05.1 | In verification |
 | DISC-01 | Phase 4 | In verification |
 | GROUP-01 | Phase 4 | In verification |
 | GROUP-02 | Phase 4 | In verification |
@@ -89,10 +91,10 @@
 | REL-02 | Phase 5 | In verification |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
+- v1 requirements: 22 total
+- Mapped to phases: 22
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after Phase 5 plan 02 execution evidence was recorded*
+*Last updated: 2026-03-14 after executing Phase 05.1 plan 01 and adding AUDIO-04 verification coverage*
