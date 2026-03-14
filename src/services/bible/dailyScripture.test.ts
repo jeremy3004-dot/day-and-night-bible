@@ -24,6 +24,17 @@ test('daily scripture can avoid triggering heavyweight bible initialization on l
   );
 });
 
+test('daily scripture can initialize bible data when explicitly allowed', () => {
+  assert.equal(
+    shouldLoadDailyScriptureText({
+      translationHasText: true,
+      isBibleReady: false,
+      allowInitialization: true,
+    }),
+    true
+  );
+});
+
 test('daily scripture loads text when the bible data is already ready', () => {
   assert.equal(
     shouldLoadDailyScriptureText({

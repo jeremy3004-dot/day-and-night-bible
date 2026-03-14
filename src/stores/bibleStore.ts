@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { bibleBooks, bibleTranslations, getBookById } from '../constants';
+import { bibleBooks, bibleTranslations, config, getBookById } from '../constants';
 import type { Verse, BibleTranslation, TranslationDownloadProgress } from '../types';
 import {
   AUDIO_DOWNLOAD_ROOT_URI,
@@ -9,6 +9,8 @@ import {
   downloadAudioTranslation,
   expoAudioFileSystemAdapter,
   fetchRemoteChapterAudio,
+  getAudioAvailability,
+  isRemoteAudioAvailable,
 } from '../services/audio';
 import { sanitizePersistedBibleState } from './persistedStateSanitizers';
 
@@ -78,8 +80,26 @@ export const useBibleStore = create<BibleState>()(
 
       setCurrentTranslation: (translationId) => {
         const translation = get().translations.find((t) => t.id === translationId);
-        if (translation && translation.isDownloaded) {
+        if (!translation) {
+          return;
+        }
+
+        if (translation.isDownloaded) {
           set({ currentTranslation: translationId });
+          return;
+        }
+
+        if (!translation.hasText && translation.hasAudio) {
+          const availability = getAudioAvailability({
+            featureEnabled: config.features.audioEnabled,
+            translationHasAudio: translation.hasAudio,
+            remoteAudioAvailable: isRemoteAudioAvailable(translation.id),
+            downloadedAudioBooks: translation.downloadedAudioBooks,
+          });
+
+          if (availability.canPlayAudio) {
+            set({ currentTranslation: translationId });
+          }
         }
       },
 

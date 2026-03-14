@@ -40,6 +40,7 @@ import {
   formatBibleSearchReference,
   shouldRunBibleSearch,
 } from './bibleSearchModel';
+import { getTranslationSelectionState } from './bibleTranslationModel';
 
 type NavigationProp = NativeStackNavigationProp<BibleStackParamList>;
 
@@ -146,16 +147,27 @@ export function BibleBrowserScreen() {
   const handleTranslationSelect = (translation: BibleTranslation) => {
     setShowTranslationModal(false);
 
-    if (translation.isDownloaded) {
+    const audioAvailability = getTranslationAudioAvailability(translation);
+    const selectionState = getTranslationSelectionState({
+      isDownloaded: translation.isDownloaded,
+      hasText: translation.hasText,
+      hasAudio: translation.hasAudio,
+      canPlayAudio: audioAvailability.canPlayAudio,
+    });
+
+    if (selectionState.isSelectable) {
       setCurrentTranslation(translation.id);
       return;
     }
 
-    Alert.alert(
-      t('common.comingSoon'),
-      t('bible.translationComingSoon', { name: translation.name }),
-      [{ text: t('common.ok') }]
-    );
+    if (selectionState.reason === 'audio-unavailable') {
+      Alert.alert(t('common.error'), t('bible.audioDownloadFailed'), [{ text: t('common.ok') }]);
+      return;
+    }
+
+    Alert.alert(t('common.comingSoon'), t('bible.translationComingSoon', { name: translation.name }), [
+      { text: t('common.ok') },
+    ]);
   };
 
   const handleOpenAudioManager = (translationId: string) => {
@@ -410,6 +422,12 @@ export function BibleBrowserScreen() {
                 {translations.map((translation) => {
                   const isSelected = currentTranslation === translation.id;
                   const audioAvailability = getTranslationAudioAvailability(translation);
+                  const selectionState = getTranslationSelectionState({
+                    isDownloaded: translation.isDownloaded,
+                    hasText: translation.hasText,
+                    hasAudio: translation.hasAudio,
+                    canPlayAudio: audioAvailability.canPlayAudio,
+                  });
                   return (
                     <View
                       key={translation.id}
@@ -456,14 +474,26 @@ export function BibleBrowserScreen() {
                             >
                               {translation.sizeInMB} MB
                             </Text>
-                            {translation.isDownloaded ? (
+                            {selectionState.isSelectable ? (
                               <View style={styles.downloadedBadge}>
                                 <Ionicons
                                   name="checkmark-circle"
                                   size={14}
-                                  color={colors.success}
+                                  color={
+                                    translation.isDownloaded ? colors.success : colors.bibleAccent
+                                  }
                                 />
-                                <Text style={[styles.downloadedText, { color: colors.success }]}>
+                                <Text
+                                  style={[
+                                    styles.downloadedText,
+                                    {
+                                      color:
+                                        translation.isDownloaded
+                                          ? colors.success
+                                          : colors.bibleAccent,
+                                    },
+                                  ]}
+                                >
                                   {t('bible.available')}
                                 </Text>
                               </View>

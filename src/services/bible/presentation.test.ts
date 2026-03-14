@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { Verse } from '../../types';
-import { buildDailyScripture, getChapterPresentationMode } from './presentation';
+import {
+  buildAudioFirstChapterPresentation,
+  buildDailyScripture,
+  getChapterPresentationMode,
+} from './presentation';
 
 const textAndAudioTranslation = {
   hasText: true,
@@ -47,6 +51,16 @@ test('shows audio-first mode when the chapter has no verses but audio is availab
   });
 
   assert.equal(mode, 'audio-first');
+});
+
+test('falls back to empty mode when translation has audio but no source is currently available', () => {
+  const mode = getChapterPresentationMode({
+    verses: [],
+    translation: audioOnlyChapterTranslation,
+    audioAvailable: false,
+  });
+
+  assert.equal(mode, 'empty');
 });
 
 test('falls back to empty mode when the chapter has no text or audio', () => {
@@ -115,4 +129,56 @@ test('falls back to verse audio when text is missing and verse audio is availabl
     text: null,
     playScope: 'verse',
   });
+});
+
+test('falls back to empty daily scripture when text is missing and no audio can play', () => {
+  const daily = buildDailyScripture({
+    reference: { bookId: 'JHN', chapter: 3, verse: 16 },
+    verse: null,
+    translation: audioOnlyChapterTranslation,
+    audioAvailable: false,
+  });
+
+  assert.deepEqual(daily, {
+    kind: 'empty',
+    bookId: 'JHN',
+    chapter: 3,
+    verse: 16,
+    text: null,
+    playScope: 'none',
+  });
+});
+
+test('builds a polished presentation model for audio-first chapters', () => {
+  const presentation = buildAudioFirstChapterPresentation({
+    bookName: 'John',
+    chapter: 3,
+    translationLabel: 'BSB',
+    testamentLabel: 'New Testament',
+    chapterLabel: 'Chapter',
+    availableLabel: 'Available',
+  });
+
+  assert.deepEqual(presentation, {
+    title: 'John 3',
+    pills: ['BSB', 'New Testament'],
+    facts: [
+      { label: 'Chapter', value: '3' },
+      { label: 'Available', value: 'BSB' },
+    ],
+  });
+});
+
+test('includes the offline pill when chapter audio is already saved', () => {
+  const presentation = buildAudioFirstChapterPresentation({
+    bookName: 'Psalms',
+    chapter: 23,
+    translationLabel: 'BSB',
+    testamentLabel: 'Old Testament',
+    chapterLabel: 'Chapter',
+    availableLabel: 'Available',
+    offlineLabel: 'Saved for Offline Listening',
+  });
+
+  assert.deepEqual(presentation.pills, ['BSB', 'Old Testament', 'Saved for Offline Listening']);
 });
