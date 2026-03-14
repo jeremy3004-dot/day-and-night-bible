@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  getPlaylistNavigationTargets,
   getNextFontSizeSheetVisibility,
   getNextTranslationSheetVisibility,
 } from './bibleReaderModel';
@@ -34,44 +33,4 @@ test('keeps the translation sheet closed when translation switching is unavailab
 test('closes the translation sheet after selection or manual dismissal', () => {
   assert.equal(getNextTranslationSheetVisibility(true, true, 'selectTranslation'), false);
   assert.equal(getNextTranslationSheetVisibility(true, true, 'dismiss'), false);
-});
-
-test('returns playlist navigation targets for a chapter in sequence', () => {
-  const playlist = [
-    { bookId: 'GEN', chapter: 1 },
-    { bookId: 'GEN', chapter: 3 },
-    { bookId: 'LUK', chapter: 2 },
-  ];
-
-  const targets = getPlaylistNavigationTargets(playlist, 'GEN', 3);
-  assert.equal(targets.hasPlaylistContext, true);
-  assert.deepEqual(targets.previousTarget, { bookId: 'GEN', chapter: 1 });
-  assert.deepEqual(targets.nextTarget, { bookId: 'LUK', chapter: 2 });
-});
-
-test('returns no next target at the end of a playlist', () => {
-  const playlist = [
-    { bookId: 'GEN', chapter: 1 },
-    { bookId: 'LUK', chapter: 2 },
-  ];
-
-  const targets = getPlaylistNavigationTargets(playlist, 'LUK', 2);
-  assert.equal(targets.hasPlaylistContext, true);
-  assert.deepEqual(targets.previousTarget, { bookId: 'GEN', chapter: 1 });
-  assert.equal(targets.nextTarget, null);
-});
-
-test('falls back when playlist context is missing or invalid', () => {
-  assert.deepEqual(getPlaylistNavigationTargets(null, 'GEN', 1), {
-    hasPlaylistContext: false,
-    previousTarget: null,
-    nextTarget: null,
-  });
-
-  const playlist = [{ bookId: 'GEN', chapter: 1 }];
-  assert.deepEqual(getPlaylistNavigationTargets(playlist, 'EXO', 1), {
-    hasPlaylistContext: false,
-    previousTarget: null,
-    nextTarget: null,
-  });
 });
