@@ -36,8 +36,7 @@
 		F11748442D0722820044C1D9 /* EveryBible-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "EveryBible-Bridging-Header.h"; path = "EveryBible/EveryBible-Bridging-Header.h"; sourceTree = "<group>"; };
 		49EB93B7FA9C4B188E8E42ED /* EveryBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; name = "EveryBibleLaunchScreen.storyboard"; path = "EveryBible/EveryBibleLaunchScreen.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		9CF29617BF0C44E6B1F3E753 /* EveryBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; name = "EveryBibleLaunchScreen.storyboard"; path = "EveryBible/EveryBibleLaunchScreen.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		60C42BB278DA4F4EA5228AEF /* EveryBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; name = "EveryBibleLaunchScreen.storyboard"; path = "EveryBible/EveryBibleLaunchScreen.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		79B0E8CE16FF440CB8C1F041 /* SplashScreen.storyboard */ = {isa = PBXFileReference; name = "SplashScreen.storyboard"; path = "EveryBible/SplashScreen.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		60C42BB278DA4F4EA5228AEF /* SplashScreen.storyboard */ = {isa = PBXFileReference; name = "SplashScreen.storyboard"; path = "EveryBible/SplashScreen.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,8 +65,7 @@
 				1860AD1B82CBE66BD57B62D3 /* PrivacyInfo.xcprivacy */,
 				49EB93B7FA9C4B188E8E42ED /* EveryBibleLaunchScreen.storyboard */,
 				9CF29617BF0C44E6B1F3E753 /* EveryBibleLaunchScreen.storyboard */,
-				60C42BB278DA4F4EA5228AEF /* EveryBibleLaunchScreen.storyboard */,
-				79B0E8CE16FF440CB8C1F041 /* SplashScreen.storyboard */,
+				60C42BB278DA4F4EA5228AEF /* SplashScreen.storyboard */,
 			);
 			name = EveryBible;
 			sourceTree = "<group>";
@@ -215,8 +213,7 @@
 				13B9648EC37BCFE93DE0C96C /* PrivacyInfo.xcprivacy in Resources */,
 				328057C0F027461BA25F57C3 /* EveryBibleLaunchScreen.storyboard in Resources */,
 				CA7B79E9B32D444BB45BE27D /* EveryBibleLaunchScreen.storyboard in Resources */,
-				5C381CF381D24FCCB3AF4C1D /* EveryBibleLaunchScreen.storyboard in Resources */,
-				B52C65CEE5D4445F82C6EE55 /* SplashScreen.storyboard in Resources */,
+				5C381CF381D24FCCB3AF4C1D /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,7 +235,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Expo export:embed expects a project-relative entry file on local archive builds.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -373,16 +370,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		13B07F941A680F5B00A75B9A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C38B1E7F79671F1E5CDEE3CC /* Pods-EveryBible.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = DiscreetAppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = EveryBible/EveryBible.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+			13B07F941A680F5B00A75B9A /* Debug */ = {
+				isa = XCBuildConfiguration;
+				baseConfigurationReference = C38B1E7F79671F1E5CDEE3CC /* Pods-EveryBible.debug.xcconfig */;
+				buildSettings = {
+					ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+					ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = DiscreetAppIcon;
+					CLANG_ENABLE_MODULES = YES;
+					CODE_SIGN_ENTITLEMENTS = EveryBible/EveryBible.entitlements;
+					CODE_SIGN_IDENTITY = "Apple Development";
+					CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NVC9N47PRH;
 				ENABLE_BITCODE = NO;
@@ -413,16 +410,16 @@
 			};
 			name = Debug;
 		};
-		13B07F951A680F5B00A75B9A /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8551957541ECB0F8F03D4566 /* Pods-EveryBible.release.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = DiscreetAppIcon;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = EveryBible/EveryBible.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+			13B07F951A680F5B00A75B9A /* Release */ = {
+				isa = XCBuildConfiguration;
+				baseConfigurationReference = 8551957541ECB0F8F03D4566 /* Pods-EveryBible.release.xcconfig */;
+				buildSettings = {
+					ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+					ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = DiscreetAppIcon;
+					CLANG_ENABLE_MODULES = YES;
+					CODE_SIGN_ENTITLEMENTS = EveryBible/EveryBible.entitlements;
+					CODE_SIGN_IDENTITY = "Apple Development";
+					CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = NVC9N47PRH;
 				INFOPLIST_FILE = EveryBible/Info.plist;
