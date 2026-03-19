@@ -54,3 +54,25 @@ test('env example documents only supported Google sign-in client IDs', () => {
   assert.match(envExample, /EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=/);
   assert.doesNotMatch(envExample, /EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=/);
 });
+
+test('local xcode node override points to an installed executable when present', () => {
+  const xcodeEnvLocal = readOptionalRootFile('ios/.xcode.env.local');
+
+  if (!xcodeEnvLocal) {
+    return;
+  }
+
+  const nodeBinaryMatch = xcodeEnvLocal.match(/^\s*export\s+NODE_BINARY=(.+)$/m);
+  assert.ok(nodeBinaryMatch, 'Expected NODE_BINARY export in ios/.xcode.env.local');
+
+  const configuredValue = nodeBinaryMatch[1].trim().replace(/^['"]|['"]$/g, '');
+
+  if (configuredValue.includes('command -v node')) {
+    return;
+  }
+
+  assert.ok(
+    existsSync(configuredValue),
+    `ios/.xcode.env.local points to a missing NODE_BINARY path: ${configuredValue}`
+  );
+});
