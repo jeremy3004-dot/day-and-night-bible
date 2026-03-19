@@ -110,6 +110,21 @@ test('release metadata stays aligned across tracked config and generated native 
   }
 });
 
+test('ios bundle phase canonicalizes the project root for local EAS workdirs', () => {
+  const pbxproj = readRootFile('ios/EveryBible.xcodeproj/project.pbxproj');
+
+  assert.match(
+    pbxproj,
+    /export PROJECT_ROOT=.*pwd -P/,
+    'Bundle script should resolve PROJECT_ROOT through pwd -P so /tmp and /private/tmp stay aligned'
+  );
+  assert.equal(
+    pbxproj.includes('export PROJECT_ROOT=\\"$PROJECT_DIR\\"/..'),
+    false,
+    'Bundle script should not rely on the non-canonical PROJECT_DIR parent path'
+  );
+});
+
 test('release docs match the supported distribution and Google sign-in contract', () => {
   const easConfig = readRootJson<EasConfig>('eas.json');
   const readme = readRootFile('README.md');
