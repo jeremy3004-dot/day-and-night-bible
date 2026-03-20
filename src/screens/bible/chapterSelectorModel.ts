@@ -12,9 +12,7 @@ export interface BookHubPresentation {
   introLabel: string | null;
   introState: 'ready' | 'coming-soon' | 'unavailable';
   continueChapter: number;
-  chaptersReadCount: number;
   completedChapters: number[];
-  progressRatio: number;
   palette: {
     gradient: readonly [string, string];
     accent: string;
@@ -66,9 +64,7 @@ export function buildBookHubPresentation({
     introLabel: seededContent?.introAudioLabel ?? `${book.name} overview coming soon`,
     introState: seededContent?.introAudioState ?? 'coming-soon',
     continueChapter,
-    chaptersReadCount: completedChapters.length,
     completedChapters,
-    progressRatio: book.chapters === 0 ? 0 : completedChapters.length / book.chapters,
     palette: getBookHubPalette(book),
   };
 }

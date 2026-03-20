@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 Phase: 10 (Book Companion Content And Ecosystem Surfaces)
 Plan: 3 of 3 in current phase
 Status: Phases 8 to 10 implemented and verified in automation; awaiting manual device QA for content layout, saved-library flows, and mini-player continuity
-Last activity: 2026-03-20 — Shipped local-first book hubs, companion modules, saved-library actions, queue/history persistence, and a global mini-player for Bible listening
+Last activity: 2026-03-20 — Removed the book-hub hero reading-progress card so the hub stays focused on launch and companion content while keeping chapter completion markers in the grid
 
 Progress: [██████████] 100%
 
@@ -70,6 +70,7 @@ Recent decisions affecting current work:
 - Phase 8: Use a local-first book experience contract with seeded metadata and original fallback visuals instead of blocking on a backend content source
 - Phase 9: Keep saved-library features local-first and extend the existing audio store/player contract rather than introducing a new playback architecture
 - Phase 10: Attach companion modules to the book hub through one reusable schema and a thin analytics seam instead of adding a CMS or vendor analytics dependency first
+- Post-phase polish: Keep completion context in the chapter grid, but remove the large hero progress card from the book hub because it competes with the actual reader/listener surfaces
 
 ### Pending Todos
 

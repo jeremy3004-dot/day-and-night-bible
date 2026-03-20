@@ -196,7 +196,6 @@ export function ChapterSelectorScreen() {
           colors,
           preferredChapterLaunchMode,
           continueChapter: bookHubPresentation.continueChapter,
-          chaptersReadCount: bookHubPresentation.chaptersReadCount,
         }}
         ListHeaderComponent={
           <View style={styles.headerContent}>
@@ -287,36 +286,6 @@ export function ChapterSelectorScreen() {
               <Text style={[styles.summary, { color: colors.biblePrimaryText }]}>
                 {bookHubPresentation.summary}
               </Text>
-
-              <View
-                style={[
-                  styles.progressPanel,
-                  {
-                    backgroundColor: 'rgba(16, 17, 19, 0.18)',
-                    borderColor: 'rgba(255, 255, 255, 0.14)',
-                  },
-                ]}
-              >
-                <View style={styles.progressHeader}>
-                  <Text style={[styles.progressLabel, { color: colors.biblePrimaryText }]}>
-                    {t('home.chaptersRead')}
-                  </Text>
-                  <Text style={[styles.progressValue, { color: colors.biblePrimaryText }]}>
-                    {bookHubPresentation.chaptersReadCount}/{book.chapters}
-                  </Text>
-                </View>
-                <View style={[styles.progressTrack, { backgroundColor: 'rgba(255, 255, 255, 0.18)' }]}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      {
-                        width: `${Math.max(bookHubPresentation.progressRatio * 100, 4)}%`,
-                        backgroundColor: bookHubPresentation.palette.accent,
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
             </LinearGradient>
 
             <View
@@ -528,34 +497,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     maxWidth: '78%',
     marginBottom: 18,
-  },
-  progressPanel: {
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    gap: 10,
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  progressLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  progressValue: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  progressTrack: {
-    height: 8,
-    borderRadius: 999,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 999,
   },
   calloutCard: {
     borderWidth: 1,

@@ -57,7 +57,7 @@ test('buildBookHubPresentation falls back to generated copy and resumes the in-f
   assert.match(presentation.summary, /Old Testament/i);
   assert.match(presentation.summary, /1 chapter/i);
   assert.equal(presentation.continueChapter, 1);
-  assert.equal(presentation.chaptersReadCount, 0);
+  assert.deepEqual(presentation.completedChapters, []);
 });
 
 test('buildBookHubPresentation prefers the most recently completed chapter when no session is open', () => {
@@ -68,15 +68,34 @@ test('buildBookHubPresentation prefers the most recently completed chapter when 
     book,
     chaptersRead: {
       GAL_2: 1700000000000,
+      GAL_3: 1700000000250,
       GAL_4: 1700000000500,
-      GAL_3: 1699999999000,
     },
     currentBookId: 'MAT',
     currentChapter: 5,
   });
 
   assert.equal(presentation.continueChapter, 4);
-  assert.equal(presentation.chaptersReadCount, 3);
+  assert.deepEqual(presentation.completedChapters, [2, 3, 4]);
+});
+
+test('buildBookHubPresentation keeps chapter completion data but does not expose hero progress metrics', () => {
+  const book = getBookById('JAS');
+  assert.ok(book);
+
+  const presentation = buildBookHubPresentation({
+    book,
+    chaptersRead: {
+      JAS_1: 1700000000000,
+      JAS_3: 1700000000200,
+    },
+    currentBookId: 'MAT',
+    currentChapter: 2,
+  });
+
+  assert.deepEqual(presentation.completedChapters, [1, 3]);
+  assert.equal(Object.hasOwn(presentation, 'chaptersReadCount'), false);
+  assert.equal(Object.hasOwn(presentation, 'progressRatio'), false);
 });
 
 test('buildChapterLaunchParams preserves the listen or read preference in navigation params', () => {
