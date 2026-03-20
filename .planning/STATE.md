@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** When someone opens the app, they can reliably read or listen to scripture and continue their discipleship journey even when network conditions are weak or backend features are partially unavailable.
-**Current focus:** Manual UX/device verification for the newly completed Dwell-inspired milestone slice, especially book hubs, saved-library flows, the global mini-player, and companion modules on physical devices
+**Current focus:** Manual UX/device verification for the newly completed Dwell-inspired milestone slice, especially chapter-to-chapter audio handoff, book hubs, saved-library flows, the global mini-player, and companion modules on physical devices
 
 ## Current Position
 
 Phase: 10 (Book Companion Content And Ecosystem Surfaces)
 Plan: 3 of 3 in current phase
 Status: Phases 8 to 10 implemented and verified in automation; awaiting manual device QA for content layout, saved-library flows, and mini-player continuity
-Last activity: 2026-03-20 — Removed the book-hub hero reading-progress card so the hub stays focused on launch and companion content while keeping chapter completion markers in the grid
+Last activity: 2026-03-20 — Fixed duplicate chapter playback during reader navigation by clearing stale autoplay params, transferring the live audio session on chapter rail changes, and invalidating stale in-flight audio loads
 
 Progress: [██████████] 100%
 
@@ -71,6 +71,7 @@ Recent decisions affecting current work:
 - Phase 9: Keep saved-library features local-first and extend the existing audio store/player contract rather than introducing a new playback architecture
 - Phase 10: Attach companion modules to the book hub through one reusable schema and a thin analytics seam instead of adding a CMS or vendor analytics dependency first
 - Post-phase polish: Keep completion context in the chapter grid, but remove the large hero progress card from the book hub because it competes with the actual reader/listener surfaces
+- Post-phase polish: Treat chapter-to-chapter audio navigation as a single-session handoff and cancel stale chapter loads instead of letting multiple playback requests race
 
 ### Pending Todos
 
@@ -82,6 +83,7 @@ Recent decisions affecting current work:
 - Manual verification for the new Phase 7 listen/read segmented session, including overlay open/close, playback continuity, and read-mode return behavior
 - Manual device verification for the new book hub hero, synopsis, intro strip, continue CTA, and chapter grid across smaller phones
 - Manual verification for saved-library flows, including favorites, playlist save/reopen, queue advancement, history reopen, and share/download behavior
+- Manual verification for reader chapter navigation while audio is already playing, especially repeated `Next`/`Previous` taps and mixed read/listen mode transitions
 - Manual verification for the global mini-player across tabs, app background/foreground transitions, and reopen/dismiss behavior
 - Manual verification for companion-module sections, including sparse-book empty states and return navigation back into the book hub or chapter session
 

@@ -29,6 +29,8 @@ import {
   getNextChapterSessionMode,
   getNextFontSizeSheetVisibility,
   getNextTranslationSheetVisibility,
+  shouldAutoplayChapterAudio,
+  shouldTransferActiveAudioOnChapterChange,
 } from './bibleReaderModel';
 import { getTranslationSelectionState } from './bibleTranslationModel';
 
@@ -219,7 +221,17 @@ export function BibleReaderScreen() {
   }, [activeFollowAlongVerse, showFollowAlongText]);
 
   useEffect(() => {
-    if (!autoplayAudio || !audioEnabled || isLoading) {
+    if (
+      !shouldAutoplayChapterAudio({
+        autoplayAudio: Boolean(autoplayAudio),
+        audioEnabled,
+        isLoading,
+        bookId,
+        chapter,
+        activeAudioBookId,
+        activeAudioChapter,
+      })
+    ) {
       return;
     }
 
@@ -240,6 +252,8 @@ export function BibleReaderScreen() {
       currentTranslationInfo?.audioGranularity === 'verse' ? focusVerse : undefined
     );
   }, [
+    activeAudioBookId,
+    activeAudioChapter,
     autoplayAudio,
     audioEnabled,
     bookId,
@@ -261,7 +275,7 @@ export function BibleReaderScreen() {
       return;
     }
 
-    navigation.setParams({ chapter: activeAudioChapter, focusVerse: undefined });
+    navigation.setParams({ chapter: activeAudioChapter, focusVerse: undefined, autoplayAudio: false });
   }, [audioEnabled, activeAudioBookId, activeAudioChapter, bookId, chapter, navigation]);
 
   const loadChapter = async () => {
@@ -290,6 +304,9 @@ export function BibleReaderScreen() {
 
   const hasPrevChapter = chapter > 1;
   const hasNextChapter = chapter < book.chapters;
+  const syncReaderChapter = (nextChapter: number) => {
+    navigation.setParams({ chapter: nextChapter, focusVerse: undefined, autoplayAudio: false });
+  };
   const dismissFontSizeSheetFromReader = () => {
     setShowFontSizeSheet((current) =>
       getNextFontSizeSheetVisibility(current, 'readerContentTap')
@@ -302,22 +319,44 @@ export function BibleReaderScreen() {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handlePrevChapter = () => {
-    if (hasPrevChapter) {
-      setShowFontSizeSheet((current) =>
-        getNextFontSizeSheetVisibility(current, 'chapterChange')
-      );
-      navigation.setParams({ chapter: chapter - 1, focusVerse: undefined });
+  const handlePrevChapter = async () => {
+    if (!hasPrevChapter) {
+      return;
     }
+
+    setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'chapterChange'));
+
+    const nextChapterNumber = chapter - 1;
+    if (
+      shouldTransferActiveAudioOnChapterChange({
+        audioEnabled,
+        isCurrentAudioChapter,
+      })
+    ) {
+      await playChapter(bookId, nextChapterNumber);
+    }
+
+    syncReaderChapter(nextChapterNumber);
   };
 
-  const handleNextChapter = () => {
-    if (hasNextChapter) {
-      setShowFontSizeSheet((current) =>
-        getNextFontSizeSheetVisibility(current, 'chapterChange')
-      );
-      navigation.setParams({ chapter: chapter + 1, focusVerse: undefined });
+  const handleNextChapter = async () => {
+    if (!hasNextChapter) {
+      return;
     }
+
+    setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'chapterChange'));
+
+    const nextChapterNumber = chapter + 1;
+    if (
+      shouldTransferActiveAudioOnChapterChange({
+        audioEnabled,
+        isCurrentAudioChapter,
+      })
+    ) {
+      await playChapter(bookId, nextChapterNumber);
+    }
+
+    syncReaderChapter(nextChapterNumber);
   };
 
   const handleTranslationChipPress = () => {
@@ -499,7 +538,7 @@ export function BibleReaderScreen() {
     }
 
     await playChapter(bookId, chapter - 1);
-    navigation.setParams({ chapter: chapter - 1, focusVerse: undefined });
+    syncReaderChapter(chapter - 1);
   };
 
   const handleNextListenChapter = async () => {
@@ -513,7 +552,7 @@ export function BibleReaderScreen() {
     }
 
     await playChapter(bookId, chapter + 1);
-    navigation.setParams({ chapter: chapter + 1, focusVerse: undefined });
+    syncReaderChapter(chapter + 1);
   };
 
   const renderListenMode = () => {
@@ -675,7 +714,7 @@ export function BibleReaderScreen() {
           chapter={chapter}
           translationLabel={translationLabel}
           onChapterChange={(newChapter) => {
-            navigation.setParams({ chapter: newChapter, focusVerse: undefined });
+            syncReaderChapter(newChapter);
           }}
         />
       );
@@ -1406,7 +1445,7 @@ export function BibleReaderScreen() {
             bookId={bookId}
             chapter={chapter}
             onChapterChange={(newChapter) => {
-              navigation.setParams({ chapter: newChapter, focusVerse: undefined });
+              syncReaderChapter(newChapter);
             }}
           />
         ) : null}
@@ -1431,7 +1470,7 @@ export function BibleReaderScreen() {
                 opacity: hasPrevChapter ? 1 : 0.45,
               },
             ]}
-            onPress={handlePrevChapter}
+            onPress={() => void handlePrevChapter()}
             disabled={!hasPrevChapter}
           >
             <Ionicons name="chevron-back" size={18} color={colors.biblePrimaryText} />
@@ -1449,7 +1488,7 @@ export function BibleReaderScreen() {
                 opacity: hasNextChapter ? 1 : 0.45,
               },
             ]}
-            onPress={handleNextChapter}
+            onPress={() => void handleNextChapter()}
             disabled={!hasNextChapter}
           >
             <Text style={[styles.chapterButtonText, { color: colors.biblePrimaryText }]}>

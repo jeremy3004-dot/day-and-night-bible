@@ -33,6 +33,21 @@ interface EstimatedFollowAlongVerseInput {
   fallbackVerse?: number;
 }
 
+interface ShouldAutoplayChapterAudioInput {
+  autoplayAudio: boolean;
+  audioEnabled: boolean;
+  isLoading: boolean;
+  bookId: string;
+  chapter: number;
+  activeAudioBookId: string | null;
+  activeAudioChapter: number | null;
+}
+
+interface ShouldTransferActiveAudioOnChapterChangeInput {
+  audioEnabled: boolean;
+  isCurrentAudioChapter: boolean;
+}
+
 export const getNextFontSizeSheetVisibility = (
   isVisible: boolean,
   action: FontSizeSheetAction
@@ -148,6 +163,28 @@ export const getEstimatedFollowAlongVerse = ({
 
   return verses[verses.length - 1]?.verse ?? fallbackVerse ?? null;
 };
+
+export const shouldAutoplayChapterAudio = ({
+  autoplayAudio,
+  audioEnabled,
+  isLoading,
+  bookId,
+  chapter,
+  activeAudioBookId,
+  activeAudioChapter,
+}: ShouldAutoplayChapterAudioInput): boolean => {
+  if (!autoplayAudio || !audioEnabled || isLoading) {
+    return false;
+  }
+
+  return !(activeAudioBookId === bookId && activeAudioChapter === chapter);
+};
+
+export const shouldTransferActiveAudioOnChapterChange = ({
+  audioEnabled,
+  isCurrentAudioChapter,
+}: ShouldTransferActiveAudioOnChapterChangeInput): boolean =>
+  audioEnabled && isCurrentAudioChapter;
 
 function getVerseWeight(verse: Verse): number {
   const headingWeight = verse.heading?.trim().length ?? 0;

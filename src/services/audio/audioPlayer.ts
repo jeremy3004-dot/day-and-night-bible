@@ -27,6 +27,7 @@ class AudioPlayer {
   private sound: Audio.Sound | null = null;
   private callbacks: AudioPlayerCallbacks = {};
   private isConfigured = false;
+  private loadRequestId = 0;
 
   async configure(): Promise<void> {
     if (this.isConfigured) return;
@@ -46,11 +47,27 @@ class AudioPlayer {
     }
   };
 
+  private async unloadCurrentSound(): Promise<void> {
+    if (!this.sound) {
+      return;
+    }
+
+    const sound = this.sound;
+    this.sound = null;
+
+    try {
+      await sound.stopAsync();
+      await sound.unloadAsync();
+    } catch {
+      // Sound may already be unloaded, ignore errors
+    }
+  }
+
   async loadAndPlay(url: string, rate: PlaybackRate = 1.0): Promise<void> {
     await this.configure();
+    const requestId = ++this.loadRequestId;
 
-    // Unload any existing sound
-    await this.stop();
+    await this.unloadCurrentSound();
 
     try {
       const { sound } = await Audio.Sound.createAsync(
@@ -63,6 +80,12 @@ class AudioPlayer {
         },
         this.handleStatusUpdate
       );
+
+      if (requestId !== this.loadRequestId) {
+        await sound.stopAsync();
+        await sound.unloadAsync();
+        return;
+      }
 
       this.sound = sound;
     } catch (error) {
@@ -99,16 +122,8 @@ class AudioPlayer {
   }
 
   async stop(): Promise<void> {
-    if (!this.sound) return;
-
-    try {
-      await this.sound.stopAsync();
-      await this.sound.unloadAsync();
-      this.sound = null;
-    } catch {
-      // Sound may already be unloaded, ignore errors
-      this.sound = null;
-    }
+    this.loadRequestId += 1;
+    await this.unloadCurrentSound();
   }
 
   async seekTo(positionMs: number): Promise<void> {

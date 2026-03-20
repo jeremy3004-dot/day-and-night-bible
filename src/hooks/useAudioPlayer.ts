@@ -13,6 +13,7 @@ import { advanceAudioQueue } from '../stores/audioQueueModel';
 
 export function useAudioPlayer(translationId: string = 'bsb') {
   const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const playRequestIdRef = useRef(0);
   const playChapterRef = useRef<
     ((bookId: string, chapter: number, verse?: number) => Promise<void>) | null
   >(null);
@@ -62,12 +63,27 @@ export function useAudioPlayer(translationId: string = 'bsb') {
         return;
       }
 
+      const playRequestId = ++playRequestIdRef.current;
+
+      if (currentBookId && currentChapter && duration > 0) {
+        useLibraryStore.getState().recordHistory(
+          currentBookId,
+          currentChapter,
+          currentPosition / duration
+        );
+      }
+
+      await audioPlayer.stop();
       setStatus('loading');
       setCurrentTrack(bookId, chapter);
       syncQueueToTrack(bookId, chapter);
 
       try {
         const audioData = await getChapterAudioUrl(translationId, bookId, chapter, verse);
+
+        if (playRequestId !== playRequestIdRef.current) {
+          return;
+        }
 
         if (!audioData) {
           setError('Audio not available for this chapter');
@@ -83,12 +99,20 @@ export function useAudioPlayer(translationId: string = 'bsb') {
         // Prefetch next chapters
         prefetchChapterAudio(translationId, bookId, chapter + 1, 2);
       } catch (err) {
+        if (playRequestId !== playRequestIdRef.current) {
+          return;
+        }
+
         const message = err instanceof Error ? err.message : 'Failed to play audio';
         setError(message);
         setStatus('error');
       }
     },
     [
+      currentBookId,
+      currentChapter,
+      currentPosition,
+      duration,
       translationId,
       playbackRate,
       setStatus,

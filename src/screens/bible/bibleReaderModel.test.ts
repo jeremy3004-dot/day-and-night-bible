@@ -6,6 +6,8 @@ import {
   getNextFontSizeSheetVisibility,
   getInitialChapterSessionMode,
   getNextTranslationSheetVisibility,
+  shouldAutoplayChapterAudio,
+  shouldTransferActiveAudioOnChapterChange,
 } from './bibleReaderModel';
 
 test('toggles the font sheet from the font button', () => {
@@ -205,5 +207,59 @@ test('uses the focused verse as a graceful follow-along fallback when timing is 
       fallbackVerse: 4,
     }),
     4
+  );
+});
+
+test('does not autoplay a chapter again when that chapter is already the active audio session', () => {
+  assert.equal(
+    shouldAutoplayChapterAudio({
+      autoplayAudio: true,
+      audioEnabled: true,
+      isLoading: false,
+      bookId: 'ROM',
+      chapter: 8,
+      activeAudioBookId: 'ROM',
+      activeAudioChapter: 8,
+    }),
+    false
+  );
+
+  assert.equal(
+    shouldAutoplayChapterAudio({
+      autoplayAudio: true,
+      audioEnabled: true,
+      isLoading: false,
+      bookId: 'ROM',
+      chapter: 8,
+      activeAudioBookId: 'ROM',
+      activeAudioChapter: 7,
+    }),
+    true
+  );
+});
+
+test('reader chapter rail only transfers audio when the displayed chapter is currently playing', () => {
+  assert.equal(
+    shouldTransferActiveAudioOnChapterChange({
+      audioEnabled: true,
+      isCurrentAudioChapter: true,
+    }),
+    true
+  );
+
+  assert.equal(
+    shouldTransferActiveAudioOnChapterChange({
+      audioEnabled: true,
+      isCurrentAudioChapter: false,
+    }),
+    false
+  );
+
+  assert.equal(
+    shouldTransferActiveAudioOnChapterChange({
+      audioEnabled: false,
+      isCurrentAudioChapter: true,
+    }),
+    false
   );
 });
