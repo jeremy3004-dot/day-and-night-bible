@@ -6,29 +6,14 @@ import { getBookById } from '../../constants';
 import { useAudioPlayer } from '../../hooks';
 import { useAudioStore, useBibleStore } from '../../stores';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
+import { getCurrentRouteName } from './miniPlayerModel';
 
 export function MiniPlayer() {
   const { colors } = useTheme();
   const currentTranslation = useBibleStore((state) => state.currentTranslation);
   const setCurrentTrack = useAudioStore((state) => state.setCurrentTrack);
   const clearQueue = useAudioStore((state) => state.clearQueue);
-  const currentRouteName = useNavigationState((state) => {
-    const navigationState = state as {
-      index: number;
-      routes: Array<{ name: string; state?: unknown }>;
-    };
-    let route = navigationState.routes[navigationState.index];
-
-    while (route?.state && typeof route.state === 'object' && 'index' in route.state && 'routes' in route.state) {
-      const nestedState = route.state as {
-        index: number;
-        routes: Array<{ name: string; state?: unknown }>;
-      };
-      route = nestedState.routes[nestedState.index];
-    }
-
-    return route?.name;
-  });
+  const currentRouteName = useNavigationState((state) => getCurrentRouteName(state));
   const {
     status,
     currentBookId,
