@@ -48,6 +48,11 @@ function LoadingScreen({ onInitialAuthRequest }: LoadingScreenProps) {
         onWarmupError: (error) => {
           console.error('Deferred startup warmup failed:', error);
         },
+        onCriticalTimeout: (taskName) => {
+          console.warn(
+            `Critical startup timed out during ${taskName}; continuing launch with safe defaults.`
+          );
+        },
       }),
     [initializeAuth, initializePrivacy]
   );

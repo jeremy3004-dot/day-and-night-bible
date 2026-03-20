@@ -62,3 +62,34 @@ test('deferred warmup schedules bible preload after launch and swallows warmup f
   cancel();
   assert.deepEqual(calls, ['bible', 'cancelled']);
 });
+
+test('critical startup continues when auth initialization stalls', async () => {
+  const calls: string[] = [];
+
+  const coordinator = createStartupCoordinator({
+    initializeAuth: async () => {
+      calls.push('auth');
+      await new Promise<void>(() => {});
+    },
+    initializePrivacy: async () => {
+      calls.push('privacy');
+    },
+    preloadBibleData: async () => {
+      calls.push('bible');
+    },
+    criticalTaskTimeoutMs: 10,
+    onCriticalTimeout: (taskName: string) => {
+      calls.push(`timeout:${taskName}`);
+    },
+  });
+
+  const outcome = await Promise.race([
+    coordinator.initializeCritical().then(() => 'resolved'),
+    new Promise<'deadline'>((resolve) => {
+      setTimeout(() => resolve('deadline'), 75);
+    }),
+  ]);
+
+  assert.equal(outcome, 'resolved');
+  assert.deepEqual(calls, ['auth', 'timeout:auth', 'privacy']);
+});
