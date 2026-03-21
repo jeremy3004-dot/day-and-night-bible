@@ -242,6 +242,7 @@ export function BibleBrowserScreen() {
 
   const renderBookCard = ({ item }: { item: BibleBook }) => (
     <TouchableOpacity
+      key={item.id}
       style={[
         styles.bookCard,
         {

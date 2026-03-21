@@ -53,33 +53,33 @@ ALTER TABLE public.user_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
 CREATE POLICY "Users can view own profile" ON public.profiles
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING ((select auth.uid()) = id);
 
 CREATE POLICY "Users can update own profile" ON public.profiles
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING ((select auth.uid()) = id);
 
 CREATE POLICY "Users can insert own profile" ON public.profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = id);
 
 -- User Progress policies
 CREATE POLICY "Users can view own progress" ON public.user_progress
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update own progress" ON public.user_progress
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert own progress" ON public.user_progress
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 -- User Preferences policies
 CREATE POLICY "Users can view own preferences" ON public.user_preferences
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can update own preferences" ON public.user_preferences
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING ((select auth.uid()) = user_id);
 
 CREATE POLICY "Users can insert own preferences" ON public.user_preferences
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((select auth.uid()) = user_id);
 
 -- Function to handle new user signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -171,19 +171,19 @@ CREATE POLICY "Group members can view groups" ON public.groups
       SELECT 1
       FROM public.group_members members
       WHERE members.group_id = groups.id
-        AND members.user_id = auth.uid()
+        AND members.user_id = (select auth.uid())
     )
   );
 
 CREATE POLICY "Leaders can create groups" ON public.groups
-  FOR INSERT WITH CHECK (leader_id = auth.uid());
+  FOR INSERT WITH CHECK (leader_id = (select auth.uid()));
 
 CREATE POLICY "Leaders can update groups" ON public.groups
-  FOR UPDATE USING (leader_id = auth.uid())
-  WITH CHECK (leader_id = auth.uid());
+  FOR UPDATE USING (leader_id = (select auth.uid()))
+  WITH CHECK (leader_id = (select auth.uid()));
 
 CREATE POLICY "Leaders can delete groups" ON public.groups
-  FOR DELETE USING (leader_id = auth.uid());
+  FOR DELETE USING (leader_id = (select auth.uid()));
 
 CREATE POLICY "Group members can view membership" ON public.group_members
   FOR SELECT USING (
@@ -191,21 +191,21 @@ CREATE POLICY "Group members can view membership" ON public.group_members
       SELECT 1
       FROM public.group_members visible_members
       WHERE visible_members.group_id = group_members.group_id
-        AND visible_members.user_id = auth.uid()
+        AND visible_members.user_id = (select auth.uid())
     )
   );
 
 CREATE POLICY "Users can join groups as themselves" ON public.group_members
-  FOR INSERT WITH CHECK (user_id = auth.uid());
+  FOR INSERT WITH CHECK (user_id = (select auth.uid()));
 
 CREATE POLICY "Users and leaders can leave groups" ON public.group_members
   FOR DELETE USING (
-    user_id = auth.uid()
+    user_id = (select auth.uid())
     OR EXISTS (
       SELECT 1
       FROM public.groups managed_groups
       WHERE managed_groups.id = group_members.group_id
-        AND managed_groups.leader_id = auth.uid()
+        AND managed_groups.leader_id = (select auth.uid())
     )
   );
 
@@ -215,7 +215,7 @@ CREATE POLICY "Leaders can update membership" ON public.group_members
       SELECT 1
       FROM public.groups managed_groups
       WHERE managed_groups.id = group_members.group_id
-        AND managed_groups.leader_id = auth.uid()
+        AND managed_groups.leader_id = (select auth.uid())
     )
   )
   WITH CHECK (
@@ -223,7 +223,7 @@ CREATE POLICY "Leaders can update membership" ON public.group_members
       SELECT 1
       FROM public.groups managed_groups
       WHERE managed_groups.id = group_members.group_id
-        AND managed_groups.leader_id = auth.uid()
+        AND managed_groups.leader_id = (select auth.uid())
     )
   );
 
@@ -233,24 +233,24 @@ CREATE POLICY "Group members can view sessions" ON public.group_sessions
       SELECT 1
       FROM public.group_members members
       WHERE members.group_id = group_sessions.group_id
-        AND members.user_id = auth.uid()
+        AND members.user_id = (select auth.uid())
     )
   );
 
 CREATE POLICY "Group members can insert sessions" ON public.group_sessions
   FOR INSERT WITH CHECK (
-    created_by = auth.uid()
+    created_by = (select auth.uid())
     AND EXISTS (
       SELECT 1
       FROM public.group_members members
       WHERE members.group_id = group_sessions.group_id
-        AND members.user_id = auth.uid()
+        AND members.user_id = (select auth.uid())
     )
   );
 
 CREATE POLICY "Session creators can update sessions" ON public.group_sessions
-  FOR UPDATE USING (created_by = auth.uid())
-  WITH CHECK (created_by = auth.uid());
+  FOR UPDATE USING (created_by = (select auth.uid()))
+  WITH CHECK (created_by = (select auth.uid()));
 
 CREATE OR REPLACE FUNCTION public.join_group_by_code(group_join_code TEXT)
 RETURNS UUID
@@ -355,6 +355,7 @@ CREATE INDEX IF NOT EXISTS idx_groups_join_code ON public.groups(join_code);
 CREATE INDEX IF NOT EXISTS idx_groups_leader_id ON public.groups(leader_id);
 CREATE INDEX IF NOT EXISTS idx_group_members_user_id ON public.group_members(user_id);
 CREATE INDEX IF NOT EXISTS idx_group_sessions_group_id ON public.group_sessions(group_id);
+CREATE INDEX IF NOT EXISTS idx_group_sessions_created_by ON public.group_sessions(created_by);
 CREATE INDEX IF NOT EXISTS idx_group_sessions_completed_at ON public.group_sessions(completed_at DESC);
 
 GRANT EXECUTE ON FUNCTION public.join_group_by_code(TEXT) TO authenticated;
