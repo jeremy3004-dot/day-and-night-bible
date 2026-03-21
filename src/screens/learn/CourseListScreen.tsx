@@ -8,6 +8,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
 import { useBibleStore, useProgressStore } from '../../stores';
 import { harvestStudySections, type HarvestStudyEntry } from './harvestStudies';
+import { layout, radius, spacing, shadows, typography } from '../../design/system';
 
 export function CourseListScreen() {
   const { colors } = useTheme();
@@ -233,62 +234,60 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 20,
-    gap: 16,
+    padding: layout.screenPadding,
+    gap: spacing.lg,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 2,
+    ...typography.pageTitle,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    marginBottom: 6,
+    ...typography.body,
+    marginBottom: spacing.sm,
     lineHeight: 22,
   },
   heroCard: {
+    ...shadows.card,
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
-    gap: 12,
+    borderRadius: radius.lg,
+    padding: layout.denseCardPadding,
+    gap: spacing.md,
   },
   heroBody: {
-    fontSize: 14,
+    ...typography.body,
     lineHeight: 21,
   },
   metricsRow: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   metricChip: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 2,
   },
   metricValue: {
-    fontSize: 18,
-    fontWeight: '700',
+    ...typography.cardTitle,
   },
   metricLabel: {
-    fontSize: 11,
+    ...typography.micro,
     textTransform: 'uppercase',
-    letterSpacing: 0.3,
-    fontWeight: '600',
   },
   playlist: {
-    gap: 14,
-    paddingBottom: 20,
+    gap: spacing.md,
+    paddingBottom: layout.cardPadding,
   },
   sectionCard: {
+    ...shadows.card,
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: radius.lg,
     padding: 14,
-    gap: 10,
+    gap: spacing.sm,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -296,54 +295,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    ...typography.cardTitle,
   },
   sectionDescription: {
-    fontSize: 13,
+    ...typography.micro,
     lineHeight: 19,
   },
   sectionProgress: {
-    fontSize: 12,
-    fontWeight: '700',
+    ...typography.label,
   },
   groupBlock: {
-    gap: 8,
+    gap: spacing.sm,
   },
   groupTitle: {
-    fontSize: 14,
-    fontWeight: '700',
+    ...typography.eyebrow,
     marginTop: 2,
   },
   playlistRow: {
+    ...shadows.card,
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: radius.md,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
   },
   indexBadge: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   indexBadgeText: {
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.label,
   },
   rowContent: {
     flex: 1,
     gap: 2,
   },
   rowTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    ...typography.bodyStrong,
   },
   rowSubtitle: {
-    fontSize: 13,
+    ...typography.micro,
   },
   rowMeta: {
     width: 26,

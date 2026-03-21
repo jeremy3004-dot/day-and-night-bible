@@ -14,6 +14,7 @@ import { useBibleStore, useProgressStore } from '../../stores';
 import type { BibleStackParamList, ChapterSelectorScreenProps } from '../../navigation/types';
 import type { BookCompanionCardModel } from './bookCompanionModel';
 import { buildBookCompanionSections } from './bookCompanionModel';
+import { layout, radius, spacing, shadows, typography } from '../../design/system';
 import {
   CHAPTER_GRID_ROW_GAP,
   buildChapterGridRows,
@@ -52,7 +53,6 @@ export function ChapterSelectorScreen() {
     currentChapter,
   });
   const companionSections = buildBookCompanionSections(bookId);
-  const completedChapters = new Set(bookHubPresentation.completedChapters);
 
   const navigateToChapter = (chapter: number) => {
     trackBibleExperienceEvent({
@@ -91,7 +91,6 @@ export function ChapterSelectorScreen() {
     <View style={styles.row}>
       {item.map((chapter) => {
         const isContinueChapter = chapter === bookHubPresentation.continueChapter;
-        const isCompleted = completedChapters.has(chapter);
 
         return (
           <TouchableOpacity
@@ -116,24 +115,6 @@ export function ChapterSelectorScreen() {
             >
               {chapter}
             </Text>
-            {isCompleted ? (
-              <View
-                style={[
-                  styles.chapterBadge,
-                  {
-                    backgroundColor: isContinueChapter
-                      ? `${colors.bibleBackground}22`
-                      : `${colors.bibleAccent}18`,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="checkmark"
-                  size={10}
-                  color={isContinueChapter ? colors.bibleBackground : colors.bibleAccent}
-                />
-              </View>
-            ) : null}
           </TouchableOpacity>
         );
       })}
@@ -224,13 +205,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingHorizontal: layout.screenPadding,
+    paddingBottom: layout.sectionGap,
   },
   headerContent: {
-    paddingTop: 10,
-    paddingBottom: 20,
-    gap: 14,
+    paddingTop: spacing.md,
+    paddingBottom: layout.sectionGap,
+    gap: spacing.lg,
   },
   headerRow: {
     flexDirection: 'row',
@@ -241,63 +222,55 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   heroCard: {
-    borderRadius: 30,
-    padding: 24,
+    ...shadows.card,
+    borderRadius: radius.xl,
+    padding: layout.cardPadding,
     overflow: 'hidden',
-    minHeight: 220,
+    minHeight: 216,
     justifyContent: 'flex-end',
   },
   heroIconWrap: {
     width: 78,
     height: 78,
-    borderRadius: 24,
+    borderRadius: radius.lg,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: layout.cardGap,
   },
   bookIcon: {
     width: 44,
     height: 44,
   },
   title: {
-    fontSize: 34,
-    fontWeight: '800',
-    marginTop: 8,
+    ...typography.screenTitle,
+    fontSize: 36,
+    lineHeight: 40,
+    marginTop: spacing.sm,
   },
   sectionHeader: {
     gap: 0,
   },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: '800',
+    ...typography.sectionTitle,
   },
   chapterButton: {
     width: ITEM_SIZE,
     height: ITEM_SIZE,
-    borderRadius: 18,
+    borderRadius: radius.lg,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   chapterNumber: {
-    fontSize: 18,
-    fontWeight: '800',
-  },
-  chapterBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...typography.cardTitle,
+    fontSize: 20,
+    lineHeight: 24,
   },
   row: {
     flexDirection: 'row',
@@ -305,7 +278,7 @@ const styles = StyleSheet.create({
     marginBottom: CHAPTER_GRID_ROW_GAP,
   },
   footerContent: {
-    paddingTop: 18,
-    gap: 24,
+    paddingTop: spacing.lg,
+    gap: layout.sectionGap,
   },
 });

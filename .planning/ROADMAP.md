@@ -25,6 +25,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 9: Saved Library And Audio Personalization** - Add the media-product actions around listening such as favorites, playlists, sharing, and persistent resume/history
 - [x] **Phase 10: Book Companion Content And Ecosystem Surfaces** - Populate each book hub with figures, passages, plans, devotionals, and playlists without breaking the core Bible loop
 - [x] **Phase 11: Audio reader chrome simplification and Dwell-style listen layout polish** - Strip the audio-first Bible screen down to the essential Dwell-style listen chrome while keeping EveryBible's current palette
+- [x] **Phase 12: Professional Design System Unification** - Replace ad hoc styling with one disciplined, professional visual system across the main app shell and highest-traffic screens
 
 ## Phase Details
 
@@ -189,10 +190,25 @@ Plans:
 - [x] 11-02: Rebuild the audio-first transport layout around chapter controls and clean visual shells
 - [x] 11-03: Add regression checks and device QA for the simplified Dwell-style listen screen
 
+### Phase 12: Professional Design System Unification
+**Goal**: Make EveryBible feel like one intentional product by standardizing typography, spacing, radii, shadows, and semantic colors across the main mobile surfaces.
+**Depends on**: Phase 11
+**Requirements**: M2-DESIGN-01
+**Success Criteria** (what must be TRUE):
+  1. The app uses one shared mobile design system for typography, spacing, border radius, and elevation instead of screen-by-screen style drift.
+  2. High-traffic surfaces across Home, Bible browse/book hub, Learn, and More adopt the same professional card, header, and navigation language.
+  3. Decorative treatments that make the app feel stitched together are removed or simplified so the product reads as calm, structured, and trustworthy at first glance.
+**Plans**: 3 plans
+
+Plans:
+- [x] 12-01: Define the app-wide design tokens, palette refinements, and typography hierarchy
+- [x] 12-02: Apply the shared design system to the app shell, Home, Bible browse, and book-hub surfaces
+- [x] 12-03: Apply the shared design system to Learn, More, Profile, Reading Activity, and shared cards, then verify the sweep
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 → 8 → 9 → 10 → 11
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -208,6 +224,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 9. Saved Library And Audio Personalization | 3/3 | Automated verification complete; needs device playback/library QA | 2026-03-20 |
 | 10. Book Companion Content And Ecosystem Surfaces | 3/3 | Automated verification complete; needs device module/navigation QA | 2026-03-20 |
 | 11. Audio reader chrome simplification and Dwell-style listen layout polish | 3/3 | Automated verification complete; needs device visual QA | 2026-03-20 |
+| 12. Professional Design System Unification | 3/3 | Automated verification complete; needs device visual QA | 2026-03-20 |
 
 ### Phase 05.1: Audio-only downloadable Bible experience (INSERTED)
 

@@ -53,6 +53,18 @@ test('ChapterSelectorScreen keeps the book hub hero minimal and removes non-read
   );
 
   assert.equal(
+    source.includes('styles.chapterBadge'),
+    false,
+    'ChapterSelectorScreen should not render completion badges over chapter tiles'
+  );
+
+  assert.equal(
+    source.includes('name="checkmark"'),
+    false,
+    'ChapterSelectorScreen should not render small check icons on chapter tiles'
+  );
+
+  assert.equal(
     source.includes('buildBookCompanionEmptyState'),
     false,
     'ChapterSelectorScreen should not render the empty companion-content fallback card'

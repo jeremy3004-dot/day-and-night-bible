@@ -22,6 +22,7 @@ import { getAudioAvailability, isRemoteAudioAvailable } from '../../services/aud
 import { CardSkeleton } from '../../components';
 import type { DailyScripture } from '../../types';
 import type { RootTabParamList } from '../../navigation/types';
+import { layout, radius, spacing, shadows, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<RootTabParamList>;
 
@@ -292,58 +293,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 20,
+    padding: layout.screenPadding,
   },
   greeting: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    ...typography.screenTitle,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    marginBottom: 24,
+    ...typography.body,
+    marginBottom: layout.sectionGap,
   },
   card: {
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    ...shadows.card,
+    borderRadius: radius.lg,
+    padding: layout.cardPadding,
+    marginBottom: spacing.lg,
     borderWidth: 1,
   },
   cardTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...typography.eyebrow,
+    marginBottom: spacing.md,
   },
   verseText: {
-    fontSize: 18,
-    lineHeight: 28,
+    fontSize: 20,
+    lineHeight: 30,
+    fontWeight: '400',
+    letterSpacing: -0.2,
     fontStyle: 'italic',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   reference: {
-    fontSize: 14,
-    fontWeight: '600',
+    ...typography.label,
   },
   audioFallbackBody: {
+    ...typography.bodyStrong,
     fontSize: 17,
     lineHeight: 26,
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   audioAction: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     alignSelf: 'flex-start',
-    borderRadius: 999,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
+    borderRadius: radius.pill,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   audioActionText: {
-    fontSize: 14,
-    fontWeight: '700',
+    ...typography.button,
   },
   statsRow: {
     flexDirection: 'row',
@@ -353,14 +352,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 24,
+    fontSize: 28,
+    lineHeight: 32,
     fontWeight: '700',
-    marginBottom: 4,
+    letterSpacing: -0.4,
+    marginBottom: spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
+    ...typography.micro,
   },
   cardSkeleton: {
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
 });

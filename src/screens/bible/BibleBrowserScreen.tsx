@@ -47,6 +47,7 @@ import {
   resolveBibleSearchIntent,
 } from './bibleSearchModel';
 import { getTranslationSelectionState } from './bibleTranslationModel';
+import { layout, radius, spacing, shadows, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<BibleStackParamList>;
 
@@ -819,10 +820,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingHorizontal: 20,
+    paddingHorizontal: layout.screenPadding,
     paddingTop: 18,
-    paddingBottom: 10,
-    gap: 12,
+    paddingBottom: spacing.sm,
+    gap: spacing.md,
   },
   headerTopRow: {
     flexDirection: 'row',
@@ -831,43 +832,43 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   title: {
-    fontSize: 30,
-    fontWeight: '700',
-    marginBottom: 4,
+    ...typography.screenTitle,
+    fontSize: 32,
+    lineHeight: 36,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 14,
+    ...typography.micro,
   },
   translationButton: {
     minHeight: 42,
-    borderRadius: 999,
+    borderRadius: radius.pill,
     borderWidth: 1,
     paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   translationButtonText: {
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.label,
   },
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: layout.screenPadding,
     paddingBottom: 28,
-    paddingTop: 8,
+    paddingTop: spacing.sm,
   },
   searchInputShell: {
     minHeight: 48,
-    borderRadius: 16,
+    borderRadius: radius.md,
     borderWidth: 1,
     paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: spacing.sm,
   },
   searchInput: {
     flex: 1,
-    fontSize: 15,
+    ...typography.body,
     paddingVertical: 0,
   },
   clearSearchButton: {
@@ -882,16 +883,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchResultsContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: layout.screenPadding,
     paddingBottom: 28,
-    paddingTop: 8,
-    gap: 12,
+    paddingTop: spacing.sm,
+    gap: spacing.md,
   },
   searchResultCard: {
+    ...shadows.card,
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: radius.lg,
     padding: 18,
-    gap: 10,
+    gap: spacing.sm,
   },
   searchResultHeader: {
     flexDirection: 'row',
@@ -900,10 +902,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   searchReference: {
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.label,
   },
   searchExcerpt: {
+    ...typography.body,
     fontSize: 16,
     lineHeight: 24,
   },
@@ -911,37 +913,38 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   searchFeedbackCard: {
-    marginHorizontal: 16,
-    marginTop: 8,
+    ...shadows.card,
+    marginHorizontal: layout.screenPadding,
+    marginTop: spacing.sm,
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: radius.lg,
     padding: 18,
   },
   searchFeedbackText: {
-    fontSize: 15,
-    fontWeight: '600',
+    ...typography.bodyStrong,
   },
   referenceActionCard: {
-    marginHorizontal: 16,
-    marginTop: 8,
+    ...shadows.card,
+    marginHorizontal: layout.screenPadding,
+    marginTop: spacing.sm,
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: radius.lg,
     padding: 18,
-    gap: 8,
+    gap: spacing.sm,
   },
   referenceMetaText: {
-    fontSize: 14,
-    fontWeight: '600',
+    ...typography.label,
   },
   row: {
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: spacing.md,
     flexDirection: 'row',
   },
   bookCard: {
+    ...shadows.card,
     width: CARD_WIDTH,
     minHeight: 136,
-    borderRadius: 24,
+    borderRadius: radius.lg,
     borderWidth: 1,
     padding: 18,
     justifyContent: 'flex-start',
@@ -949,7 +952,7 @@ const styles = StyleSheet.create({
   iconBadge: {
     width: 54,
     height: 54,
-    borderRadius: 18,
+    borderRadius: radius.md,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -960,9 +963,8 @@ const styles = StyleSheet.create({
     height: 28,
   },
   bookName: {
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 22,
+    ...typography.cardTitle,
+    lineHeight: 23,
   },
   bookCardSpacer: {
     width: CARD_WIDTH,
@@ -970,9 +972,9 @@ const styles = StyleSheet.create({
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
     marginTop: 10,
-    marginBottom: 16,
+    marginBottom: spacing.lg,
     paddingHorizontal: 4,
   },
   dividerLine: {
@@ -980,39 +982,36 @@ const styles = StyleSheet.create({
     height: 1,
   },
   dividerLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
+    ...typography.eyebrow,
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   modalContent: {
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
     borderWidth: 1,
-    paddingTop: 20,
+    paddingTop: layout.cardPadding,
     maxHeight: '82%',
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    paddingHorizontal: layout.screenPadding,
+    marginBottom: spacing.md,
   },
   modalTitle: {
-    fontSize: 20,
-    fontWeight: '700',
+    ...typography.cardTitle,
   },
   translationList: {
-    paddingHorizontal: 20,
+    paddingHorizontal: layout.screenPadding,
   },
   translationCard: {
-    marginBottom: 12,
-    borderRadius: 18,
+    ...shadows.card,
+    marginBottom: spacing.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     overflow: 'hidden',
   },
@@ -1022,7 +1021,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
   },
   translationInfo: {
     flex: 1,
@@ -1034,8 +1033,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   translationName: {
-    fontSize: 16,
-    fontWeight: '700',
+    ...typography.cardTitle,
   },
   translationAbbr: {
     fontSize: 12,

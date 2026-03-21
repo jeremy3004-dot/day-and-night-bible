@@ -5,6 +5,7 @@ import { getBookById } from '../../constants';
 import { useAudioPlayer } from '../../hooks';
 import { useAudioStore, useBibleStore } from '../../stores';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
+import { layout, radius, spacing, shadows, typography } from '../../design/system';
 
 interface MiniPlayerProps {
   currentRouteName: string | null;
@@ -114,14 +115,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 74,
-    paddingHorizontal: 16,
+    paddingHorizontal: layout.screenPadding,
   },
   container: {
+    ...shadows.floating,
     borderWidth: 1,
-    borderRadius: 20,
-    paddingHorizontal: 16,
+    borderRadius: radius.lg,
+    paddingHorizontal: layout.denseCardPadding,
     paddingTop: 14,
-    paddingBottom: 12,
+    paddingBottom: spacing.md,
     overflow: 'hidden',
   },
   copy: {
@@ -129,11 +131,10 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   title: {
-    fontSize: 16,
-    fontWeight: '700',
+    ...typography.cardTitle,
   },
   subtitle: {
-    fontSize: 13,
+    ...typography.micro,
   },
   controls: {
     position: 'absolute',
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     right: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   iconButton: {
     width: 34,
@@ -150,13 +151,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   progressTrack: {
-    marginTop: 12,
+    marginTop: spacing.md,
     height: 4,
-    borderRadius: 999,
+    borderRadius: radius.pill,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 999,
+    borderRadius: radius.pill,
   },
 });

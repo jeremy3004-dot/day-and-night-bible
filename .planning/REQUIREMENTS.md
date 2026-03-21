@@ -68,6 +68,7 @@
 - **M2-BROWSE-01**: User can open a rich book hub with artwork, synopsis, intro action, and chapter entry points before entering a chapter
 - **M2-LIB-01**: User can favorite, share, download, and organize Bible listening content with persistent resume and history behavior
 - **M2-CONTENT-01**: Book hubs can surface companion modules such as passages, devotionals, figures, plans, and playlists with graceful fallbacks
+- **M2-DESIGN-01**: User experiences a unified, professional visual system across the main app surfaces with consistent typography, spacing, color tokens, and component chrome
 
 ## Out of Scope
 
@@ -113,6 +114,7 @@
 | M2-BROWSE-01 | Phase 8 | In verification |
 | M2-LIB-01 | Phase 9 | In verification |
 | M2-CONTENT-01 | Phase 10 | In verification |
+| M2-DESIGN-01 | Phase 12 | Planned |
 
 **Coverage:**
 - v1 requirements: 25 total

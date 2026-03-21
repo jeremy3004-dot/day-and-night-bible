@@ -11,6 +11,7 @@ import { MoreStack } from './MoreStack';
 import { useTheme } from '../contexts/ThemeContext';
 import { rootTabManifest } from './tabManifest';
 import { shouldHideTabBarOnNestedRoute } from './tabBarVisibility';
+import { layout, radius, spacing, typography } from '../design/system';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -18,12 +19,14 @@ export function TabNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const defaultTabBarStyle = {
-    backgroundColor: colors.background,
+    backgroundColor: colors.cardBackground,
     borderTopColor: colors.cardBorder,
     borderTopWidth: 1,
-    paddingTop: 8,
-    paddingBottom: 8,
-    height: 65,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    height: layout.tabBarHeight,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
   } as const;
 
   return (
@@ -37,9 +40,9 @@ export function TabNavigator() {
           shouldHideTabBarOnNestedRoute(getFocusedRouteNameFromRoute(route))
             ? { display: 'none' }
             : defaultTabBarStyle,
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
+        tabBarLabelStyle: typography.tabLabel,
+        tabBarItemStyle: {
+          paddingVertical: spacing.xs,
         },
         tabBarIcon: ({ focused, color, size }) => {
           const tab = rootTabManifest.find((entry) => entry.name === route.name);

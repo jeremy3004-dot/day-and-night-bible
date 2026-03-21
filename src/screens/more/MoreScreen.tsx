@@ -9,6 +9,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { config } from '../../constants/config';
 import { useAuthStore } from '../../stores/authStore';
 import type { MoreStackParamList } from '../../navigation/types';
+import { layout, radius, spacing, shadows, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<MoreStackParamList>;
 
@@ -152,25 +153,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 20,
+    padding: layout.screenPadding,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 24,
+    ...typography.pageTitle,
+    marginBottom: layout.sectionGap,
   },
   profileCard: {
+    ...shadows.card,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    borderRadius: radius.lg,
+    padding: layout.cardPadding,
+    marginBottom: spacing.lg,
     borderWidth: 1,
   },
   avatar: {
     width: 64,
     height: 64,
-    borderRadius: 32,
+    borderRadius: radius.pill,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -179,52 +180,51 @@ const styles = StyleSheet.create({
   avatarImage: {
     width: 64,
     height: 64,
-    borderRadius: 32,
+    borderRadius: radius.pill,
   },
   profileInfo: {
     flex: 1,
   },
   profileName: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 4,
+    ...typography.cardTitle,
+    marginBottom: spacing.xs,
   },
   profileEmail: {
-    fontSize: 14,
+    ...typography.micro,
   },
   signInButton: {
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: radius.md,
+    padding: spacing.lg,
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: layout.sectionGap,
   },
   signInText: {
-    fontSize: 16,
-    fontWeight: '600',
+    ...typography.button,
+    color: '#ffffff',
   },
   signOutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
+    borderRadius: radius.md,
+    padding: spacing.lg,
+    marginBottom: layout.sectionGap,
     borderWidth: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   signOutText: {
-    fontSize: 16,
-    fontWeight: '600',
+    ...typography.button,
   },
   menuSection: {
-    borderRadius: 16,
+    ...shadows.card,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    marginBottom: 24,
+    marginBottom: layout.sectionGap,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: spacing.lg,
     borderBottomWidth: 1,
   },
   menuItemLast: {
@@ -232,11 +232,11 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     flex: 1,
-    fontSize: 16,
-    marginLeft: 12,
+    ...typography.bodyStrong,
+    marginLeft: spacing.md,
   },
   version: {
-    fontSize: 12,
+    ...typography.micro,
     textAlign: 'center',
   },
 });

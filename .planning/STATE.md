@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** When someone opens the app, they can reliably read or listen to scripture and continue their discipleship journey even when network conditions are weak or backend features are partially unavailable.
-**Current focus:** Validate the simplified Bible listen/book-hub chrome on device and package the next TestFlight build when requested
+**Current focus:** Validate the new professional design system on device and package the next release when requested
 
 ## Current Position
 
-Phase: 11 (Audio reader chrome simplification and Dwell-style listen layout polish)
+Phase: 12 (Professional Design System Unification)
 Plan: 3 of 3 in current phase
-Status: Automated verification complete; awaiting device visual QA and release packaging
-Last activity: 2026-03-20 — Applied a post-Phase 11 book-hub polish pass that removes non-reader Listen/Read chrome, deletes the empty companion placeholder card, and normalizes hero banners to the shared accent color
+Status: Automated verification complete; awaiting device visual QA
+Last activity: 2026-03-20 — Completed the Phase 12 design-system sweep with shared tokens, tighter theme colors, and higher-consistency styling across the main app shell, Home, Bible, Learn, and More surfaces
 
-Progress: [██████████] 98%
+Progress: [██████████] 99%
 
 ## Performance Metrics
 
@@ -78,6 +78,7 @@ Recent decisions affecting current work:
 - Post-phase polish: Treat the audio-first Bible screen as a dedicated minimal listen surface with its own stripped header and transport variant instead of reusing the fuller reader chrome
 - Post-phase polish: Keep the Listen/Read toggle exclusive to the actual chapter session screen, and keep book-hub hero banners on the shared accent red instead of rotating per-book colors
 - Phase 11: Reuse the existing playback/session model, but give audio-first chapters a dedicated chapter-only transport and art-led layout instead of stacking extra shells and explanatory copy
+- Phase 12: Prefer a disciplined mobile system built around structured native sans typography, 4-point spacing rhythm, and semantic surfaces rather than adding more decorative treatments or screen-specific visual experiments
 
 ### Pending Todos
 
@@ -96,8 +97,10 @@ Recent decisions affecting current work:
 - Manual device verification for the full-screen BibleReader chrome, especially hidden tabs, audio-only chapter spacing, and read/listen mode bottom insets on smaller phones
 - Manual device verification for the simplified book hub on smaller phones, ensuring the reduced hero still balances cleanly above the chapter grid
 - Manual device verification that simplified book hubs no longer show the top Listen/Read rail, no longer show the empty companion fallback card, and keep the same accent-red hero background across books
+- Manual device verification that chapter tiles no longer show completion check badges and still keep the intended continue-chapter highlight
 - Manual device verification for the new simplified audio-first listen screen, especially header removal, three-button transport spacing, and overflow/favorite actions on smaller iPhones
 - Manual device verification that the top audio toggle/button remains discoverable enough on text chapters now that audio-first chapters no longer show duplicate top chrome
+- Manual device verification for the new Phase 12 professional design system, especially tab-bar fit, card density, and title hierarchy across Home, Bible, Learn, More, Profile, and Reading Activity
 
 ### Roadmap Evolution
 
@@ -108,6 +111,7 @@ Recent decisions affecting current work:
 - Phase 9 mapped from Dwell gap audit: Saved Library And Audio Personalization
 - Phase 10 mapped from Dwell gap audit: Book Companion Content And Ecosystem Surfaces
 - Phase 11 added: Audio reader chrome simplification and Dwell-style listen layout polish
+- Phase 12 added: Professional design-system unification across the app shell and highest-traffic screens
 
 ### Blockers/Concerns
 
@@ -122,9 +126,10 @@ Recent decisions affecting current work:
 - Phases 8 to 10 ship with local-first seeded metadata and companion content; any future backend source now needs only to implement the existing contracts rather than redefining the UI layer
 - Gstack/browser verification remains intentionally skipped for the new Bible flows because the repo does not include Expo web dependencies and the shipped surfaces are native-first
 - Phase 11 now depends on device QA for visual fit on smaller iPhones because the new art-led listen layout intentionally uses more vertical space and fewer header affordances
+- Phase 12 improves the main impression surfaces first; deeper edge screens such as full settings flows may still benefit from a second-pass polish after device review
 
 ## Session Continuity
 
-Last session: 2026-03-20 21:18 +0545
-Stopped at: Phase 11 implementation and automated verification are complete; next step is device QA of the simplified listen screen and TestFlight packaging on request
-Resume file: .planning/phases/11-audio-reader-chrome-simplification-and-dwell-style-listen-layout-polish/11-CONTEXT.md
+Last session: 2026-03-21 00:16 +0545
+Stopped at: Phase 12 implementation and automated verification are complete; next step is device QA of the professional design sweep and release packaging on request
+Resume file: .planning/phases/12-professional-design-system-unification/12-CONTEXT.md
