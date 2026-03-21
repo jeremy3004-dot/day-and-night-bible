@@ -274,6 +274,22 @@ test('sanitizePersistedAudioState preserves supported repeat modes', () => {
   assert.equal(sanitized.repeatMode, 'book');
 });
 
+test('sanitizePersistedAudioState falls back to off for unsupported background music choices', () => {
+  const sanitized = sanitizePersistedAudioState({
+    backgroundMusicChoice: 'forest-birds',
+  });
+
+  assert.equal(sanitized.backgroundMusicChoice, 'off');
+});
+
+test('sanitizePersistedAudioState preserves supported bundled background music choices', () => {
+  const sanitized = sanitizePersistedAudioState({
+    backgroundMusicChoice: 'ocean-waves',
+  });
+
+  assert.equal(sanitized.backgroundMusicChoice, 'ocean-waves');
+});
+
 test('sanitizePersistedLibraryState keeps only valid favorites, playlists, and history entries', () => {
   const sanitized = sanitizePersistedLibraryState({
     favorites: [

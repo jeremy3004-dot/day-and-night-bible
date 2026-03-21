@@ -84,6 +84,50 @@ test('listen mode no longer renders the extra eyebrow and play-CTA card copy abo
   );
 });
 
+test('listen mode moves the show-text action into the inline utility row and anchors controls lower', () => {
+  const source = readRelativeSource('./BibleReaderScreen.tsx');
+
+  assert.equal(
+    source.includes('styles.listenActionsRow'),
+    false,
+    'BibleReaderScreen should remove the standalone listen action row once show text is inline'
+  );
+
+  assert.equal(
+    source.includes('styles.listenSecondaryAction'),
+    false,
+    'BibleReaderScreen should remove the large secondary show-text pill from listen mode'
+  );
+
+  assert.match(
+    source,
+    /listenPlayerCard:\s*{[\s\S]*marginTop:\s*'auto'/,
+    'BibleReaderScreen should pull the player cluster lower by anchoring the listen player card to the bottom'
+  );
+});
+
+test('listen mode delegates bundled background-music selection to PlaybackControls', () => {
+  const source = readRelativeSource('./BibleReaderScreen.tsx');
+
+  assert.match(
+    source,
+    /<PlaybackControls[\s\S]*backgroundMusicChoice=\{backgroundMusicChoice\}[\s\S]*onChangeBackgroundMusicChoice=\{changeBackgroundMusicChoice\}/,
+    'BibleReaderScreen listen mode should pass the bundled background-music props into PlaybackControls'
+  );
+
+  assert.equal(
+    source.includes('showAudioOptionsSheet'),
+    false,
+    'BibleReaderScreen should remove the old placeholder audio-options sheet once the inline music picker is live'
+  );
+
+  assert.equal(
+    source.includes('Ambient layers are not available for this chapter yet'),
+    false,
+    'BibleReaderScreen should remove the placeholder ambient-copy path once bundled music ships'
+  );
+});
+
 test('switching the chapter session into listen mode starts playback for the displayed chapter', () => {
   const source = readRelativeSource('./BibleReaderScreen.tsx');
 
@@ -116,7 +160,7 @@ test('premium read mode uses animated overlay chrome with blur-backed glass surf
   );
 });
 
-test('premium read mode removes the old bottom audio bar and uses dedicated floating reader controls instead', () => {
+test('premium read mode removes the old bottom audio bar and keeps one persistent glass chapter bar', () => {
   const source = readRelativeSource('./BibleReaderScreen.tsx');
 
   assert.equal(
@@ -127,18 +171,18 @@ test('premium read mode removes the old bottom audio bar and uses dedicated floa
 
   assert.match(
     source,
-    /styles\.floatingReaderBottomBar/,
-    'BibleReaderScreen should define a dedicated floating bottom reader bar for the premium read layout'
+    /styles\.persistentReaderBottomBar/,
+    'BibleReaderScreen should define one persistent bottom reader bar for the premium read layout'
   );
 
-  assert.match(
-    source,
-    /styles\.collapsedReaderChapterPill/,
-    'BibleReaderScreen should define the compact collapsed chapter pill used after scrolling'
+  assert.equal(
+    source.includes('styles.collapsedReaderChapterPill'),
+    false,
+    'BibleReaderScreen should not swap to a chapter-only collapsed pill when the user scrolls'
   );
 });
 
-test('premium read mode replaces the bottom library and AA controls with chapter arrows', () => {
+test('premium read mode keeps chapter arrows inside the persistent bottom glass bar while scrolling', () => {
   const source = readRelativeSource('./BibleReaderScreen.tsx');
 
   assert.match(
@@ -155,8 +199,8 @@ test('premium read mode replaces the bottom library and AA controls with chapter
 
   assert.match(
     source,
-    /styles\.floatingReaderBottomBar[\s\S]*name="chevron-back"[\s\S]*styles\.expandedReaderChapterPill[\s\S]*name="chevron-forward"/s,
-    'BibleReaderScreen should render left and right chapter arrows around the bottom chapter pill in premium read mode'
+    /styles\.persistentReaderBottomBar[\s\S]*name="chevron-back"[\s\S]*styles\.persistentReaderChapterCenter[\s\S]*name="chevron-forward"/s,
+    'BibleReaderScreen should keep the chapter arrows on the persistent bottom glass bar in premium read mode'
   );
 
   assert.equal(
@@ -166,13 +210,31 @@ test('premium read mode replaces the bottom library and AA controls with chapter
   );
 });
 
-test('premium read mode moves the library action under the listen/read rail and drops the bottom translation chip', () => {
+test('premium read mode centers a translation-list button under the listen and read rail', () => {
   const source = readRelativeSource('./BibleReaderScreen.tsx');
 
   assert.match(
     source,
-    /styles\.floatingReaderTopBar[\s\S]*styles\.floatingReaderLibraryButton/s,
-    'BibleReaderScreen should render a dedicated small library button below the listen/read rail'
+    /styles\.floatingReaderTopBar[\s\S]*styles\.floatingReaderTranslationDock/s,
+    'BibleReaderScreen should render a centered translation dock below the listen/read rail'
+  );
+
+  assert.match(
+    source,
+    /styles\.floatingReaderTranslationDock[\s\S]*handleOpenTranslationOptions/s,
+    'BibleReaderScreen should open translation options from the centered dock instead of the saved library'
+  );
+
+  assert.equal(
+    source.includes('handleOpenLibrary'),
+    false,
+    'BibleReaderScreen should remove the saved library overflow action after the More tab reverts to settings'
+  );
+
+  assert.equal(
+    source.includes('styles.floatingReaderLibraryButton'),
+    false,
+    'BibleReaderScreen should remove the old small library button from under the session rail'
   );
 
   assert.equal(
@@ -185,6 +247,22 @@ test('premium read mode moves the library action under the listen/read rail and 
     source.includes('styles.expandedReaderTranslationLabel'),
     false,
     'BibleReaderScreen should stop rendering the translation abbreviation inside the premium bottom pill'
+  );
+});
+
+test('premium read mode centers the chapter label inside the persistent bottom bar', () => {
+  const source = readRelativeSource('./BibleReaderScreen.tsx');
+
+  assert.match(
+    source,
+    /persistentReaderChapterCenter:\s*{[\s\S]*flex:\s*1,[\s\S]*alignItems:\s*'center'/,
+    'BibleReaderScreen should dedicate a centered middle column for the chapter label'
+  );
+
+  assert.match(
+    source,
+    /persistentReaderChapterLabel:\s*{[\s\S]*textAlign:\s*'center'/,
+    'BibleReaderScreen should center the chapter label text inside the persistent bottom bar'
   );
 });
 

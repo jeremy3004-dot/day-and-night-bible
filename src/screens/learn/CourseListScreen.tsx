@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getBookById } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
-import { useBibleStore, useProgressStore } from '../../stores';
+import { useBibleStore } from '../../stores';
 import {
   getHarvestStudySectionPlaybackSequence,
   harvestStudySections,
@@ -19,14 +19,10 @@ export function CourseListScreen() {
   const { t } = useTranslation();
   const currentBook = useBibleStore((state) => state.currentBook);
   const currentChapter = useBibleStore((state) => state.currentChapter);
-  const isChapterRead = useProgressStore((state) => state.isChapterRead);
 
   const allStudyEntries = harvestStudySections.flatMap((section) =>
     section.groups.flatMap((group) => group.entries)
   );
-  const completedCount = allStudyEntries.filter((entry) =>
-    isChapterRead(entry.bookId, entry.chapter)
-  ).length;
 
   const openStudyChapter = (entry: HarvestStudyEntry, playbackSequenceEntries: HarvestStudyEntry[]) => {
     if (!rootNavigationRef.isReady()) {
@@ -98,28 +94,11 @@ export function CourseListScreen() {
                 {t('harvest.chapters', { defaultValue: 'Chapters' })}
               </Text>
             </View>
-            <View
-              style={[
-                styles.metricChip,
-                { backgroundColor: colors.background, borderColor: colors.cardBorder },
-              ]}
-            >
-              <Text style={[styles.metricValue, { color: colors.primaryText }]}>
-                {completedCount}
-              </Text>
-              <Text style={[styles.metricLabel, { color: colors.secondaryText }]}>
-                {t('harvest.read', { defaultValue: 'Read' })}
-              </Text>
-            </View>
           </View>
         </View>
 
         <View style={styles.playlist}>
           {harvestStudySections.map((section) => {
-            const sectionEntries = section.groups.flatMap((group) => group.entries);
-            const sectionCompletedCount = sectionEntries.filter((entry) =>
-              isChapterRead(entry.bookId, entry.chapter)
-            ).length;
             const playbackSequenceEntries = getHarvestStudySectionPlaybackSequence(section);
 
             return (
@@ -141,10 +120,6 @@ export function CourseListScreen() {
                 <Text style={[styles.sectionDescription, { color: colors.secondaryText }]}>
                   {section.description}
                 </Text>
-                <Text style={[styles.sectionProgress, { color: colors.accentPrimary }]}>
-                  {sectionCompletedCount}/{sectionEntries.length}{' '}
-                  {t('harvest.read', { defaultValue: 'Read' })}
-                </Text>
 
                 {section.groups.map((group) => (
                   <View key={group.id} style={styles.groupBlock}>
@@ -157,7 +132,6 @@ export function CourseListScreen() {
                     {group.entries.map((entry, index) => {
                       const isActive =
                         currentBook === entry.bookId && currentChapter === entry.chapter;
-                      const read = isChapterRead(entry.bookId, entry.chapter);
                       const bookName = getBookById(entry.bookId)?.name ?? entry.bookId;
                       const reference = `${bookName} ${entry.chapter}`;
 
@@ -208,15 +182,11 @@ export function CourseListScreen() {
                           </View>
 
                           <View style={styles.rowMeta}>
-                            {read ? (
-                              <Ionicons name="checkmark-circle" size={22} color={colors.success} />
-                            ) : (
-                              <Ionicons
-                                name="play-circle-outline"
-                                size={22}
-                                color={colors.accentPrimary}
-                              />
-                            )}
+                            <Ionicons
+                              name="play-circle-outline"
+                              size={22}
+                              color={colors.accentPrimary}
+                            />
                           </View>
                         </TouchableOpacity>
                       );
@@ -306,9 +276,6 @@ const styles = StyleSheet.create({
   sectionDescription: {
     ...typography.micro,
     lineHeight: 19,
-  },
-  sectionProgress: {
-    ...typography.label,
   },
   groupBlock: {
     gap: spacing.sm,

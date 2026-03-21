@@ -11,7 +11,7 @@ import { MoreStack } from './MoreStack';
 import { useTheme } from '../contexts/ThemeContext';
 import { rootTabManifest } from './tabManifest';
 import { shouldHideTabBarOnNestedRoute } from './tabBarVisibility';
-import { layout, radius, spacing, typography } from '../design/system';
+import { layout, spacing, typography } from '../design/system';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
@@ -25,8 +25,6 @@ export function TabNavigator() {
     paddingTop: spacing.sm,
     paddingBottom: spacing.sm,
     height: layout.tabBarHeight,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
   } as const;
 
   return (

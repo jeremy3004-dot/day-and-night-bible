@@ -51,6 +51,84 @@ test('PlaybackControls exposes a repeat utility button alongside playback speed 
   );
 });
 
+test('PlaybackControls supports an inline text utility action for the chapter-only player', () => {
+  const source = readRelativeSource('./PlaybackControls.tsx');
+
+  assert.match(
+    source,
+    /onShowText\?: \(\) => void;/,
+    'PlaybackControls should accept an inline show-text action for listen mode'
+  );
+
+  assert.match(
+    source,
+    /showTextLabel\?: string;/,
+    'PlaybackControls should let the listen surface provide the show-text label'
+  );
+
+  assert.match(
+    source,
+    /const showTextUtility = typeof onShowText === 'function';/,
+    'PlaybackControls should derive whether to render the inline text utility from the provided callback'
+  );
+
+  assert.match(
+    source,
+    /showTextUtility \? \([\s\S]*renderTextUtilityIcon\(\)[\s\S]*showTextLabel/s,
+    'PlaybackControls should render the Dwell-inspired text utility inline with the other controls'
+  );
+});
+
+test('PlaybackControls exposes a bundled background-music utility in the listen control row', () => {
+  const source = readRelativeSource('./PlaybackControls.tsx');
+
+  assert.match(
+    source,
+    /backgroundMusicChoice: BackgroundMusicChoice;/,
+    'PlaybackControls should receive the currently selected bundled background-music choice'
+  );
+
+  assert.match(
+    source,
+    /onChangeBackgroundMusicChoice: \(choice: BackgroundMusicChoice\) => void;/,
+    'PlaybackControls should let listen surfaces update the selected bundled background-music choice'
+  );
+
+  assert.match(
+    source,
+    /musical-notes(?:-outline)?/,
+    'PlaybackControls should render a music-note affordance for bundled background music'
+  );
+
+  assert.match(
+    source,
+    /setShowBackgroundMusicModal\(true\)/,
+    'PlaybackControls should open a bundled background-music picker from the utility row'
+  );
+});
+
+test('PlaybackControls gives the chapter-only transport a stronger Dwell-inspired hierarchy', () => {
+  const source = readRelativeSource('./PlaybackControls.tsx');
+
+  assert.match(
+    source,
+    /const isChapterOnlyTransport = variant === 'chapter-only';/,
+    'PlaybackControls should derive a dedicated transport treatment for the Bible listen player'
+  );
+
+  assert.match(
+    source,
+    /chapterOnlyTransportButton:\s*{[\s\S]*width:\s*52,[\s\S]*height:\s*52/s,
+    'PlaybackControls should give chapter transport buttons a larger Dwell-inspired tap target'
+  );
+
+  assert.match(
+    source,
+    /chapterOnlyPlayButton:\s*{[\s\S]*width:\s*72,[\s\S]*height:\s*72/s,
+    'PlaybackControls should make the main play button visually dominant in chapter-only mode'
+  );
+});
+
 test('Bible listen surfaces opt into the chapter-only transport variant', () => {
   const audioFirstSource = readRelativeSource('./AudioFirstChapterCard.tsx');
   const readerSource = readRelativeSource('../../screens/bible/BibleReaderScreen.tsx');
@@ -65,5 +143,11 @@ test('Bible listen surfaces opt into the chapter-only transport variant', () => 
     readerSource,
     /<PlaybackControls[\s\S]*variant="chapter-only"/,
     'BibleReaderScreen listen mode should use the simplified chapter-only player transport'
+  );
+
+  assert.match(
+    readerSource,
+    /<PlaybackControls[\s\S]*onShowText=\{\(\) => setShowFollowAlongText\(true\)\}/,
+    'BibleReaderScreen listen mode should pass the inline show-text action into PlaybackControls'
   );
 });

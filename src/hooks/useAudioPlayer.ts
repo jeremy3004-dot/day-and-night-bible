@@ -3,6 +3,7 @@ import { AVPlaybackStatus } from 'expo-av';
 import { useAudioStore, useLibraryStore } from '../stores';
 import {
   audioPlayer,
+  backgroundMusicPlayer,
   getChapterAudioUrl,
   isAudioAvailable,
   prefetchChapterAudio,
@@ -45,6 +46,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     repeatMode,
     sleepTimerMinutes,
     sleepTimerEndTime,
+    backgroundMusicChoice,
     setStatus,
     setCurrentTrack,
     setPosition,
@@ -64,6 +66,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     cycleRepeatMode,
     setSleepTimer,
     clearSleepTimer,
+    setBackgroundMusicChoice,
     resetPlayback,
   } = useAudioStore();
 
@@ -265,6 +268,12 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     });
   }, [handleStatusUpdate, handlePlaybackFinished, setError]);
 
+  useEffect(() => {
+    const shouldPlayBackgroundMusic = status === 'playing' || status === 'loading';
+
+    void backgroundMusicPlayer.sync(backgroundMusicChoice, shouldPlayBackgroundMusic);
+  }, [backgroundMusicChoice, status]);
+
   // Sleep timer check and remaining time calculation
   useEffect(() => {
     if (sleepTimerEndTime) {
@@ -327,6 +336,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       );
     }
     await audioPlayer.stop();
+    await backgroundMusicPlayer.stop();
     resetPlayback();
   }, [currentBookId, currentChapter, currentPosition, duration, resetPlayback]);
 
@@ -542,6 +552,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     repeatMode,
     sleepTimerMinutes,
     sleepTimerRemaining,
+    backgroundMusicChoice,
     audioAvailable,
 
     // Player visibility
@@ -573,5 +584,6 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     cycleRepeatMode,
     startSleepTimer,
     clearSleepTimer,
+    changeBackgroundMusicChoice: setBackgroundMusicChoice,
   };
 }

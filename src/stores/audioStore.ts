@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {
   AudioPlaybackSequenceEntry,
   AudioStatus,
+  BackgroundMusicChoice,
   PlaybackRate,
   RepeatMode,
   SleepTimerOption,
@@ -46,6 +47,7 @@ interface AudioState {
   autoAdvanceChapter: boolean;
   repeatMode: RepeatMode;
   sleepTimerMinutes: SleepTimerOption;
+  backgroundMusicChoice: BackgroundMusicChoice;
 
   // Playback actions
   setStatus: (status: AudioStatus) => void;
@@ -76,6 +78,7 @@ interface AudioState {
   cycleRepeatMode: () => void;
   setSleepTimer: (minutes: SleepTimerOption) => void;
   clearSleepTimer: () => void;
+  setBackgroundMusicChoice: (choice: BackgroundMusicChoice) => void;
 
   // Reset
   resetPlayback: () => void;
@@ -107,6 +110,7 @@ export const useAudioStore = create<AudioState>()(
       autoAdvanceChapter: true,
       repeatMode: 'off',
       sleepTimerMinutes: null,
+      backgroundMusicChoice: 'off',
 
       // Playback actions
       setStatus: (status) => set({ status, error: status === 'error' ? 'Playback error' : null }),
@@ -205,6 +209,8 @@ export const useAudioStore = create<AudioState>()(
           sleepTimerEndTime: null,
         }),
 
+      setBackgroundMusicChoice: (choice) => set({ backgroundMusicChoice: choice }),
+
       // Reset playback state
       resetPlayback: () =>
         set({
@@ -226,6 +232,7 @@ export const useAudioStore = create<AudioState>()(
         autoAdvanceChapter: state.autoAdvanceChapter,
         repeatMode: state.repeatMode,
         sleepTimerMinutes: state.sleepTimerMinutes,
+        backgroundMusicChoice: state.backgroundMusicChoice,
         queue: state.queue,
         queueIndex: state.queueIndex,
         lastPlayedTranslationId: state.lastPlayedTranslationId,

@@ -1,11 +1,17 @@
 import { bibleTranslations } from '../constants/translations';
 import { getBookById } from '../constants/books';
 import { SUPPORTED_LANGUAGES } from '../constants/languages';
-import { PLAYBACK_RATES, REPEAT_MODES, SLEEP_TIMER_OPTIONS } from '../types/audio';
+import {
+  BACKGROUND_MUSIC_CHOICES,
+  PLAYBACK_RATES,
+  REPEAT_MODES,
+  SLEEP_TIMER_OPTIONS,
+} from '../types/audio';
 import { getAudioTrackId } from './audioQueueModel';
 import type {
   BibleTranslation,
   PlaybackRate,
+  BackgroundMusicChoice,
   RepeatMode,
   SleepTimerOption,
   TranslationAudioCatalog,
@@ -24,6 +30,7 @@ const validThemes = new Set<UserPreferences['theme']>(['dark', 'light']);
 const validPlaybackRates = new Set<PlaybackRate>(PLAYBACK_RATES);
 const validRepeatModes = new Set<RepeatMode>(REPEAT_MODES);
 const validSleepTimers = new Set<SleepTimerOption>(SLEEP_TIMER_OPTIONS.map((option) => option.value));
+const validBackgroundMusicChoices = new Set<BackgroundMusicChoice>(BACKGROUND_MUSIC_CHOICES);
 const validAudioGranularities = new Set<BibleTranslation['audioGranularity']>([
   'none',
   'chapter',
@@ -585,6 +592,11 @@ export const sanitizePersistedAudioState = (value: unknown) => {
     sleepTimerMinutes: validSleepTimers.has(persisted.sleepTimerMinutes as SleepTimerOption)
       ? ((persisted.sleepTimerMinutes as SleepTimerOption) ?? null)
       : null,
+    backgroundMusicChoice: validBackgroundMusicChoices.has(
+      persisted.backgroundMusicChoice as BackgroundMusicChoice
+    )
+      ? (persisted.backgroundMusicChoice as BackgroundMusicChoice)
+      : 'off',
     queue,
     queueIndex:
       typeof persisted.queueIndex === 'number' &&

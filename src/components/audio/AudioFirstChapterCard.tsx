@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAudioPlayer } from '../../hooks';
 import { getBookById, getBookIcon } from '../../constants';
 import { useBibleStore } from '../../stores';
 import { getAdjacentAudioPlaybackSequenceEntry } from '../../stores/audioPlaybackSequenceModel';
+import { AudioProgressScrubber } from './AudioProgressScrubber';
 import { PlaybackControls } from './PlaybackControls';
 import type { AudioPlaybackSequenceEntry } from '../../types';
 
@@ -36,6 +37,7 @@ export function AudioFirstChapterCard({
     playbackRate,
     repeatMode,
     sleepTimerRemaining,
+    backgroundMusicChoice,
     playChapter,
     togglePlayPause,
     previousChapter,
@@ -46,6 +48,7 @@ export function AudioFirstChapterCard({
     changePlaybackRate,
     cycleRepeatMode,
     startSleepTimer,
+    changeBackgroundMusicChoice,
   } = useAudioPlayer(currentTranslation);
 
   const book = getBookById(bookId);
@@ -71,8 +74,6 @@ export function AudioFirstChapterCard({
     nextSequenceEntry ?? (book && chapter < book.chapters ? { bookId, chapter: chapter + 1 } : null);
   const displayPosition = isCurrentChapter ? currentPosition : 0;
   const displayDuration = isCurrentChapter ? duration : 0;
-  const progress = displayDuration > 0 ? (displayPosition / displayDuration) * 100 : 0;
-
   const formatTime = (ms: number): string => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -89,14 +90,12 @@ export function AudioFirstChapterCard({
     void togglePlayPause();
   };
 
-  const handleSeek = (locationX: number, width: number) => {
-    if (!isCurrentChapter || displayDuration <= 0 || width <= 0) {
+  const handleSeek = (positionMs: number) => {
+    if (!isCurrentChapter || displayDuration <= 0) {
       return;
     }
 
-    const percentage = locationX / width;
-    const newPosition = percentage * displayDuration;
-    void seekTo(Math.max(0, Math.min(displayDuration, newPosition)));
+    void seekTo(Math.max(0, Math.min(displayDuration, positionMs)));
   };
 
   const handlePreviousChapter = async () => {
@@ -157,25 +156,16 @@ export function AudioFirstChapterCard({
       </View>
 
       <View style={styles.controlBlock}>
-        <TouchableOpacity
-          style={styles.progressContainer}
-          activeOpacity={0.85}
-          onPress={(event) => {
-            const { locationX } = event.nativeEvent;
-            event.currentTarget.measure((_x, _y, measuredWidth) => {
-              handleSeek(locationX, measuredWidth);
-            });
-          }}
-        >
-          <View style={[styles.progressTrack, { backgroundColor: colors.bibleDivider }]}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${progress}%`, backgroundColor: colors.bibleAccent },
-              ]}
-            />
-          </View>
-        </TouchableOpacity>
+        <AudioProgressScrubber
+          position={displayPosition}
+          duration={displayDuration}
+          onSeek={handleSeek}
+          trackColor={colors.bibleDivider}
+          fillColor={colors.bibleAccent}
+          containerStyle={styles.progressContainer}
+          trackStyle={styles.progressTrack}
+          fillStyle={styles.progressFill}
+        />
 
         <View style={styles.timeRow}>
           <Text style={[styles.timeText, { color: colors.bibleSecondaryText }]}>
@@ -195,6 +185,7 @@ export function AudioFirstChapterCard({
           playbackRate={playbackRate}
           repeatMode={repeatMode}
           sleepTimerRemaining={sleepTimerRemaining}
+          backgroundMusicChoice={backgroundMusicChoice}
           hasPreviousChapter={hasPreviousChapter}
           hasNextChapter={hasNextChapter}
           onPlayPause={handlePlayPause}
@@ -205,6 +196,7 @@ export function AudioFirstChapterCard({
           onChangePlaybackRate={changePlaybackRate}
           onCycleRepeatMode={cycleRepeatMode}
           onSetSleepTimer={startSleepTimer}
+          onChangeBackgroundMusicChoice={changeBackgroundMusicChoice}
         />
 
         {error ? (

@@ -364,10 +364,15 @@ export function SettingsScreen() {
             onPress={() => navigation.navigate('PrivacyPreferences')}
           >
             <View style={styles.settingLeft}>
-              <Ionicons name="lock-closed-outline" size={24} color={colors.secondaryText} />
-              <Text style={[styles.settingLabel, { color: colors.primaryText }]}>
-                {t('onboarding.privacyTitle')}
-              </Text>
+              <Ionicons name="calculator-outline" size={24} color={colors.secondaryText} />
+              <View style={styles.settingCopy}>
+                <Text style={[styles.settingLabel, styles.settingLabelNoMargin, { color: colors.primaryText }]}>
+                  {t('onboarding.privacyTitle')}
+                </Text>
+                <Text style={[styles.settingSubLabel, { color: colors.secondaryText }]}>
+                  {t('onboarding.discreetIconTitle')}
+                </Text>
+              </View>
             </View>
             <View style={styles.settingRight}>
               <Text style={[styles.settingValue, { color: colors.secondaryText }]}>
@@ -756,6 +761,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  settingCopy: {
+    marginLeft: 12,
+    gap: 2,
+  },
   settingRight: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -764,6 +773,12 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: 16,
     marginLeft: 12,
+  },
+  settingLabelNoMargin: {
+    marginLeft: 0,
+  },
+  settingSubLabel: {
+    fontSize: 13,
   },
   settingValue: {
     fontSize: 14,

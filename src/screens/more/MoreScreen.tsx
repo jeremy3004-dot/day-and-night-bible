@@ -23,7 +23,6 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { id: 'library', title: 'Saved Library', icon: 'library-outline', screen: 'Library' },
   { id: 'profile', titleKey: 'more.profile', icon: 'person-outline', screen: 'Profile' },
   {
     id: 'readingActivity',

@@ -19,10 +19,6 @@ export function MoreStack() {
         getComponent={() => require('../screens/more/MoreScreen').MoreScreen}
       />
       <Stack.Screen
-        name="Library"
-        getComponent={() => require('../screens/more/LibraryScreen').LibraryScreen}
-      />
-      <Stack.Screen
         name="Settings"
         getComponent={() => require('../screens/more/SettingsScreen').SettingsScreen}
       />

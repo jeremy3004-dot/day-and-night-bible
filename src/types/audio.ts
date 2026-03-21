@@ -28,6 +28,7 @@ export interface AudioSettings {
   autoAdvanceChapter: boolean;
   repeatMode: RepeatMode;
   sleepTimerMinutes: number | null;
+  backgroundMusicChoice: BackgroundMusicChoice;
 }
 
 export type PlaybackRate = 0.75 | 1.0 | 1.25 | 1.5 | 2.0;
@@ -47,6 +48,23 @@ export const SLEEP_TIMER_OPTIONS: { label: string; value: SleepTimerOption }[] =
   { label: '15 min', value: 15 },
   { label: '30 min', value: 30 },
   { label: '1 hour', value: 60 },
+];
+
+export type BackgroundMusicChoice =
+  | 'off'
+  | 'ambient'
+  | 'piano'
+  | 'soft-guitar'
+  | 'sitar'
+  | 'ocean-waves';
+
+export const BACKGROUND_MUSIC_CHOICES: BackgroundMusicChoice[] = [
+  'off',
+  'ambient',
+  'piano',
+  'soft-guitar',
+  'sitar',
+  'ocean-waves',
 ];
 
 // Bible.is API response types

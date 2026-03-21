@@ -3,8 +3,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import type { AudioStatus, PlaybackRate, RepeatMode, SleepTimerOption } from '../../types';
+import type {
+  AudioStatus,
+  BackgroundMusicChoice,
+  PlaybackRate,
+  RepeatMode,
+  SleepTimerOption,
+} from '../../types';
 import { PLAYBACK_RATES, SLEEP_TIMER_OPTIONS } from '../../types';
+import { BACKGROUND_MUSIC_OPTIONS } from '../../services/audio';
 
 interface PlaybackControlsProps {
   variant?: 'default' | 'chapter-only';
@@ -12,6 +19,7 @@ interface PlaybackControlsProps {
   playbackRate: PlaybackRate;
   repeatMode: RepeatMode;
   sleepTimerRemaining: number | null;
+  backgroundMusicChoice: BackgroundMusicChoice;
   hasPreviousChapter: boolean;
   hasNextChapter: boolean;
   onPlayPause: () => void;
@@ -22,6 +30,9 @@ interface PlaybackControlsProps {
   onChangePlaybackRate: (rate: PlaybackRate) => void;
   onCycleRepeatMode: () => void;
   onSetSleepTimer: (minutes: SleepTimerOption) => void;
+  onChangeBackgroundMusicChoice: (choice: BackgroundMusicChoice) => void;
+  onShowText?: () => void;
+  showTextLabel?: string;
 }
 
 export function PlaybackControls({
@@ -30,6 +41,7 @@ export function PlaybackControls({
   playbackRate,
   repeatMode,
   sleepTimerRemaining,
+  backgroundMusicChoice,
   hasPreviousChapter,
   hasNextChapter,
   onPlayPause,
@@ -40,17 +52,30 @@ export function PlaybackControls({
   onChangePlaybackRate,
   onCycleRepeatMode,
   onSetSleepTimer,
+  onChangeBackgroundMusicChoice,
+  onShowText,
+  showTextLabel,
 }: PlaybackControlsProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [showTimerModal, setShowTimerModal] = useState(false);
+  const [showBackgroundMusicModal, setShowBackgroundMusicModal] = useState(false);
 
   const isLoading = status === 'loading';
   const isPlaying = status === 'playing';
+  const isChapterOnlyTransport = variant === 'chapter-only';
   const showSkipControls = variant === 'default';
+  const showTextUtility = typeof onShowText === 'function';
   const isRepeatActive = repeatMode !== 'off';
+  const isBackgroundMusicActive = backgroundMusicChoice !== 'off';
+  const selectedBackgroundMusic =
+    BACKGROUND_MUSIC_OPTIONS.find((option) => option.id === backgroundMusicChoice) ??
+    BACKGROUND_MUSIC_OPTIONS[0];
   const repeatIconColor = isRepeatActive ? colors.bibleAccent : colors.bibleSecondaryText;
+  const backgroundMusicIconColor = isBackgroundMusicActive
+    ? colors.bibleAccent
+    : colors.biblePrimaryText;
   const repeatAccessibilityLabel =
     repeatMode === 'chapter'
       ? 'Repeat chapter'
@@ -73,17 +98,63 @@ export function PlaybackControls({
     </View>
   );
 
+  const renderTextUtilityIcon = () => (
+    <View style={styles.textUtilityIcon}>
+      <View
+        style={[
+          styles.textUtilityIconBubble,
+          {
+            borderColor: colors.biblePrimaryText,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.textUtilityIconLineLong,
+            { backgroundColor: colors.biblePrimaryText },
+          ]}
+        />
+        <View
+          style={[
+            styles.textUtilityIconLineMedium,
+            { backgroundColor: colors.biblePrimaryText },
+          ]}
+        />
+        <View
+          style={[
+            styles.textUtilityIconLineShort,
+            { backgroundColor: colors.biblePrimaryText },
+          ]}
+        />
+      </View>
+      <View
+        style={[
+          styles.textUtilityIconTail,
+          {
+            borderBottomColor: colors.biblePrimaryText,
+          },
+        ]}
+      />
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <View style={styles.transportRow}>
+      <View
+        style={[styles.transportRow, isChapterOnlyTransport ? styles.chapterOnlyTransportRow : null]}
+      >
         <TouchableOpacity
-          style={[styles.iconButton, !hasPreviousChapter && styles.disabledButton]}
+          style={[
+            styles.iconButton,
+            isChapterOnlyTransport ? styles.chapterOnlyTransportButton : null,
+            !hasPreviousChapter && styles.disabledButton,
+          ]}
           onPress={onPreviousChapter}
           disabled={!hasPreviousChapter || isLoading}
         >
           <Ionicons
             name="play-skip-back"
-            size={20}
+            size={isChapterOnlyTransport ? 28 : 20}
             color={hasPreviousChapter ? colors.biblePrimaryText : colors.bibleSecondaryText}
           />
         </TouchableOpacity>
@@ -103,16 +174,24 @@ export function PlaybackControls({
         ) : null}
 
         <TouchableOpacity
-          style={[styles.playButton, { backgroundColor: colors.bibleControlBackground }]}
+          style={[
+            styles.playButton,
+            isChapterOnlyTransport ? styles.chapterOnlyPlayButton : null,
+            { backgroundColor: colors.bibleControlBackground },
+          ]}
           onPress={onPlayPause}
           disabled={isLoading}
         >
           {isLoading ? (
-            <Ionicons name="hourglass" size={26} color={colors.bibleBackground} />
+            <Ionicons
+              name="hourglass"
+              size={isChapterOnlyTransport ? 32 : 26}
+              color={colors.bibleBackground}
+            />
           ) : (
             <Ionicons
               name={isPlaying ? 'pause' : 'play'}
-              size={26}
+              size={isChapterOnlyTransport ? 34 : 26}
               color={colors.bibleBackground}
             />
           )}
@@ -133,45 +212,23 @@ export function PlaybackControls({
         ) : null}
 
         <TouchableOpacity
-          style={[styles.iconButton, !hasNextChapter && styles.disabledButton]}
+          style={[
+            styles.iconButton,
+            isChapterOnlyTransport ? styles.chapterOnlyTransportButton : null,
+            !hasNextChapter && styles.disabledButton,
+          ]}
           onPress={onNextChapter}
           disabled={!hasNextChapter || isLoading}
         >
           <Ionicons
             name="play-skip-forward"
-            size={20}
+            size={isChapterOnlyTransport ? 28 : 20}
             color={hasNextChapter ? colors.biblePrimaryText : colors.bibleSecondaryText}
           />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.utilityRow}>
-        <TouchableOpacity
-          style={[
-            styles.utilityButton,
-            { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
-          ]}
-          onPress={() => setShowSpeedModal(true)}
-        >
-          <Text style={[styles.utilityText, { color: colors.biblePrimaryText }]}>
-            {playbackRate}x
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.utilityButton,
-            styles.repeatUtilityButton,
-            { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
-          ]}
-          onPress={() => onCycleRepeatMode()}
-          accessibilityRole="button"
-          accessibilityLabel={repeatAccessibilityLabel}
-          accessibilityHint="Cycles repeat off, repeat chapter, and repeat book"
-        >
-          {renderRepeatModeIcon()}
-        </TouchableOpacity>
-
+      <View style={[styles.utilityRow, isChapterOnlyTransport ? styles.chapterOnlyUtilityRow : null]}>
         <TouchableOpacity
           style={[
             styles.utilityButton,
@@ -195,7 +252,141 @@ export function PlaybackControls({
             {sleepTimerRemaining ? `${sleepTimerRemaining}m` : '...'}
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.utilityButton,
+            styles.musicUtilityButton,
+            { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+          ]}
+          onPress={() => setShowBackgroundMusicModal(true)}
+          accessibilityRole="button"
+          accessibilityLabel={`Background music: ${selectedBackgroundMusic.label}`}
+          accessibilityHint="Opens the bundled background music picker"
+        >
+          <Ionicons
+            name={backgroundMusicChoice === 'off' ? 'musical-notes-outline' : 'musical-notes'}
+            size={18}
+            color={backgroundMusicIconColor}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.utilityButton,
+            styles.repeatUtilityButton,
+            { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+          ]}
+          onPress={() => onCycleRepeatMode()}
+          accessibilityRole="button"
+          accessibilityLabel={repeatAccessibilityLabel}
+          accessibilityHint="Cycles repeat off, repeat chapter, and repeat book"
+        >
+          {renderRepeatModeIcon()}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.utilityButton,
+            { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+          ]}
+          onPress={() => setShowSpeedModal(true)}
+        >
+          <Text style={[styles.utilityText, { color: colors.biblePrimaryText }]}>
+            {playbackRate}x
+          </Text>
+        </TouchableOpacity>
+
+        {showTextUtility ? (
+          <TouchableOpacity
+            style={[
+              styles.utilityButton,
+              styles.textUtilityButton,
+              isChapterOnlyTransport ? styles.chapterOnlyTextUtilityButton : null,
+              { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+            ]}
+            onPress={onShowText}
+            accessibilityRole="button"
+            accessibilityLabel={showTextLabel ?? 'Show text'}
+            accessibilityHint="Opens the Bible text for the currently playing chapter"
+          >
+            {renderTextUtilityIcon()}
+            <Text style={[styles.utilityText, { color: colors.biblePrimaryText }]}>
+              {showTextLabel}
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
+
+      <Modal
+        visible={showBackgroundMusicModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowBackgroundMusicModal(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setShowBackgroundMusicModal(false)}>
+          <View
+            style={[
+              styles.modalContent,
+              styles.backgroundMusicModalContent,
+              { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+            ]}
+          >
+            <Text style={[styles.modalTitle, { color: colors.biblePrimaryText }]}>
+              Music and sounds
+            </Text>
+            <Text style={[styles.modalSubtitle, { color: colors.bibleSecondaryText }]}>
+              Choose a bundled background layer for offline scripture listening.
+            </Text>
+            {BACKGROUND_MUSIC_OPTIONS.map((option) => {
+              const isSelected = option.id === backgroundMusicChoice;
+
+              return (
+                <TouchableOpacity
+                  key={option.id}
+                  style={[
+                    styles.backgroundMusicOption,
+                    {
+                      backgroundColor: isSelected
+                        ? colors.bibleElevatedSurface
+                        : colors.bibleBackground,
+                      borderColor: colors.bibleDivider,
+                    },
+                  ]}
+                  onPress={() => {
+                    onChangeBackgroundMusicChoice(option.id);
+                    setShowBackgroundMusicModal(false);
+                  }}
+                >
+                  <View style={styles.backgroundMusicCopy}>
+                    <Text
+                      style={[
+                        styles.backgroundMusicLabel,
+                        {
+                          color: isSelected ? colors.bibleAccent : colors.biblePrimaryText,
+                        },
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.backgroundMusicDescription,
+                        { color: colors.bibleSecondaryText },
+                      ]}
+                    >
+                      {option.description}
+                    </Text>
+                  </View>
+                  {isSelected ? (
+                    <Ionicons name="checkmark" size={20} color={colors.bibleAccent} />
+                  ) : null}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </Pressable>
+      </Modal>
 
       <Modal
         visible={showSpeedModal}
@@ -293,16 +484,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
   },
+  chapterOnlyTransportRow: {
+    gap: 18,
+    marginTop: 6,
+  },
   utilityRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
+  },
+  chapterOnlyUtilityRow: {
+    gap: 10,
+    marginTop: 4,
   },
   iconButton: {
     width: 36,
     height: 36,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  chapterOnlyTransportButton: {
+    width: 52,
+    height: 52,
   },
   utilityButton: {
     minWidth: 64,
@@ -319,8 +523,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
+  musicUtilityButton: {
+    minWidth: 38,
+    paddingHorizontal: 10,
+  },
   repeatUtilityButton: {
     minWidth: 38,
+    paddingHorizontal: 10,
+  },
+  textUtilityButton: {
+    minWidth: 80,
+  },
+  chapterOnlyTextUtilityButton: {
     paddingHorizontal: 10,
   },
   repeatIconWrapper: {
@@ -328,6 +542,47 @@ const styles = StyleSheet.create({
     height: 18,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  textUtilityIcon: {
+    width: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textUtilityIconBubble: {
+    width: 16,
+    minHeight: 13,
+    borderWidth: 1.5,
+    borderRadius: 5,
+    paddingHorizontal: 3,
+    paddingVertical: 3,
+    gap: 2,
+  },
+  textUtilityIconTail: {
+    position: 'absolute',
+    left: 4,
+    bottom: 0,
+    width: 5,
+    height: 5,
+    borderLeftWidth: 1.5,
+    borderBottomWidth: 1.5,
+    transform: [{ rotate: '-45deg' }],
+    backgroundColor: 'transparent',
+  },
+  textUtilityIconLineLong: {
+    width: 8,
+    height: 1.5,
+    borderRadius: 999,
+  },
+  textUtilityIconLineMedium: {
+    width: 7,
+    height: 1.5,
+    borderRadius: 999,
+  },
+  textUtilityIconLineShort: {
+    width: 5,
+    height: 1.5,
+    borderRadius: 999,
   },
   repeatBadge: {
     position: 'absolute',
@@ -371,6 +626,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: 2,
   },
+  chapterOnlyPlayButton: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    marginHorizontal: 10,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
@@ -391,6 +652,12 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     textAlign: 'center',
   },
+  modalSubtitle: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 14,
+    textAlign: 'center',
+  },
   modalOption: {
     minHeight: 46,
     borderRadius: 14,
@@ -402,5 +669,29 @@ const styles = StyleSheet.create({
   modalOptionText: {
     fontSize: 15,
     fontWeight: '600',
+  },
+  backgroundMusicModalContent: {
+    gap: 10,
+  },
+  backgroundMusicOption: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backgroundMusicCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  backgroundMusicLabel: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  backgroundMusicDescription: {
+    fontSize: 12,
+    lineHeight: 17,
   },
 });
