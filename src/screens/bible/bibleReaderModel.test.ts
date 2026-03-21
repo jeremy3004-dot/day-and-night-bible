@@ -388,6 +388,6 @@ test('reader only follows active audio chapter changes when the reader was alrea
       previousActiveAudioBookId: 'GEN',
       previousActiveAudioChapter: 3,
     }),
-    false
+    true
   );
 });

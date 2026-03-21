@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { harvestStudySections, type HarvestStudySection } from './harvestStudies';
+import {
+  getHarvestStudySectionPlaybackSequence,
+  harvestStudySections,
+  type HarvestStudySection,
+} from './harvestStudies';
 
 test('exports a typed sectioned harvest study model', () => {
   const typedSections: HarvestStudySection[] = harvestStudySections;
@@ -148,4 +152,34 @@ test('keeps an explicit chapter ordering for every study group', () => {
       ],
     },
   ]);
+});
+
+test('flattens a harvest section into a single playback sequence in visible top-to-bottom order', () => {
+  const christology = harvestStudySections.find((section) => section.id === 'christology');
+  assert.ok(christology);
+
+  assert.deepEqual(
+    getHarvestStudySectionPlaybackSequence(christology),
+    [
+      { bookId: 'JHN', chapter: 1 },
+      { bookId: 'COL', chapter: 1 },
+      { bookId: 'HEB', chapter: 1 },
+      { bookId: 'MAT', chapter: 1 },
+      { bookId: 'MAT', chapter: 2 },
+      { bookId: 'LUK', chapter: 1 },
+      { bookId: 'LUK', chapter: 2 },
+      { bookId: 'MRK', chapter: 1 },
+      { bookId: 'LUK', chapter: 4 },
+      { bookId: 'JHN', chapter: 3 },
+      { bookId: 'MAT', chapter: 26 },
+      { bookId: 'MAT', chapter: 27 },
+      { bookId: 'JHN', chapter: 19 },
+      { bookId: 'MAT', chapter: 28 },
+      { bookId: 'LUK', chapter: 24 },
+      { bookId: '1CO', chapter: 15 },
+      { bookId: 'ACT', chapter: 1 },
+      { bookId: 'PHP', chapter: 2 },
+      { bookId: 'REV', chapter: 1 },
+    ]
+  );
 });

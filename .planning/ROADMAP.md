@@ -316,3 +316,23 @@ Plans:
 
 - [x] 13-01: Replace BSB runtime audio dependency with direct public-source chapter MP3s and normalize licensing/docs
 - [ ] 13-02: Replace the BSB text refresh pipeline with official Berean download sources and regenerate bundled artifacts
+
+### Phase 14: Backend-driven Bible content sync and offline pack delivery
+
+**Goal:** Let the mobile app discover backend-managed Bible translations online, stream them immediately when needed, and install verified text/audio packs that remain fully usable offline.
+**Requirements**: READ-01, READ-02, AUDIO-03, MULTI-01
+**Depends on:** Phase 13
+**Success Criteria** (what must be TRUE):
+
+1. The app can fetch a runtime translation catalog from the backend and show remotely provisioned translations without breaking current bundled BSB/WEB behavior.
+2. A translation can be installed as a verified versioned SQLite text pack plus downloadable audio assets, then read, searched, and played fully offline.
+3. Failed downloads, bad signatures/checksums, interrupted installs, and stale updates never replace the last known good local pack.
+4. Backgrounded downloads reattach cleanly on resume/app restart and surface honest progress, retry, and failure states in the Bible UI.
+   **Plans:** 4 plans
+
+Plans:
+
+- [ ] 14-01: Define the runtime catalog, signed manifest verification, and background download foundation
+- [ ] 14-02: Build the versioned SQLite text-pack registry, install flow, and rollback-safe query routing
+- [ ] 14-03: Replace hardcoded audio providers with backend-driven sources and resilient offline/background audio downloads
+- [ ] 14-04: Ship translation install/update UX, verification coverage, and release/device QA for the new content platform

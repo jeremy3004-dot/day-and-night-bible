@@ -7,7 +7,11 @@ import { getBookById } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
 import { useBibleStore, useProgressStore } from '../../stores';
-import { harvestStudySections, type HarvestStudyEntry } from './harvestStudies';
+import {
+  getHarvestStudySectionPlaybackSequence,
+  harvestStudySections,
+  type HarvestStudyEntry,
+} from './harvestStudies';
 import { layout, radius, spacing, shadows, typography } from '../../design/system';
 
 export function CourseListScreen() {
@@ -24,7 +28,7 @@ export function CourseListScreen() {
     isChapterRead(entry.bookId, entry.chapter)
   ).length;
 
-  const openStudyChapter = (entry: HarvestStudyEntry) => {
+  const openStudyChapter = (entry: HarvestStudyEntry, playbackSequenceEntries: HarvestStudyEntry[]) => {
     if (!rootNavigationRef.isReady()) {
       return;
     }
@@ -35,6 +39,7 @@ export function CourseListScreen() {
         bookId: entry.bookId,
         chapter: entry.chapter,
         autoplayAudio: true,
+        playbackSequenceEntries,
       },
     });
   };
@@ -115,6 +120,7 @@ export function CourseListScreen() {
             const sectionCompletedCount = sectionEntries.filter((entry) =>
               isChapterRead(entry.bookId, entry.chapter)
             ).length;
+            const playbackSequenceEntries = getHarvestStudySectionPlaybackSequence(section);
 
             return (
               <View
@@ -165,7 +171,7 @@ export function CourseListScreen() {
                               borderColor: isActive ? colors.accentPrimary : colors.cardBorder,
                             },
                           ]}
-                          onPress={() => openStudyChapter(entry)}
+                          onPress={() => openStudyChapter(entry, playbackSequenceEntries)}
                           activeOpacity={0.9}
                         >
                           <View

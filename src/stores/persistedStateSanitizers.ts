@@ -7,6 +7,11 @@ import type {
   BibleTranslation,
   PlaybackRate,
   SleepTimerOption,
+  TranslationAudioCatalog,
+  TranslationCatalog,
+  TranslationDownloadJob,
+  TranslationInstallState,
+  TranslationTextCatalog,
   User,
   UserPreferences,
 } from '../types';
@@ -17,6 +22,47 @@ const validFontSizes = new Set<UserPreferences['fontSize']>(['small', 'medium', 
 const validThemes = new Set<UserPreferences['theme']>(['dark', 'light']);
 const validPlaybackRates = new Set<PlaybackRate>(PLAYBACK_RATES);
 const validSleepTimers = new Set<SleepTimerOption>(SLEEP_TIMER_OPTIONS.map((option) => option.value));
+const validAudioGranularities = new Set<BibleTranslation['audioGranularity']>([
+  'none',
+  'chapter',
+  'verse',
+]);
+const validAudioProviders = new Set<NonNullable<BibleTranslation['audioProvider']>>([
+  'bible-is',
+  'ebible-webbe',
+  'openbible-bsb-souer',
+]);
+const validInstallStates = new Set<TranslationInstallState>([
+  'seeded',
+  'remote-only',
+  'downloading',
+  'verifying',
+  'installing',
+  'installed',
+  'failed',
+  'rollback-available',
+  'update-available',
+]);
+const validAudioStrategies = new Set<TranslationAudioCatalog['strategy']>([
+  'provider',
+  'stream-template',
+  'audio-pack',
+]);
+const validDownloadJobKinds = new Set<TranslationDownloadJob['kind']>([
+  'text-pack',
+  'audio-pack',
+  'audio-book',
+  'translation-audio',
+]);
+const validDownloadJobStates = new Set<TranslationDownloadJob['state']>([
+  'queued',
+  'running',
+  'paused',
+  'reattaching',
+  'failed',
+  'completed',
+  'cancelled',
+]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -24,15 +70,290 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const sanitizeOptionalString = (value: unknown): string | null =>
   typeof value === 'string' && value.length > 0 ? value : null;
 
+const sanitizeRequiredString = (value: unknown): string | null =>
+  typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+
+const sanitizeOptionalFiniteNumber = (value: unknown): number | null =>
+  typeof value === 'number' && Number.isFinite(value) ? value : null;
+
+const sanitizeUrlString = (value: unknown): string | null => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return null;
+  }
+
+  try {
+    return new URL(value).toString();
+  } catch {
+    return null;
+  }
+};
+
+const sanitizeIsoDateString = (value: unknown): string | null => {
+  if (typeof value !== 'string' || value.trim().length === 0) {
+    return null;
+  }
+
+  return Number.isNaN(Date.parse(value)) ? null : value;
+};
+
 const sanitizeTranslationId = (value: unknown): string | null =>
   typeof value === 'string' && supportedBibleTranslationIds.has(value) ? value : null;
 
 const sanitizeBookId = (value: unknown): string | null =>
   typeof value === 'string' && getBookById(value) ? value : null;
 
+const sanitizeBookIds = (value: unknown, fallback: string[] = []): string[] =>
+  Array.isArray(value)
+    ? value.filter(
+        (bookId): bookId is string => typeof bookId === 'string' && Boolean(getBookById(bookId))
+      )
+    : fallback;
+
+const sanitizeTranslationTextCatalog = (value: unknown): TranslationTextCatalog | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const version = sanitizeRequiredString(value.version);
+  const downloadUrl = sanitizeUrlString(value.downloadUrl);
+  const sha256 = sanitizeRequiredString(value.sha256);
+
+  if (value.format !== 'sqlite' || !version || !downloadUrl || !sha256) {
+    return null;
+  }
+
+  return {
+    format: 'sqlite',
+    version,
+    downloadUrl,
+    sha256,
+    signature: sanitizeOptionalString(value.signature) ?? undefined,
+  };
+};
+
+const sanitizeTranslationAudioCatalog = (value: unknown): TranslationAudioCatalog | null => {
+  if (!isRecord(value) || !validAudioStrategies.has(value.strategy as TranslationAudioCatalog['strategy'])) {
+    return null;
+  }
+
+  const strategy = value.strategy as TranslationAudioCatalog['strategy'];
+  if (strategy === 'provider') {
+    if (!validAudioProviders.has(value.provider as NonNullable<BibleTranslation['audioProvider']>)) {
+      return null;
+    }
+
+    return {
+      strategy,
+      provider: value.provider as NonNullable<BibleTranslation['audioProvider']>,
+      signature: sanitizeOptionalString(value.signature) ?? undefined,
+    };
+  }
+
+  if (strategy === 'stream-template') {
+    const baseUrl = sanitizeUrlString(value.baseUrl);
+    const chapterPathTemplate = sanitizeRequiredString(value.chapterPathTemplate);
+    if (!baseUrl || !chapterPathTemplate) {
+      return null;
+    }
+
+    return {
+      strategy,
+      baseUrl,
+      chapterPathTemplate,
+      signature: sanitizeOptionalString(value.signature) ?? undefined,
+    };
+  }
+
+  const downloadUrl = sanitizeUrlString(value.downloadUrl);
+  const sha256 = sanitizeRequiredString(value.sha256);
+  if (!downloadUrl || !sha256) {
+    return null;
+  }
+
+  return {
+    strategy,
+    downloadUrl,
+    sha256,
+    signature: sanitizeOptionalString(value.signature) ?? undefined,
+  };
+};
+
+const sanitizeTranslationCatalog = (value: unknown): TranslationCatalog | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const version = sanitizeRequiredString(value.version);
+  const updatedAt = sanitizeIsoDateString(value.updatedAt);
+  const text = sanitizeTranslationTextCatalog(value.text);
+  const audio = sanitizeTranslationAudioCatalog(value.audio);
+
+  if (!version || !updatedAt || (!text && !audio)) {
+    return null;
+  }
+
+  return {
+    version,
+    updatedAt,
+    minimumAppVersion: sanitizeOptionalString(value.minimumAppVersion) ?? undefined,
+    text: text ?? undefined,
+    audio: audio ?? undefined,
+  };
+};
+
+const sanitizeTranslationDownloadJob = (value: unknown): TranslationDownloadJob | null => {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const id = sanitizeRequiredString(value.id);
+  const progress = sanitizeOptionalFiniteNumber(value.progress);
+  const startedAt = sanitizeOptionalFiniteNumber(value.startedAt);
+  const updatedAt = sanitizeOptionalFiniteNumber(value.updatedAt);
+
+  if (
+    !id ||
+    progress === null ||
+    startedAt === null ||
+    updatedAt === null ||
+    !validDownloadJobKinds.has(value.kind as TranslationDownloadJob['kind']) ||
+    !validDownloadJobStates.has(value.state as TranslationDownloadJob['state'])
+  ) {
+    return null;
+  }
+
+  return {
+    id,
+    kind: value.kind as TranslationDownloadJob['kind'],
+    state: value.state as TranslationDownloadJob['state'],
+    progress: Math.max(0, Math.min(100, progress)),
+    startedAt,
+    updatedAt,
+    bytesDownloaded: sanitizeOptionalFiniteNumber(value.bytesDownloaded) ?? undefined,
+    bytesTotal: sanitizeOptionalFiniteNumber(value.bytesTotal) ?? undefined,
+    error: sanitizeOptionalString(value.error) ?? undefined,
+  };
+};
+
+const getDefaultInstallState = (translation: BibleTranslation): TranslationInstallState =>
+  translation.hasText || translation.isDownloaded ? 'seeded' : 'remote-only';
+
+const hydrateSeededTranslation = (
+  defaultTranslation: BibleTranslation,
+  persisted?: Record<string, unknown>
+): BibleTranslation => {
+  const downloadedBooks = sanitizeBookIds(persisted?.downloadedBooks, defaultTranslation.downloadedBooks);
+  const downloadedAudioBooks = sanitizeBookIds(
+    persisted?.downloadedAudioBooks,
+    defaultTranslation.downloadedAudioBooks
+  );
+
+  return {
+    ...defaultTranslation,
+    isDownloaded:
+      typeof persisted?.isDownloaded === 'boolean'
+        ? persisted.isDownloaded
+        : defaultTranslation.isDownloaded,
+    downloadedBooks,
+    downloadedAudioBooks,
+    source: 'bundled',
+    installState: validInstallStates.has(persisted?.installState as TranslationInstallState)
+      ? (persisted?.installState as TranslationInstallState)
+      : getDefaultInstallState(defaultTranslation),
+    activeTextPackVersion: sanitizeOptionalString(persisted?.activeTextPackVersion),
+    pendingTextPackVersion: sanitizeOptionalString(persisted?.pendingTextPackVersion),
+    pendingTextPackLocalPath: sanitizeOptionalString(persisted?.pendingTextPackLocalPath),
+    textPackLocalPath: sanitizeOptionalString(persisted?.textPackLocalPath),
+    rollbackTextPackVersion: sanitizeOptionalString(persisted?.rollbackTextPackVersion),
+    rollbackTextPackLocalPath: sanitizeOptionalString(persisted?.rollbackTextPackLocalPath),
+    lastInstallError: sanitizeOptionalString(persisted?.lastInstallError),
+    catalog: sanitizeTranslationCatalog(persisted?.catalog) ?? defaultTranslation.catalog,
+    activeDownloadJob: sanitizeTranslationDownloadJob(persisted?.activeDownloadJob),
+  };
+};
+
+const sanitizeRuntimeTranslation = (value: unknown): BibleTranslation | null => {
+  if (!isRecord(value) || value.source !== 'runtime') {
+    return null;
+  }
+
+  const id = sanitizeRequiredString(value.id);
+  const name = sanitizeRequiredString(value.name);
+  const abbreviation = sanitizeRequiredString(value.abbreviation);
+  const language = sanitizeRequiredString(value.language);
+  const description = sanitizeRequiredString(value.description);
+  const copyright = sanitizeRequiredString(value.copyright);
+  const totalBooks = sanitizeOptionalFiniteNumber(value.totalBooks);
+  const sizeInMB = sanitizeOptionalFiniteNumber(value.sizeInMB);
+  const catalog = sanitizeTranslationCatalog(value.catalog);
+
+  if (
+    !id ||
+    supportedBibleTranslationIds.has(id) ||
+    !name ||
+    !abbreviation ||
+    !language ||
+    !description ||
+    !copyright ||
+    totalBooks === null ||
+    !Number.isInteger(totalBooks) ||
+    totalBooks <= 0 ||
+    sizeInMB === null ||
+    sizeInMB < 0 ||
+    typeof value.hasText !== 'boolean' ||
+    typeof value.hasAudio !== 'boolean' ||
+    !validAudioGranularities.has(value.audioGranularity as BibleTranslation['audioGranularity']) ||
+    !validInstallStates.has(value.installState as TranslationInstallState) ||
+    !catalog
+  ) {
+    return null;
+  }
+
+  if (value.hasText && !catalog.text) {
+    return null;
+  }
+
+  if (value.hasAudio && !catalog.audio) {
+    return null;
+  }
+
+  return {
+    id,
+    name,
+    abbreviation,
+    language,
+    description,
+    copyright,
+    isDownloaded: value.isDownloaded === true,
+    downloadedBooks: sanitizeBookIds(value.downloadedBooks),
+    downloadedAudioBooks: sanitizeBookIds(value.downloadedAudioBooks),
+    totalBooks,
+    sizeInMB,
+    hasText: value.hasText,
+    hasAudio: value.hasAudio,
+    audioGranularity: value.audioGranularity as BibleTranslation['audioGranularity'],
+    audioProvider:
+      catalog.audio?.strategy === 'provider' ? catalog.audio.provider : undefined,
+    source: 'runtime',
+    installState: value.installState as TranslationInstallState,
+    activeTextPackVersion: sanitizeOptionalString(value.activeTextPackVersion) ?? catalog.version,
+    pendingTextPackVersion: sanitizeOptionalString(value.pendingTextPackVersion),
+    pendingTextPackLocalPath: sanitizeOptionalString(value.pendingTextPackLocalPath),
+    textPackLocalPath: sanitizeOptionalString(value.textPackLocalPath),
+    rollbackTextPackVersion: sanitizeOptionalString(value.rollbackTextPackVersion),
+    rollbackTextPackLocalPath: sanitizeOptionalString(value.rollbackTextPackLocalPath),
+    lastInstallError: sanitizeOptionalString(value.lastInstallError),
+    catalog,
+    activeDownloadJob: sanitizeTranslationDownloadJob(value.activeDownloadJob),
+  };
+};
+
+export const getDefaultBibleTranslations = (): BibleTranslation[] =>
+  bibleTranslations.map((translation) => hydrateSeededTranslation(translation));
+
 const sanitizeBibleTranslations = (value: unknown): BibleTranslation[] => {
   if (!Array.isArray(value)) {
-    return bibleTranslations;
+    return getDefaultBibleTranslations();
   }
 
   const persistedById = new Map<string, Record<string, unknown>>();
@@ -43,34 +364,19 @@ const sanitizeBibleTranslations = (value: unknown): BibleTranslation[] => {
     }
   });
 
-  return bibleTranslations.map((defaultTranslation) => {
-    const persisted = persistedById.get(defaultTranslation.id);
-    if (!persisted) {
-      return defaultTranslation;
+  const seededTranslations = bibleTranslations.map((defaultTranslation) =>
+    hydrateSeededTranslation(defaultTranslation, persistedById.get(defaultTranslation.id))
+  );
+
+  const runtimeTranslationsById = new Map<string, BibleTranslation>();
+  value.forEach((entry) => {
+    const runtimeTranslation = sanitizeRuntimeTranslation(entry);
+    if (runtimeTranslation) {
+      runtimeTranslationsById.set(runtimeTranslation.id, runtimeTranslation);
     }
-
-    const downloadedBooks = Array.isArray(persisted.downloadedBooks)
-      ? persisted.downloadedBooks.filter(
-          (bookId): bookId is string => typeof bookId === 'string' && Boolean(getBookById(bookId))
-        )
-      : defaultTranslation.downloadedBooks;
-
-    const downloadedAudioBooks = Array.isArray(persisted.downloadedAudioBooks)
-      ? persisted.downloadedAudioBooks.filter(
-          (bookId): bookId is string => typeof bookId === 'string' && Boolean(getBookById(bookId))
-        )
-      : defaultTranslation.downloadedAudioBooks;
-
-    return {
-      ...defaultTranslation,
-      isDownloaded:
-        typeof persisted.isDownloaded === 'boolean'
-          ? persisted.isDownloaded
-          : defaultTranslation.isDownloaded,
-      downloadedBooks,
-      downloadedAudioBooks,
-    };
   });
+
+  return [...seededTranslations, ...runtimeTranslationsById.values()];
 };
 
 export const defaultAuthPreferences: UserPreferences = {

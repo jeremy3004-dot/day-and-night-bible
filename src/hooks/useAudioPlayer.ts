@@ -8,8 +8,12 @@ import {
   prefetchChapterAudio,
 } from '../services/audio';
 import { getBookById } from '../constants';
-import type { PlaybackRate, SleepTimerOption } from '../types';
+import type { AudioPlaybackSequenceEntry, PlaybackRate, SleepTimerOption } from '../types';
 import { advanceAudioQueue } from '../stores/audioQueueModel';
+import {
+  getAdjacentAudioPlaybackSequenceEntry,
+  hasAudioPlaybackSequenceEntry,
+} from '../stores/audioPlaybackSequenceModel';
 
 export function useAudioPlayer(translationId: string = 'bsb') {
   const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -30,6 +34,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     showPlayer,
     queue,
     queueIndex,
+    playbackSequence,
     lastPlayedTranslationId,
     lastPlayedBookId,
     lastPlayedChapter,
@@ -48,6 +53,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     removeFromQueue,
     clearQueue,
     setQueueIndex,
+    clearPlaybackSequence,
     setShowPlayer,
     togglePlayer,
     setPlaybackRate,
@@ -78,6 +84,12 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       setStatus('loading');
       setCurrentTrack(targetTranslationId, bookId, chapter);
       syncQueueToTrackInStore(targetTranslationId, bookId, chapter);
+      if (
+        playbackSequence.length > 0 &&
+        !hasAudioPlaybackSequenceEntry(playbackSequence, bookId, chapter)
+      ) {
+        clearPlaybackSequence();
+      }
 
       try {
         const audioData = await getChapterAudioUrl(targetTranslationId, bookId, chapter, verse);
@@ -120,6 +132,8 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       setError,
       setDuration,
       syncQueueToTrackInStore,
+      playbackSequence,
+      clearPlaybackSequence,
     ]
   );
 
@@ -168,6 +182,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       queue,
       queueIndex,
       setQueueIndex,
+      playbackSequence,
     } = store;
 
     const nextQueuedEntry = advanceAudioQueue(queue, queueIndex);
@@ -177,6 +192,19 @@ export function useAudioPlayer(translationId: string = 'bsb') {
         nextQueuedEntry.entry.translationId,
         nextQueuedEntry.entry.bookId,
         nextQueuedEntry.entry.chapter
+      );
+      return;
+    }
+
+    const nextSequenceEntry =
+      bookId && chapterNum
+        ? getAdjacentAudioPlaybackSequenceEntry(playbackSequence, bookId, chapterNum, 1)
+        : null;
+    if (nextSequenceEntry && playChapterForTranslationRef.current) {
+      await playChapterForTranslationRef.current(
+        store.currentTranslationId ?? translationId,
+        nextSequenceEntry.bookId,
+        nextSequenceEntry.chapter
       );
       return;
     }
@@ -355,7 +383,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
   );
 
   // Navigate to previous chapter
-  const previousChapter = useCallback(async () => {
+  const previousChapter = useCallback(async (): Promise<AudioPlaybackSequenceEntry | null> => {
     const previousQueuedEntry = queue[queueIndex - 1];
     if (previousQueuedEntry) {
       setQueueIndex(queueIndex - 1);
@@ -364,20 +392,38 @@ export function useAudioPlayer(translationId: string = 'bsb') {
         previousQueuedEntry.bookId,
         previousQueuedEntry.chapter
       );
-      return;
+      return {
+        bookId: previousQueuedEntry.bookId,
+        chapter: previousQueuedEntry.chapter,
+      };
     }
 
-    if (!currentBookId || !currentChapter || currentChapter <= 1) return;
+    const previousSequenceEntry =
+      currentBookId && currentChapter
+        ? getAdjacentAudioPlaybackSequenceEntry(playbackSequence, currentBookId, currentChapter, -1)
+        : null;
+    if (previousSequenceEntry) {
+      await playChapterForTranslation(
+        currentTranslationId ?? translationId,
+        previousSequenceEntry.bookId,
+        previousSequenceEntry.chapter
+      );
+      return previousSequenceEntry;
+    }
+
+    if (!currentBookId || !currentChapter || currentChapter <= 1) return null;
     await playChapterForTranslation(
       currentTranslationId ?? translationId,
       currentBookId,
       currentChapter - 1
     );
+    return { bookId: currentBookId, chapter: currentChapter - 1 };
   }, [
     currentBookId,
     currentChapter,
     currentTranslationId,
     playChapterForTranslation,
+    playbackSequence,
     queue,
     queueIndex,
     setQueueIndex,
@@ -385,7 +431,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
   ]);
 
   // Navigate to next chapter
-  const nextChapter = useCallback(async () => {
+  const nextChapter = useCallback(async (): Promise<AudioPlaybackSequenceEntry | null> => {
     const nextQueuedEntry = queue[queueIndex + 1];
     if (nextQueuedEntry) {
       setQueueIndex(queueIndex + 1);
@@ -394,24 +440,42 @@ export function useAudioPlayer(translationId: string = 'bsb') {
         nextQueuedEntry.bookId,
         nextQueuedEntry.chapter
       );
-      return;
+      return {
+        bookId: nextQueuedEntry.bookId,
+        chapter: nextQueuedEntry.chapter,
+      };
     }
 
-    if (!currentBookId || !currentChapter) return;
+    const nextSequenceEntry =
+      currentBookId && currentChapter
+        ? getAdjacentAudioPlaybackSequenceEntry(playbackSequence, currentBookId, currentChapter, 1)
+        : null;
+    if (nextSequenceEntry) {
+      await playChapterForTranslation(
+        currentTranslationId ?? translationId,
+        nextSequenceEntry.bookId,
+        nextSequenceEntry.chapter
+      );
+      return nextSequenceEntry;
+    }
+
+    if (!currentBookId || !currentChapter) return null;
 
     const book = getBookById(currentBookId);
-    if (!book || currentChapter >= book.chapters) return;
+    if (!book || currentChapter >= book.chapters) return null;
 
     await playChapterForTranslation(
       currentTranslationId ?? translationId,
       currentBookId,
       currentChapter + 1
     );
+    return { bookId: currentBookId, chapter: currentChapter + 1 };
   }, [
     currentBookId,
     currentChapter,
     currentTranslationId,
     playChapterForTranslation,
+    playbackSequence,
     queue,
     queueIndex,
     setQueueIndex,
@@ -448,6 +512,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     showPlayer,
     queue,
     queueIndex,
+    playbackSequence,
     lastPlayedTranslationId,
     lastPlayedBookId,
     lastPlayedChapter,

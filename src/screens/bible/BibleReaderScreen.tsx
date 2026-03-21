@@ -29,7 +29,8 @@ import { trackBibleExperienceEvent } from '../../services/analytics/bibleExperie
 import { getChapter } from '../../services/bible';
 import { getChapterPresentationMode } from '../../services/bible/presentation';
 import { getAudioAvailability, isRemoteAudioAvailable } from '../../services/audio';
-import { useBibleStore, useLibraryStore, useProgressStore } from '../../stores';
+import { useAudioStore, useBibleStore, useLibraryStore, useProgressStore } from '../../stores';
+import { getAdjacentAudioPlaybackSequenceEntry } from '../../stores/audioPlaybackSequenceModel';
 import { useFontSize, useAudioPlayer } from '../../hooks';
 import { VersesSkeleton, AudioFirstChapterCard, PlaybackControls } from '../../components';
 import type { BibleTranslation, Verse } from '../../types';
@@ -97,7 +98,14 @@ function GlassSurface({ children, style, contentStyle, intensity = 36 }: GlassSu
 export function BibleReaderScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<BibleReaderScreenProps['route']>();
-  const { bookId, chapter, autoplayAudio, preferredMode, focusVerse } = route.params;
+  const {
+    bookId,
+    chapter,
+    autoplayAudio,
+    preferredMode,
+    focusVerse,
+    playbackSequenceEntries = [],
+  } = route.params;
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
@@ -131,6 +139,7 @@ export function BibleReaderScreen() {
   const translations = useBibleStore((state) => state.translations);
   const setCurrentTranslation = useBibleStore((state) => state.setCurrentTranslation);
   const downloadAudioForBook = useBibleStore((state) => state.downloadAudioForBook);
+  const setPlaybackSequence = useAudioStore((state) => state.setPlaybackSequence);
   const toggleFavorite = useLibraryStore((state) => state.toggleFavorite);
   const addChapterToDefaultPlaylist = useLibraryStore((state) => state.addChapterToDefaultPlaylist);
   const isFavorite = useLibraryStore((state) => state.isFavorite(bookId, chapter));
@@ -286,6 +295,14 @@ export function BibleReaderScreen() {
   }, [bookId, chapter, setCurrentBook, setCurrentChapter]);
 
   useEffect(() => {
+    if (playbackSequenceEntries.length === 0) {
+      return;
+    }
+
+    setPlaybackSequence(playbackSequenceEntries);
+  }, [playbackSequenceEntries, setPlaybackSequence]);
+
+  useEffect(() => {
     void loadChapter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookId, chapter, currentTranslation]);
@@ -431,6 +448,7 @@ export function BibleReaderScreen() {
     }
 
     navigation.setParams({
+      bookId: activeAudioBookId ?? bookId,
       chapter: activeAudioChapter,
       focusVerse: undefined,
       autoplayAudio: false,
@@ -456,12 +474,33 @@ export function BibleReaderScreen() {
     return null;
   }
 
-  const hasPrevChapter = chapter > 1;
-  const hasNextChapter = chapter < book.chapters;
+  const previousSequenceEntry = getAdjacentAudioPlaybackSequenceEntry(
+    playbackSequenceEntries,
+    bookId,
+    chapter,
+    -1
+  );
+  const nextSequenceEntry = getAdjacentAudioPlaybackSequenceEntry(
+    playbackSequenceEntries,
+    bookId,
+    chapter,
+    1
+  );
+  const previousNavigationTarget =
+    previousSequenceEntry ?? (chapter > 1 ? { bookId, chapter: chapter - 1 } : null);
+  const nextNavigationTarget =
+    nextSequenceEntry ?? (chapter < book.chapters ? { bookId, chapter: chapter + 1 } : null);
+  const hasPrevChapter = previousNavigationTarget != null;
+  const hasNextChapter = nextNavigationTarget != null;
   const shouldFillReaderCanvas =
     chapterPresentationMode === 'audio-first' || chapterSessionMode === 'listen';
-  const syncReaderChapter = (nextChapter: number) => {
-    navigation.setParams({ chapter: nextChapter, focusVerse: undefined, autoplayAudio: false });
+  const syncReaderReference = (nextBookId: string, nextChapter: number) => {
+    navigation.setParams({
+      bookId: nextBookId,
+      chapter: nextChapter,
+      focusVerse: undefined,
+      autoplayAudio: false,
+    });
   };
   const dismissFontSizeSheetFromReader = () => {
     setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'readerContentTap'));
@@ -675,30 +714,36 @@ export function BibleReaderScreen() {
 
   const handlePreviousListenChapter = async () => {
     if (isCurrentAudioChapter) {
-      await previousChapter();
+      const target = await previousChapter();
+      if (target) {
+        syncReaderReference(target.bookId, target.chapter);
+      }
       return;
     }
 
-    if (!hasPrevChapter) {
+    if (!previousNavigationTarget) {
       return;
     }
 
-    await playChapter(bookId, chapter - 1);
-    syncReaderChapter(chapter - 1);
+    await playChapter(previousNavigationTarget.bookId, previousNavigationTarget.chapter);
+    syncReaderReference(previousNavigationTarget.bookId, previousNavigationTarget.chapter);
   };
 
   const handleNextListenChapter = async () => {
     if (isCurrentAudioChapter) {
-      await nextChapter();
+      const target = await nextChapter();
+      if (target) {
+        syncReaderReference(target.bookId, target.chapter);
+      }
       return;
     }
 
-    if (!hasNextChapter) {
+    if (!nextNavigationTarget) {
       return;
     }
 
-    await playChapter(bookId, chapter + 1);
-    syncReaderChapter(chapter + 1);
+    await playChapter(nextNavigationTarget.bookId, nextNavigationTarget.chapter);
+    syncReaderReference(nextNavigationTarget.bookId, nextNavigationTarget.chapter);
   };
 
   const renderListenMode = () => {
@@ -932,8 +977,9 @@ export function BibleReaderScreen() {
             bookId={bookId}
             chapter={chapter}
             translationLabel={translationLabel}
-            onChapterChange={(newChapter) => {
-              syncReaderChapter(newChapter);
+            playbackSequenceEntries={playbackSequenceEntries}
+            onChapterChange={(nextBookId, newChapter) => {
+              syncReaderReference(nextBookId, newChapter);
             }}
           />
         </View>

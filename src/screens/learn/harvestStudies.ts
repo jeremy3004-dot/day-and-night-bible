@@ -1,7 +1,6 @@
-export interface HarvestStudyEntry {
-  bookId: string;
-  chapter: number;
-}
+import type { AudioPlaybackSequenceEntry } from '../../types';
+
+export type HarvestStudyEntry = AudioPlaybackSequenceEntry;
 
 export interface HarvestStudyGroup {
   id: string;
@@ -14,6 +13,12 @@ export interface HarvestStudySection {
   title: string;
   description: string;
   groups: HarvestStudyGroup[];
+}
+
+export function getHarvestStudySectionPlaybackSequence(
+  section: HarvestStudySection
+): HarvestStudyEntry[] {
+  return section.groups.flatMap((group) => group.entries);
 }
 
 export const harvestStudySections: HarvestStudySection[] = [

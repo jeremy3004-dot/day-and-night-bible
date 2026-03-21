@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** When someone opens the app, they can reliably read or listen to scripture and continue their discipleship journey even when network conditions are weak or backend features are partially unavailable.
-**Current focus:** Finish device QA for the hardened Phase 13 BSB audio handoff/offline flow, then continue Phase 13's official text refresh work
+**Current focus:** Execute Phase 14's backend-driven Bible content sync and offline pack delivery, with text-pack routing landed and audio/catalog integration next
 
 ## Current Position
 
-Phase: 13 (Public-domain Berean Standard Bible sourcing and direct audio integration)
-Plan: 1 of 2 complete in current phase
-Status: Plan 01 hardened with translation-aware BSB audio handoff; automated verification complete; device QA and plan 02 remain
-Last activity: 2026-03-21 — Fixed the BSB translation-switch regression by making audio session identity translation-aware across playback, queue, resume, and reader surfaces
+Phase: 14 (Backend-driven Bible content sync and offline pack delivery)
+Plan: 2 of 4 complete in current phase
+Status: Plans 01 and 02 complete with runtime catalog, signed manifest verification, durable download-job seams, and translation-aware SQLite pack routing; plan 03 is in progress
+Last activity: 2026-03-21 — Completed the Phase 14 text-pack lifecycle and DB resolver seam, and moved on to backend-driven audio routing/offline download integration
 
-Progress: [██████████] 100%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
 
 - Total plans completed: 31
-- Current phase plans remaining: 0
+- Current phase plans remaining: 2
 - Average duration: n/a
 - Total execution time: n/a
 
@@ -43,8 +43,8 @@ Progress: [██████████] 100%
 
 **Recent Trend:**
 
-- Last 5 plans: 11-03, 12.1-01, 12.1-02, 12.1-03, 13-01
-- Trend: The roadmap is now in Phase 13 hardening mode, with the direct BSB provider landed, the translation-switch regression fixed, and plan 02 still queued behind device QA
+- Last 5 plans: 12.1-02, 12.1-03, 13-01, 14-01, 14-02
+- Trend: Phase 14 is now actively executing, with the runtime content foundation and text-pack routing landed before the audio-metadata/UI waves
 
 _Updated after each plan completion_
 
@@ -120,6 +120,7 @@ Recent decisions affecting current work:
 - Phase 12 added: Professional design-system unification across the app shell and highest-traffic screens
 - Phase 12.1 inserted after Phase 12: Premium liquid-glass reader chrome and scroll-collapse motion (URGENT)
 - Phase 13 added: Public-domain Berean Standard Bible sourcing and direct audio integration
+- Phase 14 added: Backend-driven Bible content sync and offline pack delivery
 
 ### Blockers/Concerns
 

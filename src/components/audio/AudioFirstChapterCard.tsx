@@ -3,19 +3,23 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useAudioPlayer } from '../../hooks';
 import { getBookById, getBookIcon } from '../../constants';
 import { useBibleStore } from '../../stores';
+import { getAdjacentAudioPlaybackSequenceEntry } from '../../stores/audioPlaybackSequenceModel';
 import { PlaybackControls } from './PlaybackControls';
+import type { AudioPlaybackSequenceEntry } from '../../types';
 
 interface AudioFirstChapterCardProps {
   bookId: string;
   chapter: number;
   translationLabel: string;
-  onChapterChange?: (chapter: number) => void;
+  playbackSequenceEntries?: AudioPlaybackSequenceEntry[];
+  onChapterChange?: (bookId: string, chapter: number) => void;
 }
 
 export function AudioFirstChapterCard({
   bookId,
   chapter,
   translationLabel,
+  playbackSequenceEntries = [],
   onChapterChange,
 }: AudioFirstChapterCardProps) {
   const { colors } = useTheme();
@@ -47,6 +51,22 @@ export function AudioFirstChapterCard({
     currentTranslationId === currentTranslation &&
     currentBookId === bookId &&
     currentChapter === chapter;
+  const previousSequenceEntry = getAdjacentAudioPlaybackSequenceEntry(
+    playbackSequenceEntries,
+    bookId,
+    chapter,
+    -1
+  );
+  const nextSequenceEntry = getAdjacentAudioPlaybackSequenceEntry(
+    playbackSequenceEntries,
+    bookId,
+    chapter,
+    1
+  );
+  const previousNavigationTarget =
+    previousSequenceEntry ?? (chapter > 1 ? { bookId, chapter: chapter - 1 } : null);
+  const nextNavigationTarget =
+    nextSequenceEntry ?? (book && chapter < book.chapters ? { bookId, chapter: chapter + 1 } : null);
   const displayPosition = isCurrentChapter ? currentPosition : 0;
   const displayDuration = isCurrentChapter ? duration : 0;
   const progress = displayDuration > 0 ? (displayPosition / displayDuration) * 100 : 0;
@@ -79,37 +99,36 @@ export function AudioFirstChapterCard({
 
   const handlePreviousChapter = async () => {
     if (isCurrentChapter) {
-      await previousChapter();
-      if (currentBookId && currentChapter && currentChapter > 1) {
-        onChapterChange?.(currentChapter - 1);
+      const target = await previousChapter();
+      if (target) {
+        onChapterChange?.(target.bookId, target.chapter);
       }
       return;
     }
 
-    if (chapter > 1) {
-      await playChapter(bookId, chapter - 1);
-      onChapterChange?.(chapter - 1);
+    if (previousNavigationTarget) {
+      await playChapter(previousNavigationTarget.bookId, previousNavigationTarget.chapter);
+      onChapterChange?.(previousNavigationTarget.bookId, previousNavigationTarget.chapter);
     }
   };
 
   const handleNextChapter = async () => {
     if (isCurrentChapter) {
-      await nextChapter();
-      if (currentBookId && currentChapter && book && currentChapter < book.chapters) {
-        onChapterChange?.(currentChapter + 1);
+      const target = await nextChapter();
+      if (target) {
+        onChapterChange?.(target.bookId, target.chapter);
       }
       return;
     }
 
-    if (book && chapter < book.chapters) {
-      await playChapter(bookId, chapter + 1);
-      onChapterChange?.(chapter + 1);
+    if (nextNavigationTarget) {
+      await playChapter(nextNavigationTarget.bookId, nextNavigationTarget.chapter);
+      onChapterChange?.(nextNavigationTarget.bookId, nextNavigationTarget.chapter);
     }
   };
 
-  const hasPreviousChapter = currentChapter ? currentChapter > 1 : chapter > 1;
-  const hasNextChapter =
-    currentChapter && book ? currentChapter < book.chapters : chapter < (book?.chapters ?? 1);
+  const hasPreviousChapter = previousNavigationTarget != null;
+  const hasNextChapter = nextNavigationTarget != null;
   const remainingDuration = Math.max(displayDuration - displayPosition, 0);
 
   return (

@@ -1,12 +1,19 @@
 import { getBookById } from '../../constants/books';
 import { getTranslationById } from '../../constants/translations';
-import type { BibleIsAudioResponse } from '../../types';
+import type { AudioProvider, BibleIsAudioResponse, BibleTranslation } from '../../types';
 import type { RemoteAudioAsset } from './audioDownloadService';
 
 const BIBLE_IS_API_BASE = 'https://4.dbt.io/api';
 const BIBLE_IS_API_KEY = process.env.EXPO_PUBLIC_BIBLE_IS_API_KEY || '';
 const EBIBLE_WEBBE_AUDIO_BASE = 'https://ebible.org/eng-webbe/mp3';
 const OPENBIBLE_BSB_SOUER_AUDIO_BASE = 'https://openbible.com/audio/souer';
+const AUDIO_TEMPLATE_PLACEHOLDERS = new Set([
+  '{bookId}',
+  '{chapter}',
+  '{chapterPadded}',
+  '{verse}',
+  '{versePadded}',
+]);
 
 const BOOK_ID_MAP: Record<string, string> = {
   GEN: 'GEN',
@@ -148,6 +155,72 @@ const EBIBLE_WEBBE_BOOK_PREFIXES: Record<string, string> = {
 
 const audioUrlCache = new Map<string, RemoteAudioAsset>();
 
+type RemoteAudioMetadata = {
+  id: string;
+  hasAudio: boolean;
+  audioGranularity?: BibleTranslation['audioGranularity'];
+  audio?:
+    | {
+        strategy: 'provider';
+        provider?: AudioProvider;
+        filesetId?: string;
+      }
+    | {
+        strategy: 'stream-template';
+        baseUrl: string;
+        chapterPathTemplate: string;
+      }
+    | {
+        strategy: 'audio-pack';
+        downloadUrl: string;
+      };
+};
+
+export type RemoteAudioMetadataResolver = (translationId: string) => RemoteAudioMetadata | null;
+
+const defaultRemoteAudioMetadataResolver: RemoteAudioMetadataResolver = (translationId) => {
+  const translation = getTranslationById(translationId);
+  if (!translation) {
+    return null;
+  }
+
+  if (!translation.hasAudio) {
+    return {
+      id: translation.id,
+      hasAudio: false,
+      audioGranularity: translation.audioGranularity,
+    };
+  }
+
+  if (translation.audioProvider) {
+    return {
+      id: translation.id,
+      hasAudio: true,
+      audioGranularity: translation.audioGranularity,
+      audio: {
+        strategy: 'provider',
+        provider: translation.audioProvider,
+        filesetId: translation.audioFilesetId ?? undefined,
+      },
+    };
+  }
+
+  return {
+    id: translation.id,
+    hasAudio: translation.hasAudio,
+    audioGranularity: translation.audioGranularity,
+  };
+};
+
+let remoteAudioMetadataResolver: RemoteAudioMetadataResolver = defaultRemoteAudioMetadataResolver;
+
+export function setRemoteAudioMetadataResolver(
+  resolver: RemoteAudioMetadataResolver | null
+): void {
+  remoteAudioMetadataResolver = resolver ?? defaultRemoteAudioMetadataResolver;
+  audioUrlCache.clear();
+}
+
 function getCacheKey(
   translationId: string,
   bookId: string,
@@ -155,6 +228,43 @@ function getCacheKey(
   verse?: number
 ): string {
   return `${translationId}_${bookId}_${chapter}_${verse ?? 'chapter'}`;
+}
+
+function resolveRemoteAudioMetadata(translationId: string): RemoteAudioMetadata | null {
+  try {
+    return remoteAudioMetadataResolver(translationId);
+  } catch (error) {
+    console.warn('[Audio] Failed to resolve remote audio metadata:', error);
+    return null;
+  }
+}
+
+function buildStreamTemplateAudioUrl(
+  baseUrl: string,
+  chapterPathTemplate: string,
+  bookId: string,
+  chapter: number,
+  verse?: number
+): string | null {
+  if (!baseUrl || !chapterPathTemplate) {
+    return null;
+  }
+
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, '');
+  const chapterPadded = String(chapter).padStart(2, '0');
+  const versePadded = verse == null ? '' : String(verse).padStart(3, '0');
+  const path = chapterPathTemplate
+    .replaceAll('{bookId}', bookId)
+    .replaceAll('{chapter}', String(chapter))
+    .replaceAll('{chapterPadded}', chapterPadded)
+    .replaceAll('{verse}', verse == null ? '' : String(verse))
+    .replaceAll('{versePadded}', versePadded);
+
+  if (!path || Array.from(AUDIO_TEMPLATE_PLACEHOLDERS).every((placeholder) => !path.includes(placeholder))) {
+    return `${normalizedBaseUrl}/${path.replace(/^\/+/, '')}`;
+  }
+
+  return null;
 }
 
 function buildEbibleWebbeChapterAudioUrl(bookId: string, chapter: number): string | null {
@@ -193,64 +303,33 @@ function buildOpenBibleBsbSouerChapterAudioUrl(bookId: string, chapter: number):
   return `${OPENBIBLE_BSB_SOUER_AUDIO_BASE}/BSB_${orderSegment}_${bookSegment}_${chapterSegment}.mp3`;
 }
 
-export async function fetchRemoteChapterAudio(
-  translationId: string,
+function buildProviderChapterAudioUrl(
+  provider: AudioProvider | undefined,
+  bookId: string,
+  chapter: number
+): string | null {
+  if (provider === 'openbible-bsb-souer') {
+    return buildOpenBibleBsbSouerChapterAudioUrl(bookId, chapter);
+  }
+
+  if (provider === 'ebible-webbe') {
+    return buildEbibleWebbeChapterAudioUrl(bookId, chapter);
+  }
+
+  return null;
+}
+
+async function fetchBibleIsChapterAudio(
+  filesetId: string | undefined,
   bookId: string,
   chapter: number,
   verse?: number
 ): Promise<RemoteAudioAsset | null> {
-  const cacheKey = getCacheKey(translationId, bookId, chapter, verse);
-  const cached = audioUrlCache.get(cacheKey);
-  if (cached) {
-    return cached;
-  }
-
-  const translation = getTranslationById(translationId);
-  if (!translation?.hasAudio) {
-    return null;
-  }
-
-  if (translation.audioProvider === 'openbible-bsb-souer') {
-    const url = buildOpenBibleBsbSouerChapterAudioUrl(bookId, chapter);
-    if (!url) {
-      return null;
-    }
-
-    const result = {
-      url,
-      duration: 0,
-    };
-
-    audioUrlCache.set(cacheKey, result);
-    return result;
-  }
-
-  if (translation.audioProvider === 'ebible-webbe') {
-    const url = buildEbibleWebbeChapterAudioUrl(bookId, chapter);
-    if (!url) {
-      return null;
-    }
-
-    const result = {
-      url,
-      duration: 0,
-    };
-
-    audioUrlCache.set(cacheKey, result);
-    return result;
-  }
-
-  if (!BIBLE_IS_API_KEY) {
-    console.warn('Bible.is API key not configured. Audio playback unavailable.');
+  if (!BIBLE_IS_API_KEY || !filesetId) {
     return null;
   }
 
   try {
-    const filesetId = translation?.audioFilesetId;
-    if (!filesetId) {
-      return null;
-    }
-
     const bibleIsBookId = BOOK_ID_MAP[bookId] || bookId;
     const response = await fetch(
       `${BIBLE_IS_API_BASE}/bibles/filesets/${filesetId}/${bibleIsBookId}/${chapter}?v=4&key=${BIBLE_IS_API_KEY}`,
@@ -276,33 +355,100 @@ export async function fetchRemoteChapterAudio(
         : (data.data.find((file) => verse >= file.verse_start && verse <= file.verse_end) ??
           data.data[0]);
 
-    const result = {
+    return {
       url: audioFile.path,
       duration: audioFile.duration * 1000,
     };
-
-    audioUrlCache.set(cacheKey, result);
-    return result;
   } catch (error) {
     console.error('Error fetching audio URL:', error);
     return null;
   }
 }
 
+export async function fetchRemoteChapterAudio(
+  translationId: string,
+  bookId: string,
+  chapter: number,
+  verse?: number
+): Promise<RemoteAudioAsset | null> {
+  const cacheKey = getCacheKey(translationId, bookId, chapter, verse);
+  const cached = audioUrlCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const translation = resolveRemoteAudioMetadata(translationId);
+  if (!translation?.hasAudio) {
+    return null;
+  }
+
+  const audio = translation.audio;
+  if (!audio) {
+    return null;
+  }
+
+  if (audio.strategy === 'stream-template') {
+    const url = buildStreamTemplateAudioUrl(
+      audio.baseUrl,
+      audio.chapterPathTemplate,
+      bookId,
+      chapter,
+      verse
+    );
+    if (!url) {
+      return null;
+    }
+
+    const result = { url, duration: 0 };
+    audioUrlCache.set(cacheKey, result);
+    return result;
+  }
+
+  if (audio.strategy === 'audio-pack') {
+    const result = { url: audio.downloadUrl, duration: 0 };
+    audioUrlCache.set(cacheKey, result);
+    return result;
+  }
+
+  const providerUrl = buildProviderChapterAudioUrl(audio.provider, bookId, chapter);
+  if (providerUrl) {
+    const result = { url: providerUrl, duration: 0 };
+    audioUrlCache.set(cacheKey, result);
+    return result;
+  }
+
+  const bibleIsAudio = await fetchBibleIsChapterAudio(audio.filesetId, bookId, chapter, verse);
+  if (bibleIsAudio) {
+    audioUrlCache.set(cacheKey, bibleIsAudio);
+  }
+
+  return bibleIsAudio;
+}
+
 export function isRemoteAudioAvailable(translationId: string): boolean {
-  const translation = getTranslationById(translationId);
+  const translation = resolveRemoteAudioMetadata(translationId);
   if (!translation?.hasAudio) {
     return false;
   }
 
-  if (
-    translation.audioProvider === 'ebible-webbe' ||
-    translation.audioProvider === 'openbible-bsb-souer'
-  ) {
+  const audio = translation.audio;
+  if (!audio) {
+    return false;
+  }
+
+  if (audio.strategy === 'stream-template') {
+    return Boolean(audio.baseUrl && audio.chapterPathTemplate);
+  }
+
+  if (audio.strategy === 'audio-pack') {
+    return Boolean(audio.downloadUrl);
+  }
+
+  if (audio.provider === 'ebible-webbe' || audio.provider === 'openbible-bsb-souer') {
     return true;
   }
 
-  return Boolean(translation.audioFilesetId && BIBLE_IS_API_KEY);
+  return Boolean(audio.filesetId && BIBLE_IS_API_KEY);
 }
 
 export function clearRemoteAudioCache(): void {

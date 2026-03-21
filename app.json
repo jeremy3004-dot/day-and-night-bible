@@ -57,6 +57,7 @@
       "expo-web-browser",
       "expo-apple-authentication",
       "expo-av",
+      "@kesha-antonov/react-native-background-downloader",
       [
         "expo-notifications",
         {

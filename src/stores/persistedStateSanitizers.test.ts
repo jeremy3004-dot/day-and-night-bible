@@ -80,6 +80,102 @@ test('sanitizePersistedBibleState falls back when a retired translation is selec
   assert.equal(sanitized.currentTranslation, 'bsb');
 });
 
+test('sanitizePersistedBibleState preserves valid runtime translations alongside seeded ones', () => {
+  const sanitized = sanitizePersistedBibleState({
+    currentTranslation: 'niv',
+    translations: [
+      {
+        id: 'niv',
+        name: 'New International Version',
+        abbreviation: 'NIV',
+        language: 'English',
+        description: 'Runtime translation from backend catalog',
+        copyright: 'Example License',
+        isDownloaded: false,
+        downloadedBooks: [],
+        downloadedAudioBooks: ['MAT', 'INVALID'],
+        totalBooks: 66,
+        sizeInMB: 5.2,
+        hasText: true,
+        hasAudio: true,
+        audioGranularity: 'chapter',
+        source: 'runtime',
+        installState: 'remote-only',
+        activeTextPackVersion: '2026.03.21',
+        catalog: {
+          version: '2026.03.21',
+          updatedAt: '2026-03-21T10:00:00.000Z',
+          text: {
+            format: 'sqlite',
+            version: '2026.03.21',
+            downloadUrl: 'https://cdn.example.com/niv.sqlite',
+            sha256: 'sha256-text',
+          },
+          audio: {
+            strategy: 'stream-template',
+            baseUrl: 'https://cdn.example.com/audio/niv',
+            chapterPathTemplate: '{bookId}/{chapter}.mp3',
+          },
+        },
+      },
+    ],
+  });
+
+  const runtimeTranslation = sanitized.translations.find((translation) => translation.id === 'niv');
+
+  assert.equal(sanitized.currentTranslation, 'niv');
+  assert.ok(runtimeTranslation);
+  assert.equal(runtimeTranslation.source, 'runtime');
+  assert.equal(runtimeTranslation.installState, 'remote-only');
+  assert.equal(runtimeTranslation.activeTextPackVersion, '2026.03.21');
+  assert.equal(runtimeTranslation.catalog?.text?.format, 'sqlite');
+  assert.equal(runtimeTranslation.catalog?.audio?.strategy, 'stream-template');
+  assert.deepEqual(runtimeTranslation.downloadedAudioBooks, ['MAT']);
+  assert.ok(sanitized.translations.some((translation) => translation.id === 'bsb'));
+});
+
+test('sanitizePersistedBibleState drops malformed runtime translations', () => {
+  const sanitized = sanitizePersistedBibleState({
+    currentTranslation: 'niv',
+    translations: [
+      {
+        id: 'niv',
+        name: 'New International Version',
+        abbreviation: 'NIV',
+        language: 'English',
+        description: 'Runtime translation from backend catalog',
+        copyright: 'Example License',
+        isDownloaded: false,
+        downloadedBooks: [],
+        downloadedAudioBooks: [],
+        totalBooks: 66,
+        sizeInMB: 5.2,
+        hasText: true,
+        hasAudio: true,
+        audioGranularity: 'chapter',
+        source: 'runtime',
+        installState: 'remote-only',
+        catalog: {
+          version: '2026.03.21',
+          updatedAt: 'not-a-date',
+          text: {
+            format: 'sqlite',
+            version: '2026.03.21',
+            downloadUrl: 'https://cdn.example.com/niv.sqlite',
+            sha256: 42,
+          },
+        },
+      },
+    ],
+  });
+
+  assert.equal(sanitized.currentTranslation, 'bsb');
+  assert.equal(
+    sanitized.translations.some((translation) => translation.id === 'niv'),
+    false
+  );
+});
+
 test('sanitizePersistedProgressState removes invalid chapter entries', () => {
   const sanitized = sanitizePersistedProgressState({
     chaptersRead: {

@@ -3,10 +3,52 @@ import { buildAudioChapterTargets } from './audioDownloads';
 
 const DEFAULT_AUDIO_ROOT_URI = 'file:///everybible-audio/';
 
+export type AudioDownloadJobScope = 'book' | 'translation';
+export type AudioDownloadJobStatus = 'queued' | 'downloading' | 'completed' | 'failed';
+
+export interface AudioDownloadJobRecord {
+  id: string;
+  translationId: string;
+  scope: AudioDownloadJobScope;
+  bookId?: string;
+  status: AudioDownloadJobStatus;
+  createdAt: number;
+  updatedAt: number;
+  attemptCount: number;
+  error?: string;
+}
+
+export interface AudioDownloadJobStore {
+  listJobs: () => Promise<AudioDownloadJobRecord[]>;
+  getJob: (jobId: string) => Promise<AudioDownloadJobRecord | null>;
+  upsertJob: (job: AudioDownloadJobRecord) => Promise<void>;
+  removeJob: (jobId: string) => Promise<void>;
+}
+
+export interface AudioDownloadLifecycleHooks {
+  onStart?: (job: AudioDownloadJobRecord) => void;
+  onReattach?: (job: AudioDownloadJobRecord) => void;
+  onFailure?: (job: AudioDownloadJobRecord, error: Error) => void;
+  onComplete?: (job: AudioDownloadJobRecord) => void;
+}
+
 export interface AudioFileSystemAdapter {
   ensureDirectory: (directoryUri: string) => Promise<void>;
   fileExists: (fileUri: string) => Promise<boolean>;
-  downloadFile: (from: string, to: string) => Promise<void>;
+  downloadFile: (
+    from: string,
+    to: string,
+    options?: { jobId?: string; translationId?: string; bookId?: string; chapter?: number }
+  ) => Promise<void>;
+  readTextFile?: (fileUri: string) => Promise<string | null>;
+  writeTextFile?: (fileUri: string, contents: string) => Promise<void>;
+  deleteFile?: (fileUri: string) => Promise<void>;
+}
+
+export interface AudioDownloadTransport {
+  downloadFile: AudioFileSystemAdapter['downloadFile'];
+  reattachJob?: (jobId: string) => Promise<void>;
+  cancelJob?: (jobId: string) => Promise<void>;
 }
 
 export interface RemoteAudioAsset {
@@ -20,20 +62,246 @@ export type ResolveRemoteAudio = (
   chapter: number
 ) => Promise<RemoteAudioAsset | null>;
 
-interface DownloadAudioBookParams {
+export function createAudioDownloadJobId({
+  translationId,
+  scope,
+  bookId,
+}: {
+  translationId: string;
+  scope: AudioDownloadJobScope;
+  bookId?: string;
+}): string {
+  return `audio-download:${translationId}:${scope}:${scope === 'book' ? bookId ?? 'unknown' : 'all'}`;
+}
+
+interface DownloadContext {
   rootUri?: string;
+  jobStore?: AudioDownloadJobStore;
+  hooks?: AudioDownloadLifecycleHooks;
+  transport?: AudioDownloadTransport;
+}
+
+interface DownloadAudioBookParams extends DownloadContext {
   translationId: string;
   book: BibleBook;
   resolveRemoteAudio: ResolveRemoteAudio;
   fileSystem: AudioFileSystemAdapter;
 }
 
-interface DownloadAudioTranslationParams {
-  rootUri?: string;
+interface DownloadAudioTranslationParams extends DownloadContext {
   translationId: string;
   books: BibleBook[];
   resolveRemoteAudio: ResolveRemoteAudio;
   fileSystem: AudioFileSystemAdapter;
+}
+
+interface StartJobParams extends DownloadContext {
+  translationId: string;
+  scope: AudioDownloadJobScope;
+  bookId?: string;
+}
+
+interface FailJobParams extends DownloadContext {
+  jobId: string;
+  error: Error;
+}
+
+const loadJobStoreFactory = async () => {
+  const { createPersistentAudioDownloadJobStore } = await import('./audioDownloadStorage');
+  return createPersistentAudioDownloadJobStore;
+};
+
+export async function createAudioDownloadJobStore({
+  fileSystem,
+  rootUri,
+}: {
+  fileSystem: AudioFileSystemAdapter;
+  rootUri?: string;
+}): Promise<AudioDownloadJobStore> {
+  const resolvedRootUri = rootUri ?? DEFAULT_AUDIO_ROOT_URI;
+
+  try {
+    const createStore = await loadJobStoreFactory();
+    return createStore({
+      fileSystem,
+      rootUri: resolvedRootUri,
+    });
+  } catch {
+    return createFallbackAudioDownloadJobStore(resolvedRootUri);
+  }
+}
+
+const resolveJobStore = async (fileSystem: AudioFileSystemAdapter, rootUri?: string) => {
+  try {
+    return await createAudioDownloadJobStore({
+      fileSystem,
+      rootUri,
+    });
+  } catch {
+    return memoryJobStore;
+  }
+};
+
+const memoryJobStore: AudioDownloadJobStore = {
+  listJobs: async () => [],
+  getJob: async () => null,
+  upsertJob: async () => undefined,
+  removeJob: async () => undefined,
+};
+
+const resolveJobStoreOrMemory = (jobStore?: AudioDownloadJobStore): AudioDownloadJobStore =>
+  jobStore ?? memoryJobStore;
+
+const fallbackJobStores = new Map<string, Map<string, AudioDownloadJobRecord>>();
+
+const createFallbackAudioDownloadJobStore = (rootUri: string): AudioDownloadJobStore => {
+  const jobs = fallbackJobStores.get(rootUri) ?? new Map<string, AudioDownloadJobRecord>();
+  fallbackJobStores.set(rootUri, jobs);
+
+  return {
+    listJobs: async () => Array.from(jobs.values()),
+    getJob: async (jobId) => jobs.get(jobId) ?? null,
+    upsertJob: async (job) => {
+      jobs.set(job.id, job);
+    },
+    removeJob: async (jobId) => {
+      jobs.delete(jobId);
+    },
+  };
+};
+
+const createJobRecord = (
+  translationId: string,
+  scope: AudioDownloadJobScope,
+  bookId?: string,
+  status: AudioDownloadJobStatus = 'downloading',
+  existing?: AudioDownloadJobRecord
+): AudioDownloadJobRecord => {
+  const now = Date.now();
+  return existing
+    ? {
+        ...existing,
+        translationId,
+        scope,
+        bookId,
+        status,
+        updatedAt: now,
+        attemptCount: existing.attemptCount,
+        error: status === 'failed' ? existing.error : undefined,
+      }
+    : {
+        id: createAudioDownloadJobId({ translationId, scope, bookId }),
+        translationId,
+        scope,
+        bookId,
+        status,
+        createdAt: now,
+        updatedAt: now,
+        attemptCount: 1,
+      };
+};
+
+const upsertJob = async (
+  jobStore: AudioDownloadJobStore,
+  job: AudioDownloadJobRecord
+): Promise<AudioDownloadJobRecord> => {
+  await jobStore.upsertJob(job);
+  return job;
+};
+
+export async function startAudioDownloadJob({
+  translationId,
+  scope,
+  bookId,
+  jobStore,
+  hooks,
+}: StartJobParams): Promise<AudioDownloadJobRecord> {
+  const activeJobStore = resolveJobStoreOrMemory(jobStore);
+  const id = createAudioDownloadJobId({ translationId, scope, bookId });
+  const existing = await activeJobStore.getJob(id);
+
+  if (existing && (existing.status === 'downloading' || existing.status === 'queued')) {
+    const reattached = await upsertJob(
+      activeJobStore,
+      createJobRecord(translationId, scope, bookId, 'downloading', existing)
+    );
+    hooks?.onReattach?.(reattached);
+    return reattached;
+  }
+
+  const started = await upsertJob(
+    activeJobStore,
+    createJobRecord(translationId, scope, bookId, 'downloading', existing ?? undefined)
+  );
+  hooks?.onStart?.(started);
+  return started;
+}
+
+export async function reattachAudioDownloadJob({
+  jobId,
+  jobStore,
+  hooks,
+}: {
+  jobId: string;
+  jobStore: AudioDownloadJobStore;
+  hooks?: AudioDownloadLifecycleHooks;
+}): Promise<AudioDownloadJobRecord | null> {
+  const activeJobStore = resolveJobStoreOrMemory(jobStore);
+  const existing = await activeJobStore.getJob(jobId);
+  if (!existing || (existing.status !== 'downloading' && existing.status !== 'queued')) {
+    return null;
+  }
+
+  const reattached = await upsertJob(
+    activeJobStore,
+    createJobRecord(existing.translationId, existing.scope, existing.bookId, 'downloading', existing)
+  );
+  hooks?.onReattach?.(reattached);
+  return reattached;
+}
+
+export async function failAudioDownloadJob({
+  jobId,
+  jobStore,
+  error,
+  hooks,
+}: FailJobParams): Promise<AudioDownloadJobRecord> {
+  const activeJobStore = resolveJobStoreOrMemory(jobStore);
+  const existing = await activeJobStore.getJob(jobId);
+  const failed = createJobRecord(
+    existing?.translationId ?? 'unknown',
+    existing?.scope ?? 'translation',
+    existing?.bookId,
+    'failed',
+    existing ?? undefined
+  );
+  failed.error = error.message;
+  await upsertJob(activeJobStore, failed);
+  hooks?.onFailure?.(failed, error);
+  return failed;
+}
+
+export async function completeAudioDownloadJob({
+  jobId,
+  jobStore,
+  hooks,
+}: {
+  jobId: string;
+  jobStore: AudioDownloadJobStore;
+  hooks?: AudioDownloadLifecycleHooks;
+}): Promise<AudioDownloadJobRecord> {
+  const activeJobStore = resolveJobStoreOrMemory(jobStore);
+  const existing = await activeJobStore.getJob(jobId);
+  const completed = createJobRecord(
+    existing?.translationId ?? 'unknown',
+    existing?.scope ?? 'translation',
+    existing?.bookId,
+    'completed',
+    existing ?? undefined
+  );
+  await upsertJob(activeJobStore, completed);
+  hooks?.onComplete?.(completed);
+  return completed;
 }
 
 export function getBookAudioDirectoryUri(
@@ -70,30 +338,65 @@ export async function downloadAudioBook({
   book,
   resolveRemoteAudio,
   fileSystem,
+  jobStore,
+  hooks,
+  transport,
 }: DownloadAudioBookParams): Promise<{ bookId: string; chapterCount: number }> {
-  const directoryUri = getBookAudioDirectoryUri(translationId, book.id, rootUri);
+  const resolvedRootUri = rootUri ?? DEFAULT_AUDIO_ROOT_URI;
+  const activeJobStore = jobStore ?? (await resolveJobStore(fileSystem, resolvedRootUri));
+  const activeTransport = transport ?? { downloadFile: fileSystem.downloadFile };
+  const directoryUri = getBookAudioDirectoryUri(translationId, book.id, resolvedRootUri);
   const chapterTargets = buildAudioChapterTargets([book]);
+  const job = await startAudioDownloadJob({
+    translationId,
+    scope: 'book',
+    bookId: book.id,
+    jobStore: activeJobStore,
+    hooks,
+  });
 
   await fileSystem.ensureDirectory(directoryUri);
 
-  for (const target of chapterTargets) {
-    const fileUri = getChapterAudioFileUri(
-      translationId,
-      target.bookId,
-      target.chapter,
-      rootUri
-    );
-    if (await fileSystem.fileExists(fileUri)) {
-      continue;
-    }
+  try {
+    for (const target of chapterTargets) {
+      const fileUri = getChapterAudioFileUri(
+        translationId,
+        target.bookId,
+        target.chapter,
+        resolvedRootUri
+      );
+      if (await fileSystem.fileExists(fileUri)) {
+        continue;
+      }
 
-    const remoteAudio = await resolveRemoteAudio(translationId, target.bookId, target.chapter);
-    if (!remoteAudio?.url) {
-      throw new Error(`Audio is not available for ${target.bookId} ${target.chapter}`);
-    }
+      const remoteAudio = await resolveRemoteAudio(translationId, target.bookId, target.chapter);
+      if (!remoteAudio?.url) {
+        throw new Error(`Audio is not available for ${target.bookId} ${target.chapter}`);
+      }
 
-    await fileSystem.downloadFile(remoteAudio.url, fileUri);
+      await activeTransport.downloadFile(remoteAudio.url, fileUri, {
+        jobId: job.id,
+        translationId,
+        bookId: target.bookId,
+        chapter: target.chapter,
+      });
+    }
+  } catch (error) {
+    const failure = error instanceof Error ? error : new Error(String(error));
+    await failAudioDownloadJob({
+      jobId: job.id,
+      jobStore: activeJobStore,
+      error: failure,
+      hooks,
+    });
+    throw failure;
   }
+
+  await completeAudioDownloadJob({
+    jobId: job.id,
+    jobStore: activeJobStore,
+    hooks,
+  });
 
   return { bookId: book.id, chapterCount: chapterTargets.length };
 }
@@ -104,19 +407,51 @@ export async function downloadAudioTranslation({
   books,
   resolveRemoteAudio,
   fileSystem,
+  jobStore,
+  hooks,
+  transport,
 }: DownloadAudioTranslationParams): Promise<{ downloadedBookIds: string[] }> {
+  const resolvedRootUri = rootUri ?? DEFAULT_AUDIO_ROOT_URI;
+  const activeJobStore = jobStore ?? (await resolveJobStore(fileSystem, resolvedRootUri));
+  const activeTransport = transport ?? { downloadFile: fileSystem.downloadFile };
   const downloadedBookIds: string[] = [];
+  const translationJob = await startAudioDownloadJob({
+    translationId,
+    scope: 'translation',
+    jobStore: activeJobStore,
+    hooks,
+  });
 
-  for (const book of books) {
-    const result = await downloadAudioBook({
-      rootUri,
-      translationId,
-      book,
-      resolveRemoteAudio,
-      fileSystem,
+  try {
+    for (const book of books) {
+      const result = await downloadAudioBook({
+        rootUri: resolvedRootUri,
+        translationId,
+        book,
+        resolveRemoteAudio,
+        fileSystem,
+        jobStore: activeJobStore,
+        hooks,
+        transport: activeTransport,
+      });
+      downloadedBookIds.push(result.bookId);
+    }
+  } catch (error) {
+    const failure = error instanceof Error ? error : new Error(String(error));
+    await failAudioDownloadJob({
+      jobId: translationJob.id,
+      jobStore: activeJobStore,
+      error: failure,
+      hooks,
     });
-    downloadedBookIds.push(result.bookId);
+    throw failure;
   }
+
+  await completeAudioDownloadJob({
+    jobId: translationJob.id,
+    jobStore: activeJobStore,
+    hooks,
+  });
 
   return { downloadedBookIds };
 }

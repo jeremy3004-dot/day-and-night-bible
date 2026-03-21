@@ -1,6 +1,7 @@
 import type { NavigatorScreenParams } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type { AudioPlaybackSequenceEntry } from '../types';
 
 // Home Stack
 export type HomeStackParamList = {
@@ -16,6 +17,7 @@ export type BibleStackParamList = {
     autoplayAudio?: boolean;
     preferredMode?: 'listen' | 'read';
     focusVerse?: number;
+    playbackSequenceEntries?: AudioPlaybackSequenceEntry[];
   };
   ChapterSelector: {
     bookId: string;

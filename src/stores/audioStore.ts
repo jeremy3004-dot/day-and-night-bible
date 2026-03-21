@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { AudioStatus, PlaybackRate, SleepTimerOption } from '../types';
+import type {
+  AudioPlaybackSequenceEntry,
+  AudioStatus,
+  PlaybackRate,
+  SleepTimerOption,
+} from '../types';
 import {
   getAudioTrackId,
   syncAudioQueueToTrack,
@@ -25,6 +30,7 @@ interface AudioState {
   // Queue and resume state
   queue: AudioQueueEntry[];
   queueIndex: number;
+  playbackSequence: AudioPlaybackSequenceEntry[];
   lastPlayedTranslationId: string | null;
   lastPlayedBookId: string | null;
   lastPlayedChapter: number | null;
@@ -53,6 +59,8 @@ interface AudioState {
   removeFromQueue: (entryId: string) => void;
   clearQueue: () => void;
   setQueueIndex: (queueIndex: number) => void;
+  setPlaybackSequence: (entries: AudioPlaybackSequenceEntry[]) => void;
+  clearPlaybackSequence: () => void;
 
   // Player visibility
   setShowPlayer: (show: boolean) => void;
@@ -82,6 +90,7 @@ export const useAudioStore = create<AudioState>()(
       showPlayer: false,
       queue: [],
       queueIndex: 0,
+      playbackSequence: [],
       lastPlayedTranslationId: null,
       lastPlayedBookId: null,
       lastPlayedChapter: null,
@@ -159,6 +168,8 @@ export const useAudioStore = create<AudioState>()(
 
       clearQueue: () => set({ queue: [], queueIndex: 0 }),
       setQueueIndex: (queueIndex) => set({ queueIndex }),
+      setPlaybackSequence: (entries) => set({ playbackSequence: entries }),
+      clearPlaybackSequence: () => set({ playbackSequence: [] }),
 
       // Player visibility
       setShowPlayer: (show) => set({ showPlayer: show }),

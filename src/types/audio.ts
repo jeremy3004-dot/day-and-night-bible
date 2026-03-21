@@ -9,6 +9,11 @@ export interface AudioTrack {
   duration?: number; // milliseconds
 }
 
+export interface AudioPlaybackSequenceEntry {
+  bookId: string;
+  chapter: number;
+}
+
 export interface AudioPlaybackState {
   status: AudioStatus;
   currentBookId: string | null;

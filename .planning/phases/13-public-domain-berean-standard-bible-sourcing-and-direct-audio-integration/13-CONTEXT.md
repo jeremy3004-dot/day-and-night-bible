@@ -22,6 +22,7 @@ This phase does not force a full Bible data-layer rewrite. The heavier text-impo
 
 ### Locked
 - Keep `translationId='bsb'` stable so existing reading state, search, bookmarks, and translation preferences do not migrate unnecessarily.
+- Treat `translationId` as part of the audio-session identity so switching translations while listening cannot silently reuse the wrong stream, queue entry, or resume target.
 - Treat official Berean pages as the source of truth:
   - text public domain as of April 30, 2023
   - narrated BSB audio dedicated to the public domain under CC0 1.0
@@ -37,6 +38,7 @@ This phase does not force a full Bible data-layer rewrite. The heavier text-impo
 ## Specific Ideas
 
 - Runtime audio source selected for plan 01: Bob Souer chapter MP3s exposed through the public BSB audio pages and hosted on `openbible.com`.
+- Post-ship hardening for plan 01 revealed that the audio store/queue originally keyed tracks only by `bookId:chapter`; the BSB rollout now requires translation-aware track IDs so WEB and BSB cannot collide.
 - Official BSB text downloads already exist on `bereanbible.com`, including `bsb.txt`, `bsb_usfm.zip`, `bsb_usj.zip`, and `bsb_usx.zip`.
 - Plan 02 should prefer official first-party text downloads with structure-rich content, likely `bsb_usx.zip`, so headings and richer metadata can be preserved.
 

@@ -310,11 +310,11 @@ export const shouldSyncReaderToActiveAudioChapter = ({
   previousActiveAudioBookId,
   previousActiveAudioChapter,
 }: ShouldSyncReaderToActiveAudioChapterInput): boolean => {
-  if (!audioEnabled || activeAudioBookId !== bookId || activeAudioChapter == null) {
+  if (!audioEnabled || activeAudioBookId == null || activeAudioChapter == null) {
     return false;
   }
 
-  if (activeAudioChapter === chapter) {
+  if (activeAudioBookId === bookId && activeAudioChapter === chapter) {
     return false;
   }
 

@@ -26,6 +26,98 @@ export interface ChapterRead {
 
 export type AudioGranularity = 'none' | 'chapter' | 'verse';
 export type AudioProvider = 'bible-is' | 'ebible-webbe' | 'openbible-bsb-souer';
+export type TranslationSource = 'bundled' | 'runtime';
+export type TranslationInstallState =
+  | 'seeded'
+  | 'remote-only'
+  | 'downloading'
+  | 'verifying'
+  | 'installing'
+  | 'installed'
+  | 'failed'
+  | 'rollback-available'
+  | 'update-available';
+export type TranslationTextFormat = 'sqlite';
+export type TranslationAudioStrategy = 'provider' | 'stream-template' | 'audio-pack';
+export type TranslationDownloadJobKind =
+  | 'text-pack'
+  | 'audio-pack'
+  | 'audio-book'
+  | 'translation-audio';
+export type TranslationDownloadJobState =
+  | 'queued'
+  | 'running'
+  | 'paused'
+  | 'reattaching'
+  | 'failed'
+  | 'completed'
+  | 'cancelled';
+
+export interface TranslationTextCatalog {
+  format: TranslationTextFormat;
+  version: string;
+  downloadUrl: string;
+  sha256: string;
+  signature?: string;
+}
+
+export interface TranslationAudioCatalog {
+  strategy: TranslationAudioStrategy;
+  provider?: AudioProvider;
+  baseUrl?: string;
+  chapterPathTemplate?: string;
+  downloadUrl?: string;
+  sha256?: string;
+  signature?: string;
+}
+
+export interface TranslationCatalog {
+  version: string;
+  updatedAt: string;
+  minimumAppVersion?: string;
+  text?: TranslationTextCatalog;
+  audio?: TranslationAudioCatalog;
+}
+
+export interface TranslationDownloadJob {
+  id: string;
+  kind: TranslationDownloadJobKind;
+  state: TranslationDownloadJobState;
+  progress: number;
+  startedAt: number;
+  updatedAt: number;
+  bytesDownloaded?: number;
+  bytesTotal?: number;
+  error?: string;
+}
+
+export interface TranslationCatalogManifestTranslation {
+  id: string;
+  name: string;
+  abbreviation: string;
+  language: string;
+  description: string;
+  copyright: string;
+  hasText: boolean;
+  hasAudio: boolean;
+  audioGranularity: AudioGranularity;
+  totalBooks: number;
+  sizeInMB: number;
+  text?: TranslationTextCatalog;
+  audio?: TranslationAudioCatalog;
+}
+
+export interface TranslationCatalogManifest {
+  manifestVersion: string;
+  issuedAt: string;
+  translations: TranslationCatalogManifestTranslation[];
+}
+
+export interface SignedCatalogEnvelope {
+  keyId: string;
+  algorithm: 'ES256' | 'RS256';
+  compactJws: string;
+}
 
 // Bible Translations
 export interface BibleTranslation {
@@ -45,13 +137,24 @@ export interface BibleTranslation {
   audioGranularity: AudioGranularity;
   audioProvider?: AudioProvider;
   audioFilesetId?: string;
+  source?: TranslationSource;
+  installState?: TranslationInstallState;
+  activeTextPackVersion?: string | null;
+  pendingTextPackVersion?: string | null;
+  pendingTextPackLocalPath?: string | null;
+  textPackLocalPath?: string | null;
+  rollbackTextPackVersion?: string | null;
+  rollbackTextPackLocalPath?: string | null;
+  lastInstallError?: string | null;
+  catalog?: TranslationCatalog;
+  activeDownloadJob?: TranslationDownloadJob | null;
 }
 
 export interface TranslationDownloadProgress {
   translationId: string;
   bookId?: string;
   progress: number; // 0-100
-  status: 'idle' | 'downloading' | 'completed' | 'error';
+  status: 'idle' | 'downloading' | 'verifying' | 'installing' | 'completed' | 'error';
   error?: string;
 }
 

@@ -2,8 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { getBookById } from '../../constants/books';
 import {
+  createAudioDownloadJobId,
+  createAudioDownloadJobStore,
   downloadAudioBook,
   downloadAudioTranslation,
+  failAudioDownloadJob,
+  reattachAudioDownloadJob,
+  startAudioDownloadJob,
   getChapterAudioFileUri,
   getDownloadedChapterAudioUri,
   type AudioFileSystemAdapter,
@@ -27,6 +32,125 @@ const createFileSystemDouble = () => {
 
   return { fileSystem, files, directories, downloads };
 };
+
+const createPersistentFileSystemDouble = () => {
+  const files = new Map<string, string>();
+
+  const fileSystem: AudioFileSystemAdapter = {
+    ensureDirectory: async () => {},
+    fileExists: async (fileUri) => files.has(fileUri),
+    downloadFile: async (from, to) => {
+      files.set(to, from);
+    },
+    readTextFile: async (fileUri) => files.get(fileUri) ?? null,
+    writeTextFile: async (fileUri, contents) => {
+      files.set(fileUri, contents);
+    },
+    deleteFile: async (fileUri) => {
+      files.delete(fileUri);
+    },
+  };
+
+  return { fileSystem, files };
+};
+
+test('createAudioDownloadJobId keeps book and translation download jobs distinct', () => {
+  assert.equal(
+    createAudioDownloadJobId({ translationId: 'bsb', scope: 'book', bookId: 'GEN' }),
+    'audio-download:bsb:book:GEN'
+  );
+  assert.equal(
+    createAudioDownloadJobId({ translationId: 'bsb', scope: 'translation' }),
+    'audio-download:bsb:translation:all'
+  );
+});
+
+test('audio download job store persists records across store instances', async () => {
+  const { fileSystem } = createPersistentFileSystemDouble();
+  const store = await createAudioDownloadJobStore({
+    fileSystem,
+    rootUri: 'file:///tmp/everybible-audio/',
+  });
+
+  await store.upsertJob({
+    id: 'audio-download:bsb:book:GEN',
+    translationId: 'bsb',
+    scope: 'book',
+    bookId: 'GEN',
+    status: 'downloading',
+    createdAt: 123,
+    updatedAt: 456,
+    attemptCount: 1,
+  });
+
+  const reloadedStore = await createAudioDownloadJobStore({
+    fileSystem,
+    rootUri: 'file:///tmp/everybible-audio/',
+  });
+  const jobs = await reloadedStore.listJobs();
+
+  assert.deepEqual(jobs, [
+    {
+      id: 'audio-download:bsb:book:GEN',
+      translationId: 'bsb',
+      scope: 'book',
+      bookId: 'GEN',
+      status: 'downloading',
+      createdAt: 123,
+      updatedAt: 456,
+      attemptCount: 1,
+    },
+  ]);
+});
+
+test('audio download job lifecycle exposes start, reattach, and failure hooks', async () => {
+  const { fileSystem } = createPersistentFileSystemDouble();
+  const rootUri = 'file:///tmp/everybible-audio-lifecycle/';
+  const store = await createAudioDownloadJobStore({
+    fileSystem,
+    rootUri,
+  });
+
+  const events: string[] = [];
+
+  const started = await startAudioDownloadJob({
+    translationId: 'bsb',
+    scope: 'book',
+    bookId: 'GEN',
+    jobStore: store,
+    hooks: {
+      onStart: (job) => events.push(`start:${job.id}:${job.status}`),
+    },
+  });
+
+  assert.equal(started.status, 'downloading');
+
+  const reattached = await reattachAudioDownloadJob({
+    jobId: started.id,
+    jobStore: store,
+    hooks: {
+      onReattach: (job) => events.push(`reattach:${job.id}:${job.status}`),
+    },
+  });
+
+  assert.ok(reattached);
+
+  const failed = await failAudioDownloadJob({
+    jobId: started.id,
+    jobStore: store,
+    error: new Error('network down'),
+    hooks: {
+      onFailure: (job, error) => events.push(`failure:${job.id}:${job.status}:${error.message}`),
+    },
+  });
+
+  assert.equal(failed.status, 'failed');
+  assert.deepEqual(events, [
+    'start:audio-download:bsb:book:GEN:downloading',
+    'reattach:audio-download:bsb:book:GEN:downloading',
+    'failure:audio-download:bsb:book:GEN:failed:network down',
+  ]);
+});
 
 test('getDownloadedChapterAudioUri returns a local file when it has been downloaded', async () => {
   const { fileSystem, files } = createFileSystemDouble();

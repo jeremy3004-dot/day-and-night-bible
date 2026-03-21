@@ -5,9 +5,43 @@ import type { Verse } from '../../types';
 import { buildBibleSearchQuery, isBundledBibleDatabaseReady } from './bibleDataModel';
 
 let db: SQLite.SQLiteDatabase | null = null;
+const installedDatabaseCache = new Map<string, SQLite.SQLiteDatabase>();
 const DATABASE_NAME = 'bible-bsb-v2.db';
 const DATABASE_ASSET_ID: number = require('../../../assets/databases/bible-bsb-v2.db');
 const DEFAULT_MINIMUM_READY_VERSE_COUNT = 60000;
+
+export type BibleDatabaseSource =
+  | {
+      kind: 'bundled';
+      databaseName: string;
+      assetId: number;
+      directory?: string;
+    }
+  | {
+      kind: 'installed';
+      translationId: string;
+      databaseName: string;
+      directory: string;
+    };
+
+export type BibleDatabaseSourceResolver = (translationId: string) => BibleDatabaseSource | null;
+
+const bundledBibleDatabaseSource: BibleDatabaseSource = {
+  kind: 'bundled',
+  databaseName: DATABASE_NAME,
+  assetId: DATABASE_ASSET_ID,
+  directory: String(defaultDatabaseDirectory).replace(/\/$/, ''),
+};
+
+let bibleDatabaseSourceResolver: BibleDatabaseSourceResolver = () => null;
+
+export function setBibleDatabaseSourceResolver(resolver: BibleDatabaseSourceResolver | null): void {
+  bibleDatabaseSourceResolver = resolver ?? (() => null);
+}
+
+function resolveBibleDatabaseSource(translationId: string): BibleDatabaseSource {
+  return bibleDatabaseSourceResolver(translationId) ?? bundledBibleDatabaseSource;
+}
 
 type BibleDatabaseStatus = {
   verseCount: number;
@@ -17,25 +51,37 @@ type BibleDatabaseStatus = {
 };
 
 function getDatabasePath(): string {
-  return `${String(defaultDatabaseDirectory).replace(/\/$/, '')}/${DATABASE_NAME}`;
+  return `${bundledBibleDatabaseSource.directory ?? String(defaultDatabaseDirectory).replace(/\/$/, '')}/${DATABASE_NAME}`;
 }
 
-async function closeDatabase(): Promise<void> {
+function getSourceCacheKey(source: BibleDatabaseSource): string {
+  return `${source.kind}:${source.databaseName}:${source.kind === 'installed' ? source.directory : source.directory ?? ''}`;
+}
+
+async function closeDatabase(database?: SQLite.SQLiteDatabase | null): Promise<void> {
+  if (!database) {
+    return;
+  }
+
+  await database.closeAsync();
+}
+
+async function closeBundledDatabase(): Promise<void> {
   if (!db) {
     return;
   }
 
-  await db.closeAsync();
+  await closeDatabase(db);
   db = null;
 }
 
 async function openBundledDatabase(forceOverwrite = false): Promise<SQLite.SQLiteDatabase> {
-  await closeDatabase();
+  await closeBundledDatabase();
   await importDatabaseFromAssetAsync(DATABASE_NAME, {
     assetId: DATABASE_ASSET_ID,
     forceOverwrite,
   });
-  db = await SQLite.openDatabaseAsync(DATABASE_NAME);
+  db = await SQLite.openDatabaseAsync(DATABASE_NAME, undefined, bundledBibleDatabaseSource.directory);
   await db.execAsync('PRAGMA journal_mode = WAL');
   return db;
 }
@@ -147,11 +193,29 @@ export async function inspectBundledDatabaseStatus(
   }
 }
 
-export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (!db) {
-    await initDatabase();
+export async function getDatabase(
+  translationId: string = 'bsb'
+): Promise<SQLite.SQLiteDatabase> {
+  const source = resolveBibleDatabaseSource(translationId);
+
+  if (source.kind === 'bundled') {
+    if (!db) {
+      await initDatabase();
+    }
+
+    return db!;
   }
-  return db!;
+
+  const cacheKey = getSourceCacheKey(source);
+  const cachedDatabase = installedDatabaseCache.get(cacheKey);
+  if (cachedDatabase) {
+    return cachedDatabase;
+  }
+
+  const database = await SQLite.openDatabaseAsync(source.databaseName, undefined, source.directory);
+  await database.execAsync('PRAGMA journal_mode = WAL');
+  installedDatabaseCache.set(cacheKey, database);
+  return database;
 }
 
 export async function getChapter(
@@ -159,7 +223,7 @@ export async function getChapter(
   bookId: string,
   chapter: number
 ): Promise<Verse[]> {
-  const database = await getDatabase();
+  const database = await getDatabase(translationId);
   const results = await database.getAllAsync<{
     id: number;
     translation_id: string;
@@ -193,7 +257,7 @@ export async function searchVerses(
   query: string,
   limit = 50
 ): Promise<Verse[]> {
-  const database = await getDatabase();
+  const database = await getDatabase(translationId);
   const ftsQuery = buildBibleSearchQuery(query.trim());
 
   if (ftsQuery) {

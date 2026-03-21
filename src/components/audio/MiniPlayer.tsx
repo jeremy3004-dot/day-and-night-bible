@@ -17,6 +17,8 @@ export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
   const setCurrentTranslation = useBibleStore((state) => state.setCurrentTranslation);
   const setCurrentTrack = useAudioStore((state) => state.setCurrentTrack);
   const clearQueue = useAudioStore((state) => state.clearQueue);
+  const playbackSequence = useAudioStore((state) => state.playbackSequence);
+  const clearPlaybackSequence = useAudioStore((state) => state.clearPlaybackSequence);
   const {
     status,
     currentTranslationId,
@@ -68,6 +70,8 @@ export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
               bookId: book.id,
               chapter: displayChapter,
               preferredMode: 'listen',
+              playbackSequenceEntries:
+                playbackSequence.length > 0 ? playbackSequence : undefined,
             },
           });
         }}
@@ -93,6 +97,7 @@ export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
             style={styles.iconButton}
             onPress={() => {
               clearQueue();
+              clearPlaybackSequence();
               setCurrentTrack(null, null, null);
               void stop();
             }}
