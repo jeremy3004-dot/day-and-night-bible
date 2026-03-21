@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "verify:expo-config": "npx expo config --json >/dev/null",
     "release:verify": "npm run lint && npm run typecheck && npm run verify:expo-config && node --test --import tsx src/services/startup/runtimeConfig.test.ts src/services/startup/releaseMetadata.test.ts && npm run test:release",
+    "testflight:external": "bash scripts/testflight_external_gate.sh --app 6758254335 --group-name 'External Testers' --build-version ${BUILD_VERSION:?set BUILD_VERSION}",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
