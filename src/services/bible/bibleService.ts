@@ -6,7 +6,7 @@ import { buildDailyScripture } from './presentation';
 
 let isInitialized = false;
 let initPromise: Promise<void> | null = null;
-const MIN_READY_VERSE_COUNT = 20000;
+const MIN_READY_VERSE_COUNT = 60000;
 
 export async function isBibleDataReady(): Promise<boolean> {
   if (isInitialized) {
@@ -54,14 +54,18 @@ export async function initBibleData(): Promise<void> {
   return initPromise;
 }
 
-export async function getChapter(bookId: string, chapter: number): Promise<Verse[]> {
+export async function getChapter(
+  translationId: string,
+  bookId: string,
+  chapter: number
+): Promise<Verse[]> {
   await initBibleData();
-  return bibleDb.getChapter(bookId, chapter);
+  return bibleDb.getChapter(translationId, bookId, chapter);
 }
 
-export async function searchBible(query: string): Promise<Verse[]> {
+export async function searchBible(translationId: string, query: string): Promise<Verse[]> {
   await initBibleData();
-  return bibleDb.searchVerses(query);
+  return bibleDb.searchVerses(translationId, query);
 }
 
 export function getBookInfo(bookId: string) {
@@ -95,16 +99,16 @@ function getTodayReference(): DailyScriptureReference {
   return popularVerses[dayOfYear % popularVerses.length];
 }
 
-export async function getVerseOfTheDay(): Promise<Verse | null> {
+export async function getVerseOfTheDay(translationId = 'bsb'): Promise<Verse | null> {
   await initBibleData();
 
   const verseRef = getTodayReference();
-  const verses = await getChapter(verseRef.bookId, verseRef.chapter);
+  const verses = await getChapter(translationId, verseRef.bookId, verseRef.chapter);
   return verses.find((v) => v.verse === verseRef.verse) ?? verses[0] ?? null;
 }
 
 export async function getDailyScripture(
-  translation: Pick<BibleTranslation, 'hasText' | 'hasAudio' | 'audioGranularity'>,
+  translation: Pick<BibleTranslation, 'id' | 'hasText' | 'hasAudio' | 'audioGranularity'>,
   audioAvailable: boolean,
   options?: { allowInitialization?: boolean }
 ): Promise<DailyScripture> {
@@ -125,7 +129,7 @@ export async function getDailyScripture(
       await initBibleData();
     }
 
-    const verses = await getChapter(reference.bookId, reference.chapter);
+    const verses = await getChapter(translation.id, reference.bookId, reference.chapter);
     verse = verses.find((item) => item.verse === reference.verse) ?? verses[0] ?? null;
   }
 
@@ -139,5 +143,5 @@ export async function getDailyScripture(
 
 export async function getLoadingProgress(): Promise<{ loaded: number; total: number }> {
   const count = await bibleDb.getVerseCount();
-  return { loaded: count, total: 31086 };
+  return { loaded: count, total: 62184 };
 }

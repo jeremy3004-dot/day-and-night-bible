@@ -19,12 +19,8 @@ export const getTranslationSelectionState = ({
   hasAudio,
   canPlayAudio,
 }: TranslationSelectionOptions): TranslationSelectionState => {
-  if (isDownloaded) {
+  if (isDownloaded || hasText) {
     return { isSelectable: true, reason: null };
-  }
-
-  if (hasText) {
-    return { isSelectable: false, reason: 'coming-soon' };
   }
 
   if (hasAudio) {

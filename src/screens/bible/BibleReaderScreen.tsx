@@ -296,12 +296,7 @@ export function BibleReaderScreen() {
     setIsLoading(true);
     setError(null);
     try {
-      if (currentTranslationInfo && !currentTranslationInfo.hasText) {
-        setVerses([]);
-        return;
-      }
-
-      const data = await getChapter(bookId, chapter);
+      const data = await getChapter(currentTranslation, bookId, chapter);
       setVerses(data);
       markChapterRead(bookId, chapter);
     } catch (err) {

@@ -16,7 +16,7 @@ test('downloaded translations are selectable', () => {
   });
 });
 
-test('text translations that are not downloaded remain blocked', () => {
+test('text translations remain selectable even when audio downloads are separate', () => {
   const state = getTranslationSelectionState({
     isDownloaded: false,
     hasText: true,
@@ -25,8 +25,8 @@ test('text translations that are not downloaded remain blocked', () => {
   });
 
   assert.deepEqual(state, {
-    isSelectable: false,
-    reason: 'coming-soon',
+    isSelectable: true,
+    reason: null,
   });
 });
 

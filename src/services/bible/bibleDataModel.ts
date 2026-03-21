@@ -1,4 +1,4 @@
-export const BUNDLED_BIBLE_SCHEMA_VERSION = 2;
+export const BUNDLED_BIBLE_SCHEMA_VERSION = 3;
 
 export type BundledBibleDatabaseStatus = {
   verseCount: number;

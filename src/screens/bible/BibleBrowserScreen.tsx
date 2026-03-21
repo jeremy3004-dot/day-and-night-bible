@@ -119,7 +119,7 @@ export function BibleBrowserScreen() {
       setSearchError(null);
 
       try {
-        const results = await searchBible(deferredSearchIntent.query);
+        const results = await searchBible(currentTranslation, deferredSearchIntent.query);
 
         if (!isCancelled) {
           setSearchResults(results);
@@ -142,7 +142,7 @@ export function BibleBrowserScreen() {
     return () => {
       isCancelled = true;
     };
-  }, [deferredSearchQuery, t]);
+  }, [currentTranslation, deferredSearchQuery, t]);
 
   const handleBookPress = (book: BibleBook) => {
     navigation.navigate('ChapterSelector', { bookId: book.id });

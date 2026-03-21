@@ -49,6 +49,7 @@ test('sanitizePersistedBibleState refreshes bundled translation capabilities dur
     translations: [
       {
         id: 'web',
+        hasText: false,
         hasAudio: false,
         audioGranularity: 'none',
         downloadedAudioBooks: ['GEN'],
@@ -60,6 +61,7 @@ test('sanitizePersistedBibleState refreshes bundled translation capabilities dur
 
   assert.equal(sanitized.currentTranslation, 'web');
   assert.ok(web);
+  assert.equal(web.hasText, true);
   assert.equal(web.hasAudio, true);
   assert.equal(web.audioGranularity, 'chapter');
   assert.deepEqual(web.downloadedAudioBooks, ['GEN']);

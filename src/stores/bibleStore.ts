@@ -89,7 +89,7 @@ export const useBibleStore = create<BibleState>()(
           return;
         }
 
-        if (translation.isDownloaded) {
+        if (translation.isDownloaded || translation.hasText) {
           set({ currentTranslation: translationId });
           return;
         }

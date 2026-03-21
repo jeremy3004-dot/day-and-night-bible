@@ -7,7 +7,7 @@ import { buildBibleSearchQuery, isBundledBibleDatabaseReady } from './bibleDataM
 let db: SQLite.SQLiteDatabase | null = null;
 const DATABASE_NAME = 'bible-bsb-v2.db';
 const DATABASE_ASSET_ID: number = require('../../../assets/databases/bible-bsb-v2.db');
-const DEFAULT_MINIMUM_READY_VERSE_COUNT = 20000;
+const DEFAULT_MINIMUM_READY_VERSE_COUNT = 60000;
 
 type BibleDatabaseStatus = {
   verseCount: number;
@@ -144,16 +144,29 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   return db!;
 }
 
-export async function getChapter(bookId: string, chapter: number): Promise<Verse[]> {
+export async function getChapter(
+  translationId: string,
+  bookId: string,
+  chapter: number
+): Promise<Verse[]> {
   const database = await getDatabase();
   const results = await database.getAllAsync<{
     id: number;
+    translation_id: string;
     book_id: string;
     chapter: number;
     verse: number;
     text: string;
     heading: string | null;
-  }>('SELECT * FROM verses WHERE book_id = ? AND chapter = ? ORDER BY verse', [bookId, chapter]);
+  }>(
+    `
+      SELECT *
+      FROM verses
+      WHERE translation_id = ? AND book_id = ? AND chapter = ?
+      ORDER BY verse
+    `,
+    [translationId, bookId, chapter]
+  );
 
   return results.map((row) => ({
     id: row.id,
@@ -165,7 +178,11 @@ export async function getChapter(bookId: string, chapter: number): Promise<Verse
   }));
 }
 
-export async function searchVerses(query: string, limit = 50): Promise<Verse[]> {
+export async function searchVerses(
+  translationId: string,
+  query: string,
+  limit = 50
+): Promise<Verse[]> {
   const database = await getDatabase();
   const ftsQuery = buildBibleSearchQuery(query.trim());
 
@@ -173,6 +190,7 @@ export async function searchVerses(query: string, limit = 50): Promise<Verse[]> 
     try {
       const indexedResults = await database.getAllAsync<{
         id: number;
+        translation_id: string;
         book_id: string;
         chapter: number;
         verse: number;
@@ -183,11 +201,11 @@ export async function searchVerses(query: string, limit = 50): Promise<Verse[]> 
           SELECT v.*
           FROM verses_fts
           JOIN verses v ON v.id = verses_fts.rowid
-          WHERE verses_fts MATCH ?
+          WHERE verses_fts MATCH ? AND v.translation_id = ?
           ORDER BY bm25(verses_fts), v.book_id, v.chapter, v.verse
           LIMIT ?
         `,
-        [ftsQuery, limit]
+        [ftsQuery, translationId, limit]
       );
 
       return indexedResults.map((row) => ({
@@ -205,15 +223,22 @@ export async function searchVerses(query: string, limit = 50): Promise<Verse[]> 
 
   const results = await database.getAllAsync<{
     id: number;
+    translation_id: string;
     book_id: string;
     chapter: number;
     verse: number;
     text: string;
     heading: string | null;
-  }>('SELECT * FROM verses WHERE text LIKE ? ORDER BY book_id, chapter, verse LIMIT ?', [
-    `%${query}%`,
-    limit,
-  ]);
+  }>(
+    `
+      SELECT *
+      FROM verses
+      WHERE translation_id = ? AND text LIKE ?
+      ORDER BY book_id, chapter, verse
+      LIMIT ?
+    `,
+    [translationId, `%${query}%`, limit]
+  );
 
   return results.map((row) => ({
     id: row.id,
@@ -225,22 +250,41 @@ export async function searchVerses(query: string, limit = 50): Promise<Verse[]> 
   }));
 }
 
-export async function insertVerse(verse: Omit<Verse, 'id'>): Promise<void> {
+export async function insertVerse(
+  translationId: string,
+  verse: Omit<Verse, 'id'>
+): Promise<void> {
   const database = await getDatabase();
   await database.runAsync(
-    'INSERT INTO verses (book_id, chapter, verse, text, heading) VALUES (?, ?, ?, ?, ?)',
-    [verse.bookId, verse.chapter, verse.verse, verse.text, verse.heading ?? null]
+    `
+      INSERT INTO verses (translation_id, book_id, chapter, verse, text, heading)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `,
+    [translationId, verse.bookId, verse.chapter, verse.verse, verse.text, verse.heading ?? null]
   );
 }
 
-export async function insertVerses(verses: Omit<Verse, 'id'>[]): Promise<void> {
+export async function insertVerses(
+  translationId: string,
+  verses: Omit<Verse, 'id'>[]
+): Promise<void> {
   const database = await getDatabase();
 
   await database.withTransactionAsync(async () => {
     for (const verse of verses) {
       await database.runAsync(
-        'INSERT INTO verses (book_id, chapter, verse, text, heading) VALUES (?, ?, ?, ?, ?)',
-        [verse.bookId, verse.chapter, verse.verse, verse.text, verse.heading ?? null]
+        `
+          INSERT INTO verses (translation_id, book_id, chapter, verse, text, heading)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `,
+        [
+          translationId,
+          verse.bookId,
+          verse.chapter,
+          verse.verse,
+          verse.text,
+          verse.heading ?? null,
+        ]
       );
     }
   });
