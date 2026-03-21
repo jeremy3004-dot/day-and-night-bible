@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -103,71 +105,80 @@ export function PrivacyPreferencesScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        <View style={styles.infoCard}>
-          <View style={styles.infoIconShell}>
-            <Ionicons name="shield-checkmark-outline" size={24} color={colors.accentPrimary} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.infoCard}>
+            <View style={styles.infoIconShell}>
+              <Ionicons name="shield-checkmark-outline" size={24} color={colors.accentPrimary} />
+            </View>
+            <Text style={styles.infoTitle}>{t('onboarding.privacyTitle')}</Text>
+            <Text style={styles.infoBody}>{t('onboarding.privacyBody')}</Text>
           </View>
-          <Text style={styles.infoTitle}>{t('onboarding.privacyTitle')}</Text>
-          <Text style={styles.infoBody}>{t('onboarding.privacyBody')}</Text>
-        </View>
 
-        <View style={styles.optionGroup}>
-          <PrivacyModeOption
-            body={t('onboarding.standardIconBody')}
-            colors={colors}
-            icon="book-outline"
-            isSelected={selectedMode === 'standard'}
-            onPress={() => selectMode('standard')}
-            title={t('onboarding.standardIconTitle')}
-          />
-          <PrivacyModeOption
-            body={t('onboarding.discreetIconBody')}
-            colors={colors}
-            icon="calculator-outline"
-            isSelected={selectedMode === 'discreet'}
-            onPress={() => selectMode('discreet')}
-            title={t('onboarding.discreetIconTitle')}
-          />
-        </View>
-
-        {discreetSelected ? (
-          <View style={styles.pinCard}>
-            <Text style={styles.pinTitle}>{t('onboarding.pinTitle')}</Text>
-            <Text style={styles.pinBody}>{t('onboarding.pinBody')}</Text>
-
-            <TextInput
-              value={pinInput}
-              onChangeText={(value) => {
-                setPinInput(value);
-                setErrorKey(null);
-              }}
-              placeholder={t('onboarding.pinPlaceholder')}
-              placeholderTextColor={colors.secondaryText}
-              style={styles.input}
-              autoCapitalize="none"
-              autoCorrect={false}
+          <View style={styles.optionGroup}>
+            <PrivacyModeOption
+              body={t('onboarding.standardIconBody')}
+              colors={colors}
+              icon="book-outline"
+              isSelected={selectedMode === 'standard'}
+              onPress={() => selectMode('standard')}
+              title={t('onboarding.standardIconTitle')}
             />
-
-            <TextInput
-              value={pinConfirmation}
-              onChangeText={(value) => {
-                setPinConfirmation(value);
-                setErrorKey(null);
-              }}
-              placeholder={t('onboarding.pinConfirmPlaceholder')}
-              placeholderTextColor={colors.secondaryText}
-              style={styles.input}
-              autoCapitalize="none"
-              autoCorrect={false}
+            <PrivacyModeOption
+              body={t('onboarding.discreetIconBody')}
+              colors={colors}
+              icon="calculator-outline"
+              isSelected={selectedMode === 'discreet'}
+              onPress={() => selectMode('discreet')}
+              title={t('onboarding.discreetIconTitle')}
             />
-
-            <Text style={styles.pinLegend}>{t('onboarding.pinLegend')}</Text>
-
-            {errorKey ? <Text style={styles.errorText}>{t(errorKey)}</Text> : null}
           </View>
-        ) : null}
-      </ScrollView>
+
+          {discreetSelected ? (
+            <View style={styles.pinCard}>
+              <Text style={styles.pinTitle}>{t('onboarding.pinTitle')}</Text>
+              <Text style={styles.pinBody}>{t('onboarding.pinBody')}</Text>
+
+              <TextInput
+                value={pinInput}
+                onChangeText={(value) => {
+                  setPinInput(value);
+                  setErrorKey(null);
+                }}
+                placeholder={t('onboarding.pinPlaceholder')}
+                placeholderTextColor={colors.secondaryText}
+                style={styles.input}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+
+              <TextInput
+                value={pinConfirmation}
+                onChangeText={(value) => {
+                  setPinConfirmation(value);
+                  setErrorKey(null);
+                }}
+                placeholder={t('onboarding.pinConfirmPlaceholder')}
+                placeholderTextColor={colors.secondaryText}
+                style={styles.input}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+
+              <Text style={styles.pinLegend}>{t('onboarding.pinLegend')}</Text>
+
+              {errorKey ? <Text style={styles.errorText}>{t(errorKey)}</Text> : null}
+            </View>
+          ) : null}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -250,8 +261,13 @@ const createStyles = (colors: ThemeColors) =>
     scrollView: {
       flex: 1,
     },
+    keyboardView: {
+      flex: 1,
+    },
     content: {
+      flexGrow: 1,
       padding: 20,
+      paddingBottom: 32,
       gap: 20,
     },
     infoCard: {

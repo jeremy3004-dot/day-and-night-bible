@@ -196,18 +196,6 @@ export function BibleReaderScreen() {
     bookId,
   }).canPlayAudio;
   const translationLabel = currentTranslationInfo?.abbreviation || 'BSB';
-  const availableListenTranslations = translations.filter((translation) =>
-    getTranslationAudioAvailability(translation, bookId).canPlayAudio
-  );
-  const availableListenTranslationLabel =
-    availableListenTranslations.length === 0
-      ? translationLabel
-      : availableListenTranslations.length <= 3
-        ? availableListenTranslations.map((translation) => translation.abbreviation).join(' • ')
-        : `${availableListenTranslations
-            .slice(0, 2)
-            .map((translation) => translation.abbreviation)
-            .join(' • ')} +${availableListenTranslations.length - 2}`;
   const chapterPresentationMode = getChapterPresentationMode({
     verses,
     translation: currentTranslationInfo,
@@ -1029,7 +1017,7 @@ export function BibleReaderScreen() {
           onPress={() => navigation.goBack()}
         >
           <GlassSurface style={styles.glassIconButton} intensity={44}>
-            <Ionicons name="chevron-down" size={20} color={colors.biblePrimaryText} />
+            <Ionicons name="arrow-back" size={20} color={colors.biblePrimaryText} />
           </GlassSurface>
         </TouchableOpacity>
 
@@ -1101,7 +1089,7 @@ export function BibleReaderScreen() {
         ]}
       >
         <TouchableOpacity
-          style={styles.touchableGlassButton}
+          style={styles.floatingReaderTranslationButtonTouchable}
           activeOpacity={canShowTranslationSheet ? 0.9 : 1}
           disabled={!canShowTranslationSheet}
           onPress={handleOpenTranslationOptions}
@@ -1122,7 +1110,7 @@ export function BibleReaderScreen() {
               ]}
               numberOfLines={1}
             >
-              {availableListenTranslationLabel}
+              {translationLabel}
             </Text>
           </GlassSurface>
         </TouchableOpacity>
@@ -1846,6 +1834,9 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 25,
     alignItems: 'center',
+  },
+  floatingReaderTranslationButtonTouchable: {
+    alignSelf: 'center',
   },
   floatingReaderTranslationButton: {
     minHeight: 34,

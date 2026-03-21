@@ -225,6 +225,30 @@ test('premium read mode centers a translation-list button under the listen and r
     'BibleReaderScreen should open translation options from the centered dock instead of the saved library'
   );
 
+  assert.match(
+    source,
+    /floatingReaderTranslationDock:[\s\S]*alignItems:\s*'center'/,
+    'BibleReaderScreen should center the translation dock container under the listen/read rail'
+  );
+
+  assert.match(
+    source,
+    /floatingReaderTranslationButtonTouchable:[\s\S]*alignSelf:\s*'center'/,
+    'BibleReaderScreen should center the translation chip touch target instead of pinning it to the left edge'
+  );
+
+  assert.match(
+    source,
+    /\{translationLabel\}/,
+    'BibleReaderScreen should show only the currently selected translation in the centered dock'
+  );
+
+  assert.equal(
+    source.includes('availableListenTranslationLabel'),
+    false,
+    'BibleReaderScreen should not show a combined available-translation list in the centered dock'
+  );
+
   assert.equal(
     source.includes('handleOpenLibrary'),
     false,
@@ -263,6 +287,16 @@ test('premium read mode centers the chapter label inside the persistent bottom b
     source,
     /persistentReaderChapterLabel:\s*{[\s\S]*textAlign:\s*'center'/,
     'BibleReaderScreen should center the chapter label text inside the persistent bottom bar'
+  );
+});
+
+test('premium read mode uses a left-facing back arrow in the top-left control', () => {
+  const source = readRelativeSource('./BibleReaderScreen.tsx');
+
+  assert.match(
+    source,
+    /onPress=\{\(\) => navigation\.goBack\(\)\}[\s\S]*?<GlassSurface style=\{styles\.glassIconButton\} intensity=\{44\}>[\s\S]*?name="arrow-back"/s,
+    'BibleReaderScreen should use a left-facing back arrow for the top-left reader control'
   );
 });
 
