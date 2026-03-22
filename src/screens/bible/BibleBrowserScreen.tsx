@@ -2,6 +2,7 @@ import { useDeferredValue, useEffect, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   TouchableOpacity,
   Modal,
@@ -48,6 +49,7 @@ import {
 } from './bibleSearchModel';
 import { getTranslationSelectionState } from './bibleTranslationModel';
 import { layout, radius, spacing, typography } from '../../design/system';
+import { getBookIcon } from '../../constants/bookIcons';
 
 type NavigationProp = NativeStackNavigationProp<BibleStackParamList>;
 
@@ -272,12 +274,19 @@ export function BibleBrowserScreen() {
           onPress={() => handleBookPress(book)}
           activeOpacity={0.7}
         >
-          <Text style={[styles.bookName, { color: colors.biblePrimaryText }]}>
-            {book.name}
-          </Text>
+          <View style={styles.bookRowLeft}>
+            <Image
+              source={getBookIcon(book.id)}
+              style={styles.bookIcon}
+              resizeMode="cover"
+            />
+            <Text style={[styles.bookName, { color: colors.biblePrimaryText }]}>
+              {book.name}
+            </Text>
+          </View>
           <Ionicons
             name={isExpanded ? 'chevron-up' : 'chevron-down'}
-            size={18}
+            size={20}
             color={colors.bibleSecondaryText}
           />
         </TouchableOpacity>
@@ -960,12 +969,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    minHeight: 48,
+    minHeight: 54,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  bookRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  bookIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+  },
   bookName: {
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: '500',
   },
   chapterGrid: {
