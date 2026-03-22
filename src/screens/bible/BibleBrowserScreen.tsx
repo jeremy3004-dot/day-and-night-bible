@@ -4,11 +4,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   Modal,
   ScrollView,
   Alert,
-  Image,
   ActivityIndicator,
   TextInput,
   LayoutAnimation,
@@ -25,7 +23,6 @@ import {
   type BibleBook,
   config,
   getBookById,
-  getBookIcon,
 } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useBibleStore } from '../../stores/bibleStore';
@@ -54,10 +51,8 @@ import { layout, radius, spacing, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<BibleStackParamList>;
 
-const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 56) / 2;
 const bibleBrowserRows = buildBibleBrowserRows(bibleBooks);
-const BIBLE_BROWSER_ROW_ESTIMATED_SIZE = 170;
+const BIBLE_BROWSER_ROW_ESTIMATED_SIZE = 52;
 const SEARCH_RESULT_ESTIMATED_SIZE = 118;
 
 if (Platform.OS === 'android') {
@@ -253,77 +248,6 @@ export function BibleBrowserScreen() {
     }
   };
 
-  const renderBookCard = ({ item }: { item: BibleBook }) => {
-    const isExpanded = item.id === expandedBookId;
-
-    return (
-      <View key={item.id} style={{ width: CARD_WIDTH }}>
-        <TouchableOpacity
-          style={[
-            styles.bookCard,
-            {
-              backgroundColor: colors.bibleSurface,
-              borderColor: colors.bibleDivider,
-            },
-            isExpanded && styles.bookCardExpanded,
-          ]}
-          onPress={() => handleBookPress(item)}
-          activeOpacity={0.85}
-        >
-          <View
-            style={[
-              styles.iconBadge,
-              { backgroundColor: colors.bibleElevatedSurface, borderColor: colors.bibleDivider },
-            ]}
-          >
-            <Image
-              source={getBookIcon(item.id)}
-              style={styles.bookIcon}
-              resizeMode="contain"
-              tintColor={colors.biblePrimaryText}
-            />
-          </View>
-          <Text style={[styles.bookName, { color: colors.biblePrimaryText }]} numberOfLines={2}>
-            {item.name}
-          </Text>
-        </TouchableOpacity>
-
-        {isExpanded && (
-          <View
-            style={[
-              styles.chapterGrid,
-              {
-                backgroundColor: colors.bibleElevatedSurface,
-                borderColor: colors.bibleDivider,
-              },
-            ]}
-          >
-            <View style={styles.chapterGridInner}>
-              {Array.from({ length: item.chapters }, (_, i) => i + 1).map((chapter) => (
-                <TouchableOpacity
-                  key={chapter}
-                  style={[
-                    styles.chapterButton,
-                    {
-                      backgroundColor: colors.bibleSurface,
-                      borderColor: colors.bibleDivider,
-                    },
-                  ]}
-                  onPress={() => handleChapterPress(item.id, chapter)}
-                  activeOpacity={0.85}
-                >
-                  <Text style={[styles.chapterNumber, { color: colors.biblePrimaryText }]}>
-                    {chapter}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-      </View>
-    );
-  };
-
   const renderRow = ({ item }: { item: BibleBrowserRow }) => {
     if (item.type === 'divider') {
       return (
@@ -337,10 +261,56 @@ export function BibleBrowserScreen() {
       );
     }
 
+    const book = item.books[0];
+    if (!book) return null;
+    const isExpanded = book.id === expandedBookId;
+
     return (
-      <View style={styles.row}>
-        {item.books.map((book) => renderBookCard({ item: book }))}
-        {item.books.length === 1 ? <View style={styles.bookCardSpacer} /> : null}
+      <View>
+        <TouchableOpacity
+          style={[styles.bookRow, { borderBottomColor: colors.bibleDivider }]}
+          onPress={() => handleBookPress(book)}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.bookName, { color: colors.biblePrimaryText }]}>
+            {book.name}
+          </Text>
+          <Ionicons
+            name={isExpanded ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={colors.bibleSecondaryText}
+          />
+        </TouchableOpacity>
+
+        {isExpanded && (
+          <View
+            style={[
+              styles.chapterGrid,
+              { backgroundColor: colors.bibleElevatedSurface },
+            ]}
+          >
+            <View style={styles.chapterGridInner}>
+              {Array.from({ length: book.chapters }, (_, i) => i + 1).map((chapter) => (
+                <TouchableOpacity
+                  key={chapter}
+                  style={[
+                    styles.chapterButton,
+                    {
+                      backgroundColor: colors.bibleSurface,
+                      borderColor: colors.bibleDivider,
+                    },
+                  ]}
+                  onPress={() => handleChapterPress(book.id, chapter)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.chapterNumber, { color: colors.biblePrimaryText }]}>
+                    {chapter}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
       </View>
     );
   };
@@ -986,67 +956,38 @@ const styles = StyleSheet.create({
   referenceMetaText: {
     ...typography.label,
   },
-  row: {
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
+  bookRow: {
     flexDirection: 'row',
-  },
-  bookCard: {
-    width: CARD_WIDTH,
-    minHeight: 136,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    padding: 18,
-    justifyContent: 'flex-start',
-  },
-  iconBadge: {
-    width: 54,
-    height: 54,
-    borderRadius: radius.md,
-    borderWidth: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 18,
-  },
-  bookIcon: {
-    width: 28,
-    height: 28,
+    justifyContent: 'space-between',
+    minHeight: 48,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   bookName: {
-    ...typography.cardTitle,
-    lineHeight: 23,
-  },
-  bookCardExpanded: {
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    fontSize: 17,
+    fontWeight: '500',
   },
   chapterGrid: {
-    borderWidth: 1,
-    borderTopWidth: 0,
-    borderBottomLeftRadius: radius.lg,
-    borderBottomRightRadius: radius.lg,
-    padding: spacing.sm,
-    marginTop: -1,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xs,
   },
   chapterGridInner: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   chapterButton: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     borderRadius: radius.sm,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   chapterNumber: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-  },
-  bookCardSpacer: {
-    width: CARD_WIDTH,
   },
   dividerRow: {
     flexDirection: 'row',
