@@ -12,10 +12,10 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  sm: 12,
-  md: 16,
-  lg: 24,
-  xl: 32,
+  xs: 2,
+  sm: 4,
+  md: 8,
+  lg: 12,
   pill: 999,
 } as const;
 
@@ -25,11 +25,8 @@ const uiFontFamily = Platform.select({
   default: 'System',
 });
 
-const readingFontFamily = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'serif',
-});
+const readingFontFamily = 'Lora-Regular';
+const readingFontFamilyItalic = 'Lora-Italic';
 
 export const typography = {
   screenTitle: {
@@ -109,32 +106,34 @@ export const typography = {
     letterSpacing: 0.2,
   } satisfies TextStyle,
   readingDisplay: {
-    fontFamily: readingFontFamily,
+    fontFamily: readingFontFamilyItalic,
     fontSize: 28,
-    lineHeight: 34,
+    lineHeight: 38,
     fontStyle: 'italic',
     fontWeight: '400',
-    letterSpacing: -0.3,
+    letterSpacing: 0.2,
   } satisfies TextStyle,
   readingHeading: {
     fontFamily: readingFontFamily,
-    fontSize: 15,
+    fontSize: 14,
     lineHeight: 20,
-    fontWeight: '700',
-    letterSpacing: -0.1,
+    fontWeight: '400',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   } satisfies TextStyle,
   readingBody: {
     fontFamily: readingFontFamily,
     fontSize: 18,
-    lineHeight: 28,
+    lineHeight: 30,
     fontWeight: '400',
-    letterSpacing: -0.1,
+    letterSpacing: 0.1,
   } satisfies TextStyle,
   readingVerseNumber: {
     fontFamily: readingFontFamily,
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 18,
-    fontWeight: '600',
+    fontWeight: '400',
+    letterSpacing: 0.5,
   } satisfies TextStyle,
 } as const;
 
@@ -150,27 +149,16 @@ export const layout = {
 } as const;
 
 export const shadows = {
-  card: Platform.select<ViewStyle>({
-    ios: {
-      shadowColor: '#000000',
-      shadowOpacity: 0.16,
-      shadowRadius: 20,
-      shadowOffset: { width: 0, height: 10 },
-    },
-    android: {
-      elevation: 4,
-    },
-    default: {},
-  }) as ViewStyle,
+  card: {} as ViewStyle, // Flat -- hierarchy via borders and spacing now
   floating: Platform.select<ViewStyle>({
     ios: {
       shadowColor: '#000000',
-      shadowOpacity: 0.22,
-      shadowRadius: 28,
-      shadowOffset: { width: 0, height: 14 },
+      shadowOpacity: 0.12,
+      shadowRadius: 16,
+      shadowOffset: { width: 0, height: 8 },
     },
     android: {
-      elevation: 6,
+      elevation: 4,
     },
     default: {},
   }) as ViewStyle,

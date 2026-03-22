@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     ...shadows.card,
-    borderRadius: radius.xl,
+    borderRadius: radius.lg,
     padding: layout.cardPadding,
     overflow: 'hidden',
     minHeight: 216,
