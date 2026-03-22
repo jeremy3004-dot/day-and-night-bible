@@ -303,8 +303,8 @@ export function BibleBrowserScreen() {
           <View style={styles.bookRowLeft}>
             <Image
               source={getBookIcon(book.id)}
-              style={styles.bookIcon}
-              resizeMode="cover"
+              style={[styles.bookIcon, { tintColor: colors.biblePrimaryText }]}
+              resizeMode="contain"
             />
             <Text style={[styles.bookName, { color: colors.biblePrimaryText }]}>
               {book.name}
@@ -1056,8 +1056,6 @@ const styles = StyleSheet.create({
   bookIcon: {
     width: 40,
     height: 40,
-    borderRadius: 8,
-    backgroundColor: '#00000010',
   },
   bookName: {
     fontSize: 19,
