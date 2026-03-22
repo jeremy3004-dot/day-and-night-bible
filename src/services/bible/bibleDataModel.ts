@@ -20,7 +20,6 @@ const validAudioStrategies = new Set<TranslationAudioCatalog['strategy']>([
 const validAudioProviders = new Set<AudioProvider>([
   'bible-is',
   'ebible-webbe',
-  'openbible-bsb-souer',
 ]);
 
 export type BundledBibleDatabaseStatus = {

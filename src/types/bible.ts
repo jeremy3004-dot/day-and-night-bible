@@ -25,7 +25,7 @@ export interface ChapterRead {
 }
 
 export type AudioGranularity = 'none' | 'chapter' | 'verse';
-export type AudioProvider = 'bible-is' | 'ebible-webbe' | 'openbible-bsb-souer';
+export type AudioProvider = 'bible-is' | 'ebible-webbe';
 export type TranslationSource = 'bundled' | 'runtime';
 export type TranslationInstallState =
   | 'seeded'

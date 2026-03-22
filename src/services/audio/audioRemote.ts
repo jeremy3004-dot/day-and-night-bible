@@ -1,4 +1,3 @@
-import { getBookById } from '../../constants/books';
 import { getTranslationById } from '../../constants/translations';
 import type { AudioProvider, BibleIsAudioResponse, BibleTranslation } from '../../types';
 import type { RemoteAudioAsset } from './audioDownloadService';
@@ -12,7 +11,6 @@ const SUPABASE_AUDIO_BUCKET_BASE = process.env.EXPO_PUBLIC_SUPABASE_URL
   ? `${process.env.EXPO_PUBLIC_SUPABASE_URL}/storage/v1/object/public/bible-audio`
   : null;
 const EBIBLE_WEBBE_AUDIO_BASE = 'https://ebible.org/eng-webbe/mp3';
-const OPENBIBLE_BSB_SOUER_AUDIO_BASE = 'https://openbible.com/audio/souer';
 const AUDIO_TEMPLATE_PLACEHOLDERS = new Set([
   '{bookId}',
   '{chapter}',
@@ -182,8 +180,9 @@ type RemoteAudioMetadata = {
       }
     | {
         // Self-hosted in Supabase Storage bucket "bible-audio"
-        // Path: {translationId}/{bookId}/{chapter}.mp3
+        // Path: {translationId}/{bookId}/{chapter}.{extension}
         strategy: 'supabase-storage';
+        extension?: string; // file extension without dot, defaults to 'mp3'
       };
 };
 
@@ -212,6 +211,20 @@ const defaultRemoteAudioMetadataResolver: RemoteAudioMetadataResolver = (transla
         strategy: 'provider',
         provider: translation.audioProvider,
         filesetId: translation.audioFilesetId ?? undefined,
+      },
+    };
+  }
+
+  // Fallback: translations with audio but no explicit provider use Supabase Storage (.m4a).
+  // BSB is the only translation currently hitting this path; files are uploaded as .m4a.
+  if (SUPABASE_AUDIO_BUCKET_BASE) {
+    return {
+      id: translation.id,
+      hasAudio: true,
+      audioGranularity: translation.audioGranularity,
+      audio: {
+        strategy: 'supabase-storage',
+        extension: 'm4a',
       },
     };
   }
@@ -294,35 +307,11 @@ function buildEbibleWebbeChapterAudioUrl(bookId: string, chapter: number): strin
   return `${EBIBLE_WEBBE_AUDIO_BASE}/eng-webbe_${bookPrefix}_${chapterSegment}.mp3`;
 }
 
-function buildOpenBibleBsbSouerChapterAudioUrl(bookId: string, chapter: number): string | null {
-  if (!Number.isInteger(chapter) || chapter < 1) {
-    return null;
-  }
-
-  const book = getBookById(bookId);
-  if (!book) {
-    return null;
-  }
-
-  const orderSegment = String(book.order).padStart(2, '0');
-  const bookSegment =
-    /^[1-3][A-Z]{2}$/.test(bookId)
-      ? `${bookId[0]}${bookId[1]}${bookId[2].toLowerCase()}`
-      : `${bookId[0]}${bookId.slice(1).toLowerCase()}`;
-  const chapterSegment = String(chapter).padStart(3, '0');
-
-  return `${OPENBIBLE_BSB_SOUER_AUDIO_BASE}/BSB_${orderSegment}_${bookSegment}_${chapterSegment}.mp3`;
-}
-
 function buildProviderChapterAudioUrl(
   provider: AudioProvider | undefined,
   bookId: string,
   chapter: number
 ): string | null {
-  if (provider === 'openbible-bsb-souer') {
-    return buildOpenBibleBsbSouerChapterAudioUrl(bookId, chapter);
-  }
-
   if (provider === 'ebible-webbe') {
     return buildEbibleWebbeChapterAudioUrl(bookId, chapter);
   }
@@ -425,7 +414,8 @@ export async function fetchRemoteChapterAudio(
     if (!SUPABASE_AUDIO_BUCKET_BASE) {
       return null;
     }
-    const url = `${SUPABASE_AUDIO_BUCKET_BASE}/${translationId}/${bookId}/${chapter}.mp3`;
+    const ext = audio.extension ?? 'mp3';
+    const url = `${SUPABASE_AUDIO_BUCKET_BASE}/${translationId}/${bookId}/${chapter}.${ext}`;
     const result = { url, duration: 0 };
     audioUrlCache.set(cacheKey, result);
     return result;
@@ -469,7 +459,7 @@ export function isRemoteAudioAvailable(translationId: string): boolean {
     return Boolean(SUPABASE_AUDIO_BUCKET_BASE);
   }
 
-  if (audio.provider === 'ebible-webbe' || audio.provider === 'openbible-bsb-souer') {
+  if (audio.provider === 'ebible-webbe') {
     return true;
   }
 

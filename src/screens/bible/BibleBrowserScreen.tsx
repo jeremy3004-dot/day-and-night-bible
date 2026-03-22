@@ -208,7 +208,9 @@ export function BibleBrowserScreen() {
   };
 
   const handleOpenAudioManager = (translationId: string) => {
-    setAudioManagerTranslationId(translationId);
+    setShowTranslationModal(false);
+    // Small delay so the first modal finishes dismissing before the second opens
+    setTimeout(() => setAudioManagerTranslationId(translationId), 350);
   };
 
   const handleCloseAudioManager = () => {
@@ -672,6 +674,9 @@ export function BibleBrowserScreen() {
                                 translation.downloadedAudioBooks.length ===
                                 translation.totalBooks;
                               const isActive = activeAudioDownloadKey === `all-${translation.id}`;
+                              const pct = translation.totalBooks > 0
+                                ? Math.round((translation.downloadedAudioBooks.length / translation.totalBooks) * 100)
+                                : 0;
                               return (
                                 <TouchableOpacity
                                   style={[
@@ -707,24 +712,29 @@ export function BibleBrowserScreen() {
                                   }}
                                 >
                                   {isActive ? (
-                                    <ActivityIndicator size="small" color={colors.bibleAccent} />
+                                    <View style={styles.chipProgressWrapper}>
+                                      <ActivityIndicator size="small" color={colors.bibleAccent} />
+                                      <Text style={[styles.audioDownloadChipLabel, { color: colors.bibleAccent }]}>
+                                        {translation.downloadedAudioBooks.length}/{translation.totalBooks} ({pct}%)
+                                      </Text>
+                                    </View>
                                   ) : (
-                                    <Ionicons
-                                      name={allDone ? 'checkmark-circle' : 'download-outline'}
-                                      size={14}
-                                      color={allDone ? colors.success : colors.bibleAccent}
-                                    />
+                                    <>
+                                      <Ionicons
+                                        name={allDone ? 'checkmark-circle' : 'download-outline'}
+                                        size={14}
+                                        color={allDone ? colors.success : colors.bibleAccent}
+                                      />
+                                      <Text
+                                        style={[
+                                          styles.audioDownloadChipLabel,
+                                          { color: allDone ? colors.success : colors.biblePrimaryText },
+                                        ]}
+                                      >
+                                        Whole Bible
+                                      </Text>
+                                    </>
                                   )}
-                                  <Text
-                                    style={[
-                                      styles.audioDownloadChipLabel,
-                                      {
-                                        color: allDone ? colors.success : colors.biblePrimaryText,
-                                      },
-                                    ]}
-                                  >
-                                    Whole Bible
-                                  </Text>
                                 </TouchableOpacity>
                               );
                             })()}
@@ -740,6 +750,9 @@ export function BibleBrowserScreen() {
                               const allDone = doneCount === testamentBooks.length;
                               const isActive =
                                 activeAudioDownloadKey === `testament-inline:${testament}:${translation.id}`;
+                              const pct = testamentBooks.length > 0
+                                ? Math.round((doneCount / testamentBooks.length) * 100)
+                                : 0;
                               return (
                                 <TouchableOpacity
                                   key={testament}
@@ -787,24 +800,29 @@ export function BibleBrowserScreen() {
                                   }}
                                 >
                                   {isActive ? (
-                                    <ActivityIndicator size="small" color={colors.bibleAccent} />
+                                    <View style={styles.chipProgressWrapper}>
+                                      <ActivityIndicator size="small" color={colors.bibleAccent} />
+                                      <Text style={[styles.audioDownloadChipLabel, { color: colors.bibleAccent }]}>
+                                        {doneCount}/{testamentBooks.length} ({pct}%)
+                                      </Text>
+                                    </View>
                                   ) : (
-                                    <Ionicons
-                                      name={allDone ? 'checkmark-circle' : 'download-outline'}
-                                      size={14}
-                                      color={allDone ? colors.success : colors.bibleAccent}
-                                    />
+                                    <>
+                                      <Ionicons
+                                        name={allDone ? 'checkmark-circle' : 'download-outline'}
+                                        size={14}
+                                        color={allDone ? colors.success : colors.bibleAccent}
+                                      />
+                                      <Text
+                                        style={[
+                                          styles.audioDownloadChipLabel,
+                                          { color: allDone ? colors.success : colors.biblePrimaryText },
+                                        ]}
+                                      >
+                                        {testament === 'OT' ? 'Old Testament' : 'New Testament'}
+                                      </Text>
+                                    </>
                                   )}
-                                  <Text
-                                    style={[
-                                      styles.audioDownloadChipLabel,
-                                      {
-                                        color: allDone ? colors.success : colors.biblePrimaryText,
-                                      },
-                                    ]}
-                                  >
-                                    {testament === 'OT' ? 'Old Testament' : 'New Testament'}
-                                  </Text>
                                 </TouchableOpacity>
                               );
                             })}
@@ -898,15 +916,33 @@ export function BibleBrowserScreen() {
                         ? t('bible.audioSavedOffline')
                         : t('bible.downloadBibleAudio')}
                     </Text>
-                    <Text
-                      style={[
-                        styles.downloadAllDescription,
-                        { color: colors.bibleSecondaryText },
-                      ]}
-                    >
-                      {audioManagerTranslation.downloadedAudioBooks.length}/
-                      {audioManagerTranslation.totalBooks}
-                    </Text>
+                    {activeAudioDownloadKey === 'all' ? (
+                      <>
+                        <Text style={[styles.downloadAllDescription, { color: colors.bibleAccent }]}>
+                          {audioManagerTranslation.downloadedAudioBooks.length}/{audioManagerTranslation.totalBooks} books
+                          {' '}({audioManagerTranslation.totalBooks > 0
+                            ? Math.round((audioManagerTranslation.downloadedAudioBooks.length / audioManagerTranslation.totalBooks) * 100)
+                            : 0}%)
+                        </Text>
+                        <View style={[styles.downloadProgressTrack, { backgroundColor: colors.bibleDivider }]}>
+                          <View
+                            style={[
+                              styles.downloadProgressFill,
+                              {
+                                backgroundColor: colors.bibleAccent,
+                                width: `${audioManagerTranslation.totalBooks > 0
+                                  ? Math.round((audioManagerTranslation.downloadedAudioBooks.length / audioManagerTranslation.totalBooks) * 100)
+                                  : 0}%`,
+                              },
+                            ]}
+                          />
+                        </View>
+                      </>
+                    ) : (
+                      <Text style={[styles.downloadAllDescription, { color: colors.bibleSecondaryText }]}>
+                        {audioManagerTranslation.downloadedAudioBooks.length}/{audioManagerTranslation.totalBooks}
+                      </Text>
+                    )}
                   </View>
                   {activeAudioDownloadKey === 'all' ? (
                     <ActivityIndicator color={colors.bibleAccent} />
@@ -963,9 +999,29 @@ export function BibleBrowserScreen() {
                         <Text style={[styles.downloadAllTitle, { color: colors.biblePrimaryText }]}>
                           {label}
                         </Text>
-                        <Text style={[styles.downloadAllDescription, { color: colors.bibleSecondaryText }]}>
-                          {downloadedCount}/{testamentBooks.length}
-                        </Text>
+                        {isDownloading ? (
+                          <>
+                            <Text style={[styles.downloadAllDescription, { color: colors.bibleAccent }]}>
+                              {downloadedCount}/{testamentBooks.length} books
+                              {' '}({testamentBooks.length > 0 ? Math.round((downloadedCount / testamentBooks.length) * 100) : 0}%)
+                            </Text>
+                            <View style={[styles.downloadProgressTrack, { backgroundColor: colors.bibleDivider }]}>
+                              <View
+                                style={[
+                                  styles.downloadProgressFill,
+                                  {
+                                    backgroundColor: colors.bibleAccent,
+                                    width: `${testamentBooks.length > 0 ? Math.round((downloadedCount / testamentBooks.length) * 100) : 0}%`,
+                                  },
+                                ]}
+                              />
+                            </View>
+                          </>
+                        ) : (
+                          <Text style={[styles.downloadAllDescription, { color: colors.bibleSecondaryText }]}>
+                            {downloadedCount}/{testamentBooks.length}
+                          </Text>
+                        )}
                       </View>
                       {isDownloading ? (
                         <ActivityIndicator color={colors.bibleAccent} />
@@ -1376,6 +1432,21 @@ const styles = StyleSheet.create({
   },
   downloadAllDescription: {
     fontSize: 13,
+  },
+  downloadProgressTrack: {
+    height: 4,
+    borderRadius: 2,
+    marginTop: 6,
+    overflow: 'hidden',
+  },
+  downloadProgressFill: {
+    height: 4,
+    borderRadius: 2,
+  },
+  chipProgressWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   audioBookRow: {
     minHeight: 60,

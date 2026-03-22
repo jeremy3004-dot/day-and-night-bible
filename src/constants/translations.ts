@@ -16,7 +16,6 @@ export const bibleTranslations: BibleTranslation[] = [
     hasText: true,
     hasAudio: true,
     audioGranularity: 'chapter',
-    audioProvider: 'openbible-bsb-souer',
   },
   {
     id: 'web',

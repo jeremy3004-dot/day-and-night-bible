@@ -39,7 +39,6 @@ const validAudioGranularities = new Set<BibleTranslation['audioGranularity']>([
 const validAudioProviders = new Set<NonNullable<BibleTranslation['audioProvider']>>([
   'bible-is',
   'ebible-webbe',
-  'openbible-bsb-souer',
 ]);
 const validInstallStates = new Set<TranslationInstallState>([
   'seeded',
