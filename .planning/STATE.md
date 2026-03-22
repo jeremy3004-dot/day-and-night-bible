@@ -121,6 +121,7 @@ Recent decisions affecting current work:
 - Phase 12.1 inserted after Phase 12: Premium liquid-glass reader chrome and scroll-collapse motion (URGENT)
 - Phase 13 added: Public-domain Berean Standard Bible sourcing and direct audio integration
 - Phase 14 added: Backend-driven Bible content sync and offline pack delivery
+- Phase 15 added: Reverential Theme & Typography
 
 ### Blockers/Concerns
 

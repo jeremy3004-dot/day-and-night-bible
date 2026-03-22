@@ -245,7 +245,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15
 
 | Phase                                                                         | Plans Complete | Status                                                             | Completed  |
 | ----------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------ | ---------- |
@@ -264,6 +264,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 12. Professional Design System Unification                                    | 3/3            | Automated verification complete; needs device visual QA            | 2026-03-20 |
 | 12.1 Premium liquid-glass reader chrome and scroll-collapse motion            | 3/3            | TestFlight build 100 distributed; needs device visual QA           | 2026-03-21 |
 | 13. Public-domain Berean Standard Bible sourcing and direct audio integration | 1/2            | Plan 01 complete; translation-aware audio handoff fixed; plan 02 pending | 2026-03-21 |
+| 14. Backend-driven Bible content sync and offline pack delivery               | 2/4            | Plans 01-02 complete; plan 03 in progress                         | -          |
+| 15. Reverential Theme & Typography                                            | 0/3            | Planned                                                            | -          |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -336,3 +338,22 @@ Plans:
 - [ ] 14-02: Build the versioned SQLite text-pack registry, install flow, and rollback-safe query routing
 - [ ] 14-03: Replace hardcoded audio providers with backend-driven sources and resilient offline/background audio downloads
 - [ ] 14-04: Ship translation install/update UX, verification coverage, and release/device QA for the new content platform
+
+### Phase 15: Reverential Theme & Typography
+
+**Goal:** Replace the current generic "tech app" visual language with a reverential, typographically disciplined aesthetic. Strip AI-generated UI patterns (excessive rounded corners, shadows/glows, nested cards, system sans-serif) and replace with warm tones, custom bundled serif font, and three theme modes (Dark, Light, Low-light/Sepia). Apply the new design language across all individual screens.
+**Depends on:** Phase 14
+**Requirements**: M2-DESIGN-01
+**Success Criteria** (what must be TRUE):
+
+1. The app uses warm-toned color palettes across three theme modes (Dark primary, Light, Low-light/Sepia) instead of the current cool blue-grey palette with coral accent.
+2. A custom bundled serif font replaces system serif for reading surfaces and extends into the typographic hierarchy where appropriate, with accent color reserved strictly for interactive affordances.
+3. Generic UI patterns (excessive rounded corners, drop shadows/glows, nested cards, decorative color) are stripped across all screens and replaced with spacing, dividers, and typographic hierarchy.
+4. All hardcoded colors are migrated to theme tokens and every screen in the app adopts the new visual language without changing layouts, navigation, or feature logic.
+   **Plans:** 3 plans
+
+Plans:
+
+- [ ] 15-01-PLAN.md — Build reverential design foundation: three warm palettes, bundled Lora serif, print-editorial tokens, three-way theme selector
+- [ ] 15-02-PLAN.md — Apply reverential visual language to Home, Bible browser/reader, audio components, and tab bar
+- [ ] 15-03-PLAN.md — Complete screen sweep across Learn, More, auth, onboarding, and visual verification
