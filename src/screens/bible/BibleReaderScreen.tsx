@@ -1879,7 +1879,7 @@ export function BibleReaderScreen() {
               ]}
               onPress={() => setShowFollowAlongText(false)}
             >
-              <Ionicons name="chevron-down" size={20} color={colors.biblePrimaryText} />
+              <Ionicons name="chevron-back" size={20} color={colors.biblePrimaryText} />
               <Text style={[styles.followAlongCloseLabel, { color: colors.biblePrimaryText }]}>
                 Back to player
               </Text>
