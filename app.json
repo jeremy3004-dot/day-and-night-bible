@@ -65,6 +65,7 @@
           "color": "#8B2635"
         }
       ],
+      "expo-image-picker",
       "expo-localization",
       "./plugins/withBrandedSplashAsset",
       "@react-native-google-signin/google-signin"

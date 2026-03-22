@@ -1,9 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 import { supabase, isSupabaseConfigured, getCurrentUserId } from '../supabase';
 
-// EncodingType is not re-exported from SDK 54 top-level; use string literal instead
-const BASE64_ENCODING = 'base64' as unknown as FileSystem.EncodingType;
-
 export interface StorageResult<T = void> {
   success: boolean;
   data?: T;
