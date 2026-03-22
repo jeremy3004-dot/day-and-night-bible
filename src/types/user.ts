@@ -11,7 +11,7 @@ import type { LanguageCode } from '../constants/languages';
 
 export interface UserPreferences {
   fontSize: 'small' | 'medium' | 'large';
-  theme: 'dark' | 'light';
+  theme: 'dark' | 'light' | 'low-light';
   language: LanguageCode;
   countryCode: string | null;
   countryName: string | null;

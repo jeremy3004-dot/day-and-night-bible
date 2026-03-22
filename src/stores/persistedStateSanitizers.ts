@@ -26,7 +26,7 @@ import type {
 const supportedBibleTranslationIds = new Set(bibleTranslations.map((translation) => translation.id));
 const supportedLanguageCodes = new Set(SUPPORTED_LANGUAGES.map((language) => language.code));
 const validFontSizes = new Set<UserPreferences['fontSize']>(['small', 'medium', 'large']);
-const validThemes = new Set<UserPreferences['theme']>(['dark', 'light']);
+const validThemes = new Set<UserPreferences['theme']>(['dark', 'light', 'low-light']);
 const validPlaybackRates = new Set<PlaybackRate>(PLAYBACK_RATES);
 const validRepeatModes = new Set<RepeatMode>(REPEAT_MODES);
 const validSleepTimers = new Set<SleepTimerOption>(SLEEP_TIMER_OPTIONS.map((option) => option.value));

@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
 import { openAuthFlow, type PendingAuthMode } from './src/navigation/rootNavigation';
 import { initBibleData } from './src/services/bible/bibleService';
 import { useAuthStore } from './src/stores/authStore';
@@ -28,6 +29,10 @@ interface LoadingScreenProps {
 
 function LoadingScreen({ onInitialAuthRequest }: LoadingScreenProps) {
   const { colors } = useTheme();
+  const [fontsLoaded, fontError] = useFonts({
+    'Lora-Regular': require('./assets/fonts/Lora-Regular.ttf'),
+    'Lora-Italic': require('./assets/fonts/Lora-Italic.ttf'),
+  });
   const [isReady, setIsReady] = useState(false);
   const [shouldRenderNavigator, setShouldRenderNavigator] = useState(false);
   const warmupCancelRef = useRef<(() => void) | null>(null);
@@ -134,7 +139,7 @@ function LoadingScreen({ onInitialAuthRequest }: LoadingScreenProps) {
     };
   }, [isPrivacyLocked, isReady, preferences.onboardingCompleted]);
 
-  if (!isReady) {
+  if (!isReady || (!fontsLoaded && !fontError)) {
     return null;
   }
 
