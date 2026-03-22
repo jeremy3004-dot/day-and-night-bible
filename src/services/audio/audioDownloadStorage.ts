@@ -82,15 +82,10 @@ export async function createBackgroundAudioDownloadTransport(): Promise<AudioDow
             task.start();
           });
         } catch (error) {
-          const message = error instanceof Error ? error.message : String(error);
-          if (
-            /doesn't seem to be linked|not using Expo Go|downloadParams is missing/i.test(message)
-          ) {
-            await expoAudioFileSystemAdapter.downloadFile(from, to, options);
-            return;
-          }
-
-          throw error;
+          // Background downloader native module may not be linked in Expo
+          // managed workflow. Always fall back to standard FileSystem download.
+          console.warn('[AudioDownload] Background downloader failed, using fallback:', error);
+          await expoAudioFileSystemAdapter.downloadFile(from, to, options);
         }
       },
       reattachJob: async (jobId) => {
