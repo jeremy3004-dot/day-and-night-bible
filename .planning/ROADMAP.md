@@ -34,6 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 20: Analytics & Engagement Metrics** - Lightweight event tracking with server-side aggregation
 - [ ] **Phase 21: Content Versioning & Multiple Translations** - Translation version tracking, preferences, and expanded content sourcing
 - [ ] **Phase 22: Gather Tab — Waha-style Foundations, Topics & Meeting Format** - Replace Harvest tab with Waha-style Gather tab featuring DBS meeting format
+- [ ] **Phase 23: Foundations Content Restructure** - Replace 9-foundation placeholder data with authoritative 7-foundation, 67-lesson content spec
 
 ## Phase Details
 
@@ -252,7 +253,7 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18 → 19 → 20 → 21 → 22
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → 15 → 16 → 17 → 18 → 19 → 20 → 21 → 22 → 23
 
 | Phase                                                                         | Plans Complete | Status                                                             | Completed  |
 | ----------------------------------------------------------------------------- | -------------- | ------------------------------------------------------------------ | ---------- |
@@ -280,6 +281,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 20. Analytics & Engagement Metrics                                             | 2/2            | Backend + frontend complete (profile engagement + Edge Function)   | 2026-03-22 |
 | 21. Content Versioning & Multiple Translations                                 | 2/2            | Backend + frontend complete (translation browser + preferences)    | 2026-03-22 |
 | 22. Gather Tab — Waha-style Foundations, Topics & Meeting Format               | 0/4            | Planned                                                            | -          |
+| 23. Foundations Content Restructure                                            | 0/1            | Planned                                                            | -          |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -482,3 +484,20 @@ Plans:
 - [ ] 22-02-PLAN.md — Rename tab to Gather, rewire navigation, build GatherScreen with Foundations/Topics sub-tabs
 - [ ] 22-03-PLAN.md — Build FoundationDetailScreen with lesson list, share invitation, and LessonBottomSheet
 - [ ] 22-04-PLAN.md — Build LessonDetailScreen with meeting format, Bible text rendering, and audio playback
+
+### Phase 23: Foundations Content Restructure
+
+**Goal:** Replace the current 9-foundation placeholder structure in gatherFoundations.ts with the authoritative 7-foundation, 67-lesson content spec using single full-chapter Bible references per lesson.
+**Requirements**: GATHER-01, GATHER-02
+**Depends on:** Phase 22
+**Success Criteria** (what must be TRUE):
+
+1. Exactly 7 foundations exist with correct titles, descriptions, and icon names matching the authoritative spec.
+2. All 67 lessons are populated with correct titles, lesson IDs, and single full-chapter Bible references (no startVerse/endVerse).
+3. Foundations 8 and 9 (Growing as Disciples, Growing as a Jesus Community, Growing as Leaders) are removed.
+4. TypeScript compiles without errors and existing tests pass.
+   **Plans:** 1 plan
+
+Plans:
+
+- [ ] 23-01-PLAN.md — Replace gatherFoundations data with authoritative 7-foundation, 67-lesson content and update type comments
