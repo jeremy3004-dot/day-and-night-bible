@@ -9,9 +9,9 @@ test('root tab manifest exposes Learn through the live shell between Bible and M
   );
 });
 
-test('learn tab reuses the existing harvest localization key', () => {
+test('learn tab uses the gather localization key', () => {
   const learnTab = rootTabManifest.find((tab) => tab.name === 'Learn');
 
   assert.ok(learnTab);
-  assert.equal(learnTab.labelKey, 'tabs.harvest');
+  assert.equal(learnTab.labelKey, 'tabs.gather');
 });
