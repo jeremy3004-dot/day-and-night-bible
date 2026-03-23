@@ -1537,6 +1537,7 @@ export function BibleReaderScreen() {
           shouldFillReaderCanvas ? styles.immersiveContent : null,
           {
             paddingBottom: 32,
+            paddingTop: fontSize === 'large' ? 28 : 18,
           },
         ]}
       >
