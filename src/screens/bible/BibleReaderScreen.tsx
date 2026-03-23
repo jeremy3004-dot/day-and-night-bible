@@ -985,7 +985,7 @@ export function BibleReaderScreen() {
       : scaleValue(20);
     const verseLineHeight = usePremiumTypography
       ? scaleValue(typography.readingBody.lineHeight * 1.15)
-      : scaleValue(34);
+      : scaleValue(40);
     const verseNumberSize = usePremiumTypography
       ? scaleValue(typography.readingVerseNumber.fontSize)
       : scaleValue(12);
