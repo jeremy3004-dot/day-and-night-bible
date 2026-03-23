@@ -155,7 +155,10 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
       setIsAudioPlaying(false);
       setAudioPosition(0);
     } else {
-      setIsAudioPlaying(status.isPlaying);
+      // Functional update bails out of re-render when value is unchanged,
+      // preventing excessive re-renders during playback from making the
+      // play/pause button unresponsive after switching tabs.
+      setIsAudioPlaying((prev) => (prev !== status.isPlaying ? status.isPlaying : prev));
     }
   }, []);
 
@@ -167,7 +170,7 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
         await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
         const { sound } = await Audio.Sound.createAsync(
           { uri: audioUrl },
-          { shouldPlay: true },
+          { shouldPlay: true, progressUpdateIntervalMillis: 500 },
           handlePlaybackStatusUpdate
         );
         soundRef.current = sound;
