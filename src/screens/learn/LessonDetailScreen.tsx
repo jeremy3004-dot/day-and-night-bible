@@ -544,11 +544,11 @@ function StorySection({ isLoading, passageBlocks, colors }: StorySectionProps) {
                     </Text>
                   )}
                   {!isFirst && !hasHeading && ' '}
-                  <Text>
-                    <Text style={[styles.verseNumber, { color: colors.accentPrimary }]}>
+                  <Text style={{ lineHeight: typography.readingBody.lineHeight }}>
+                    <Text style={[styles.verseNumber, { color: colors.accentPrimary, lineHeight: typography.readingBody.lineHeight }]}>
                       {verse.verse}{' '}
                     </Text>
-                    <Text style={{ color: colors.primaryText }}>{verse.text}</Text>
+                    <Text style={{ color: colors.primaryText, lineHeight: typography.readingBody.lineHeight }}>{verse.text}</Text>
                   </Text>
                 </React.Fragment>
               );
