@@ -482,3 +482,13 @@ Plans:
 - [ ] 22-02-PLAN.md — Rename tab to Gather, rewire navigation, build GatherScreen with Foundations/Topics sub-tabs
 - [ ] 22-03-PLAN.md — Build FoundationDetailScreen with lesson list, share invitation, and LessonBottomSheet
 - [ ] 22-04-PLAN.md — Build LessonDetailScreen with meeting format, Bible text rendering, and audio playback
+
+### Phase 23: foundations-content-restructure
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 22
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 23 to break down)
