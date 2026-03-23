@@ -985,7 +985,7 @@ export function BibleReaderScreen() {
       : scaleValue(20);
     const verseLineHeight = usePremiumTypography
       ? scaleValue(typography.readingBody.lineHeight * 1.15)
-      : scaleValue(64);
+      : scaleValue(40);
     const verseNumberSize = usePremiumTypography
       ? scaleValue(typography.readingVerseNumber.fontSize)
       : scaleValue(12);
@@ -1074,6 +1074,7 @@ export function BibleReaderScreen() {
                         : undefined
                     }
                     style={[
+                      { lineHeight: verseLineHeight },
                       isFocused
                         ? { backgroundColor: colors.bibleAccent + '30' }
                         : null,
@@ -1088,6 +1089,7 @@ export function BibleReaderScreen() {
                         usePremiumTypography ? styles.premiumVerseNumber : null,
                         {
                           fontSize: verseNumberSize,
+                          lineHeight: verseLineHeight,
                           color: colors.bibleAccent,
                         },
                       ]}
