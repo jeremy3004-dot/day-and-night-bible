@@ -128,6 +128,7 @@ Recent decisions affecting current work:
 - Phase 19 added: Prayer Community (group-scoped prayer walls with interactions)
 - Phase 20 added: Analytics & Engagement Metrics (lightweight PG event tracking + Edge Function aggregation)
 - Phase 21 added: Content Versioning & Multiple Translations (version tracking, preferences, scrollmapper data sourcing)
+- Phase 22 added: Gather Tab: Waha-style Foundations, Topics & Meeting Format
 
 ### Blockers/Concerns
 
