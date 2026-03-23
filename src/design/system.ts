@@ -132,7 +132,7 @@ export const typography = {
   readingBody: {
     fontFamily: readingFontFamily,
     fontSize: 18,
-    lineHeight: 30,
+    lineHeight: 36,
     fontWeight: '400',
     letterSpacing: 0.1,
   } satisfies TextStyle,
