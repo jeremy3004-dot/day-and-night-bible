@@ -98,33 +98,6 @@ export function GatherScreen() {
           contentContainerStyle={[styles.foundationsContent, { padding: layout.screenPadding, gap: spacing.lg }]}
           showsVerticalScrollIndicator={false}
         >
-          {/* Dismissable info banner */}
-          {!infoBannerDismissed && (
-            <View
-              style={[
-                styles.infoBanner,
-                {
-                  backgroundColor: colors.cardBackground,
-                  borderColor: colors.cardBorder,
-                },
-              ]}
-            >
-              <View style={styles.infoBannerContent}>
-                <Text style={[styles.infoBannerText, { color: colors.secondaryText }]}>
-                  {t('gather.infoBanner')}
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={dismissInfoBanner}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                accessibilityRole="button"
-                accessibilityLabel="Dismiss"
-              >
-                <Ionicons name="close-outline" size={20} color={colors.secondaryText} />
-              </TouchableOpacity>
-            </View>
-          )}
-
           {/* Foundation cards */}
           {gatherFoundations.map((foundation, index) => {
             const completedCount = getCompletedCount(foundation.id);
@@ -210,32 +183,7 @@ export function GatherScreen() {
           contentContainerStyle={[styles.topicsContent, { padding: layout.screenPadding, gap: spacing.xl }]}
           showsVerticalScrollIndicator={false}
         >
-          {/* Topics dismissable info banner */}
-          {!infoBannerDismissed && (
-            <View
-              style={[
-                styles.infoBanner,
-                {
-                  backgroundColor: colors.cardBackground,
-                  borderColor: colors.cardBorder,
-                },
-              ]}
-            >
-              <View style={styles.infoBannerContent}>
-                <Text style={[styles.infoBannerText, { color: colors.secondaryText }]}>
-                  {t('gather.topicsBanner')}
-                </Text>
-              </View>
-              <TouchableOpacity
-                onPress={dismissInfoBanner}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                accessibilityRole="button"
-                accessibilityLabel="Dismiss"
-              >
-                <Ionicons name="close-outline" size={20} color={colors.secondaryText} />
-              </TouchableOpacity>
-            </View>
-          )}
+
 
           {/* Category sections */}
           {gatherTopicCategories.map((category) => (

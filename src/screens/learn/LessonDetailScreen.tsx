@@ -426,7 +426,9 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
           <View
             style={[
               styles.heroIconCircle,
-              { backgroundColor: colors.accentPrimary + '18' },
+              parent?.iconImage && gatherIconImages[parent.iconImage]
+                ? undefined
+                : { backgroundColor: colors.accentPrimary + '18' },
             ]}
           >
             {parent?.iconImage && gatherIconImages[parent.iconImage] ? (
@@ -442,7 +444,7 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
                     ? (parent.iconName as React.ComponentProps<typeof Ionicons>['name'])
                     : 'book-outline'
                 }
-                size={32}
+                size={48}
                 color={colors.accentPrimary}
               />
             )}
@@ -1023,16 +1025,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   heroIconCircle: {
-    width: 64,
-    height: 64,
+    width: 100,
+    height: 100,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
   },
   heroIconImage: {
-    width: 64,
-    height: 64,
+    width: 100,
+    height: 100,
     borderRadius: radius.pill,
   },
   heroLessonTitle: {
