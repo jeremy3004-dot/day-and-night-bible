@@ -25,6 +25,12 @@ SOURCE_DATA = [
         "path": ROOT / "data" / "web_processed.json",
         "expected_verse_count": 31098,
     },
+    {
+        "translation_id": "asv",
+        "translation_name": "American Standard Version",
+        "path": ROOT / "data" / "asv_processed.json",
+        "expected_verse_count": 31086,
+    },
 ]
 
 
@@ -175,6 +181,14 @@ def verify_database() -> None:
             WHERE verses_fts MATCH 'beginning*' AND verses.translation_id = 'web'
             """
         ).fetchone()[0]
+        asv_hits = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM verses_fts
+            JOIN verses ON verses.id = verses_fts.rowid
+            WHERE verses_fts MATCH 'beginning*' AND verses.translation_id = 'asv'
+            """
+        ).fetchone()[0]
     finally:
         connection.close()
 
@@ -193,8 +207,8 @@ def verify_database() -> None:
         raise SystemExit(
             f"Expected {expected_total_verse_count} FTS rows, found {fts_count}"
         )
-    if bsb_hits < 1 or web_hits < 1:
-        raise SystemExit("Expected at least one FTS match for 'beginning*' in both translations")
+    if bsb_hits < 1 or web_hits < 1 or asv_hits < 1:
+        raise SystemExit("Expected at least one FTS match for 'beginning*' in all translations")
 
     print(
         f"Verified {OUTPUT_PATH}: schema={user_version}, verses={verse_count}, fts_rows={fts_count}"

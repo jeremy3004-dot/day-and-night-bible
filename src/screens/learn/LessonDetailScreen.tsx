@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Image,
   Modal,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -26,6 +27,7 @@ import {
   gatherFoundations,
 } from '../../data/gatherFoundations';
 import { gatherTopicCategories } from '../../data/gatherTopics';
+import { gatherIconImages } from '../../data/gatherIcons';
 import {
   getPassageText,
   getPrimaryAudioReference,
@@ -424,10 +426,28 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
           <View
             style={[
               styles.heroIconCircle,
-              { backgroundColor: colors.accentPrimary + '18' },
+              parent?.iconImage && gatherIconImages[parent.iconImage]
+                ? undefined
+                : { backgroundColor: colors.accentPrimary + '18' },
             ]}
           >
-            <Ionicons name="book-outline" size={32} color={colors.accentPrimary} />
+            {parent?.iconImage && gatherIconImages[parent.iconImage] ? (
+              <Image
+                source={gatherIconImages[parent.iconImage]}
+                style={styles.heroIconImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Ionicons
+                name={
+                  parent?.iconName
+                    ? (parent.iconName as React.ComponentProps<typeof Ionicons>['name'])
+                    : 'book-outline'
+                }
+                size={48}
+                color={colors.accentPrimary}
+              />
+            )}
           </View>
           <Text style={[styles.heroLessonTitle, { color: colors.primaryText }]}>
             {lesson.title}
@@ -578,53 +598,55 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
 
         {/* Controls row */}
         <View style={styles.controlsRow}>
-          {/* Left arrow — contextual */}
-          <TouchableOpacity
-            onPress={handleLeftArrow}
-            disabled={!audioUrl && activeSection === 'story'}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons name="reload-outline" size={26} color={colors.secondaryText} />
-          </TouchableOpacity>
+          {/* Left placeholder balances the dots on the right */}
+          <View style={styles.settingsButton} />
 
-          {/* Spacer */}
-          <View style={{ flex: 1 }} />
+          {/* Centered: back · play · forward */}
+          <View style={styles.controlsCenter}>
+            <TouchableOpacity
+              onPress={handleLeftArrow}
+              disabled={!audioUrl && activeSection === 'story'}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              style={{ opacity: !audioUrl && activeSection === 'story' ? 0.35 : 1 }}
+            >
+              <View style={{ transform: [{ scaleX: -1 }] }}>
+                <Ionicons name="refresh-outline" size={30} color={colors.accentPrimary} />
+              </View>
+            </TouchableOpacity>
 
-          {/* Play/Pause */}
-          <TouchableOpacity
-            onPress={togglePlayPause}
-            disabled={!audioUrl}
-            style={[
-              styles.playButton,
-              { backgroundColor: colors.accentPrimary, opacity: audioUrl ? 1 : 0.4 },
-            ]}
-          >
-            <Ionicons
-              name={isAudioPlaying ? 'pause' : 'play'}
-              size={28}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={togglePlayPause}
+              disabled={!audioUrl}
+              style={[
+                styles.playButton,
+                { backgroundColor: colors.accentPrimary, opacity: audioUrl ? 1 : 0.4 },
+              ]}
+            >
+              <Ionicons
+                name={isAudioPlaying ? 'pause' : 'play'}
+                size={30}
+                color="#FFFFFF"
+                style={isAudioPlaying ? undefined : { marginLeft: 3 }}
+              />
+            </TouchableOpacity>
 
-          {/* Spacer */}
-          <View style={{ flex: 1 }} />
+            <TouchableOpacity
+              onPress={handleRightArrow}
+              disabled={!audioUrl && activeSection === 'story'}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              style={{ opacity: !audioUrl && activeSection === 'story' ? 0.35 : 1 }}
+            >
+              <Ionicons name="refresh-outline" size={30} color={colors.accentPrimary} />
+            </TouchableOpacity>
+          </View>
 
-          {/* Right arrow — contextual */}
-          <TouchableOpacity
-            onPress={handleRightArrow}
-            disabled={!audioUrl && activeSection === 'story'}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons name="refresh-outline" size={26} color={colors.secondaryText} />
-          </TouchableOpacity>
-
-          {/* Settings */}
+          {/* Settings dots — far right */}
           <TouchableOpacity
             onPress={() => setShowSettings(true)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             style={styles.settingsButton}
           >
-            <Text style={[styles.ellipsisText, { color: colors.secondaryText }]}>···</Text>
+            <Ionicons name="ellipsis-horizontal" size={22} color={colors.secondaryText} />
           </TouchableOpacity>
         </View>
       </View>
@@ -678,7 +700,7 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
           </View>
 
           {/* Font Size */}
-          <View style={[styles.sheetRow, { borderBottomColor: colors.cardBorder }]}>
+          <View style={[styles.sheetRow, { borderBottomColor: 'transparent' }]}>
             <Text style={[styles.sheetRowIcon]}>Tt</Text>
             <Text style={[styles.sheetRowLabel, { color: colors.primaryText }]}>
               Font Size
@@ -703,34 +725,6 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
               </TouchableOpacity>
             </View>
           </View>
-
-          {/* Report a Problem */}
-          <TouchableOpacity
-            style={[styles.sheetRow, { borderBottomColor: colors.cardBorder }]}
-            onPress={() => {
-              setShowSettings(false);
-              Alert.alert('Report a Problem', 'Thank you — this feature is coming soon.');
-            }}
-          >
-            <Text style={styles.sheetRowIcon}>🚩</Text>
-            <Text style={[styles.sheetRowLabel, { color: colors.primaryText }]}>
-              Report a Problem
-            </Text>
-          </TouchableOpacity>
-
-          {/* Cast to TV */}
-          <TouchableOpacity
-            style={[styles.sheetRow, { borderBottomColor: 'transparent' }]}
-            onPress={() => {
-              setShowSettings(false);
-              Alert.alert('Cast to TV', 'Casting feature is coming soon.');
-            }}
-          >
-            <Text style={styles.sheetRowIcon}>📺</Text>
-            <Text style={[styles.sheetRowLabel, { color: colors.primaryText }]}>
-              Cast to TV
-            </Text>
-          </TouchableOpacity>
 
           {/* Close */}
           <TouchableOpacity
@@ -1031,12 +1025,17 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   heroIconCircle: {
-    width: 64,
-    height: 64,
+    width: 100,
+    height: 100,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
+  },
+  heroIconImage: {
+    width: 100,
+    height: 100,
+    borderRadius: radius.pill,
   },
   heroLessonTitle: {
     ...typography.pageTitle,
@@ -1185,18 +1184,24 @@ const styles = StyleSheet.create({
   controlsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingBottom: spacing.xs,
+    paddingVertical: spacing.sm,
+  },
+  controlsCenter: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
   playButton: {
-    width: 56,
-    height: 56,
+    width: 64,
+    height: 64,
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   settingsButton: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },

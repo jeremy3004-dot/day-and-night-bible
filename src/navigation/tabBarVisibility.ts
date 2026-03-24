@@ -1,3 +1,3 @@
 export function shouldHideTabBarOnNestedRoute(routeName?: string): boolean {
-  return routeName === 'BibleReader';
+  return routeName === 'BibleReader' || routeName === 'LessonDetail';
 }

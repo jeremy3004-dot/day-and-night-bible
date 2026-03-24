@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -17,6 +18,9 @@ import { bibleTranslations, getBookById } from '../../constants';
 import { config } from '../../constants/config';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useProgressStore, useBibleStore } from '../../stores';
+import { useGatherStore } from '../../stores/gatherStore';
+import { gatherFoundations } from '../../data/gatherFoundations';
+import { gatherIconImages } from '../../data/gatherIcons';
 import { getDailyScripture } from '../../services/bible';
 import { getAudioAvailability, isRemoteAudioAvailable } from '../../services/audio';
 import { CardSkeleton } from '../../components';
@@ -48,6 +52,25 @@ export function HomeScreen() {
   const getWeekCount = useProgressStore((state) => state.getWeekCount);
   const getMonthCount = useProgressStore((state) => state.getMonthCount);
   const getYearCount = useProgressStore((state) => state.getYearCount);
+
+  const completedLessons = useGatherStore((state) => state.completedLessons);
+
+  // Find the active foundation: first one that has started but isn't fully complete.
+  // Falls back to foundation-1 if none started yet.
+  const activeFoundation = (() => {
+    const inProgress = gatherFoundations.find((f) => {
+      const done = completedLessons[f.id]?.length ?? 0;
+      return done > 0 && done < f.lessons.length;
+    });
+    if (inProgress) return inProgress;
+    // All complete? Show the last one. Nothing started? Show the first.
+    const allDone = gatherFoundations.every(
+      (f) => (completedLessons[f.id]?.length ?? 0) >= f.lessons.length
+    );
+    return allDone ? gatherFoundations[gatherFoundations.length - 1] : gatherFoundations[0];
+  })();
+  const activeFoundationDone = completedLessons[activeFoundation.id]?.length ?? 0;
+  const activeFoundationTotal = activeFoundation.lessons.length;
 
   useEffect(() => {
     const interactionHandle = InteractionManager.runAfterInteractions(() => {
@@ -172,6 +195,50 @@ export function HomeScreen() {
       >
         <Text style={[styles.greeting, { color: colors.primaryText }]}>{getGreeting()}</Text>
         <Text style={[styles.subtitle, { color: colors.secondaryText }]}>{t('home.welcome')}</Text>
+
+        {/* Continue in Foundations card */}
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={[styles.card, styles.foundationCard, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]}
+          onPress={() =>
+            navigation.navigate('Learn', {
+              screen: 'FoundationDetail',
+              params: { foundationId: activeFoundation.id },
+            } as any)
+          }
+        >
+          <Text style={[styles.cardTitle, { color: colors.secondaryText, paddingHorizontal: layout.cardPadding, paddingTop: layout.cardPadding }]}>
+            {activeFoundationDone > 0 ? 'CONTINUE IN FOUNDATIONS' : 'GET STARTED'}
+          </Text>
+          <View style={styles.foundationCardBody}>
+            <View style={[styles.foundationIconWrap, { backgroundColor: colors.accentPrimary + '18' }]}>
+              {activeFoundation.iconImage && gatherIconImages[activeFoundation.iconImage] ? (
+                <Image
+                  source={gatherIconImages[activeFoundation.iconImage]}
+                  style={styles.foundationIconImage}
+                  resizeMode="contain"
+                />
+              ) : (
+                <Ionicons
+                  name={(activeFoundation.iconName as React.ComponentProps<typeof Ionicons>['name']) ?? 'book-outline'}
+                  size={36}
+                  color={colors.accentPrimary}
+                />
+              )}
+            </View>
+            <View style={styles.foundationCardInfo}>
+              <Text style={[styles.foundationCardTitle, { color: colors.primaryText }]} numberOfLines={2}>
+                {`Foundations ${activeFoundation.number}: ${activeFoundation.title}`}
+              </Text>
+              <Text style={[styles.foundationCardSubtitle, { color: colors.secondaryText }]}>
+                {activeFoundation.description}
+              </Text>
+              <Text style={[styles.foundationCardProgress, { color: colors.accentPrimary }]}>
+                {`${activeFoundationDone} / ${activeFoundationTotal} lessons`}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
 
         {/* Verse of the Day Card */}
         {isLoadingVerse ? (
@@ -358,5 +425,44 @@ const styles = StyleSheet.create({
   },
   cardSkeleton: {
     marginBottom: spacing.lg,
+  },
+  // Foundations continuation card
+  foundationCard: {
+    padding: 0,
+    overflow: 'hidden',
+  },
+  foundationCardBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    padding: layout.cardPadding,
+    paddingTop: 0,
+  },
+  foundationIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  foundationIconImage: {
+    width: 72,
+    height: 72,
+    borderRadius: radius.pill,
+  },
+  foundationCardInfo: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  foundationCardTitle: {
+    ...typography.bodyStrong,
+  },
+  foundationCardSubtitle: {
+    ...typography.micro,
+  },
+  foundationCardProgress: {
+    ...typography.label,
+    marginTop: spacing.xs,
   },
 });
