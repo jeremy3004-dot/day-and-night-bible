@@ -584,7 +584,9 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
             disabled={!audioUrl && activeSection === 'story'}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Ionicons name="reload-outline" size={26} color={colors.secondaryText} />
+            <View style={{ transform: [{ scaleX: -1 }] }}>
+              <Ionicons name="refresh-outline" size={26} color={colors.secondaryText} />
+            </View>
           </TouchableOpacity>
 
           {/* Spacer */}
