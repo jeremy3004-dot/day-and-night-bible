@@ -140,6 +140,23 @@ export const bibleBooks: BibleBook[] = [
 export const getBookById = (id: string): BibleBook | undefined =>
   bibleBooks.find((book) => book.id === id);
 
+/**
+ * Returns the localized name for a Bible book using the i18n translation function.
+ * Falls back to the hardcoded English name if the translation key is missing.
+ */
+export const getTranslatedBookName = (
+  bookId: string,
+  t: (key: string) => string,
+): string => {
+  const key = `bible.books.${bookId}`;
+  const translated = t(key);
+  // i18next returns the key itself when no translation is found
+  if (translated === key) {
+    return getBookById(bookId)?.name ?? bookId;
+  }
+  return translated;
+};
+
 export const getBooksByTestament = (testament: Testament): BibleBook[] =>
   bibleBooks.filter((book) => book.testament === testament);
 

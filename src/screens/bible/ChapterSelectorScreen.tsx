@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
-import { getBookById, getBookIcon } from '../../constants';
+import { getBookById, getBookIcon, getTranslatedBookName } from '../../constants';
 import { CompanionSection } from '../../components';
 import { useTheme } from '../../contexts/ThemeContext';
 import { trackBibleExperienceEvent } from '../../services/analytics/bibleExperienceAnalytics';
@@ -172,7 +172,7 @@ export function ChapterSelectorScreen() {
                 <Image source={getBookIcon(book.id)} style={styles.bookIcon} resizeMode="contain" />
               </View>
 
-              <Text style={[styles.title, { color: colors.biblePrimaryText }]}>{book.name}</Text>
+              <Text style={[styles.title, { color: colors.biblePrimaryText }]}>{getTranslatedBookName(bookId, t)}</Text>
             </LinearGradient>
 
             <View style={styles.sectionHeader}>

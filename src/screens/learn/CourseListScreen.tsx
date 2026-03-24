@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { getBookById } from '../../constants';
+import { getBookById, getTranslatedBookName } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
 import { useBibleStore } from '../../stores';
@@ -163,7 +163,7 @@ export function CourseListScreen() {
                     {group.entries.map((entry, index) => {
                       const isActive =
                         currentBook === entry.bookId && currentChapter === entry.chapter;
-                      const bookName = getBookById(entry.bookId)?.name ?? entry.bookId;
+                      const bookName = getTranslatedBookName(entry.bookId, t);
                       const reference = `${bookName} ${entry.chapter}`;
 
                       return (

@@ -24,6 +24,7 @@ import {
   type BibleBook,
   config,
   getBookById,
+  getTranslatedBookName,
 } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useBibleStore } from '../../stores/bibleStore';
@@ -309,7 +310,7 @@ export function BibleBrowserScreen() {
               resizeMode="contain"
             />
             <Text style={[styles.bookName, { color: colors.biblePrimaryText }]}>
-              {book.name}
+              {getTranslatedBookName(book.id, t)}
             </Text>
           </View>
           <Ionicons
@@ -353,8 +354,8 @@ export function BibleBrowserScreen() {
   };
 
   const renderSearchResult = ({ item }: { item: Verse }) => {
-    const bookName = getBookById(item.bookId)?.name;
-    const referenceLabel = formatBibleSearchReference(item, (bookId) => getBookById(bookId)?.name);
+    const bookName = getTranslatedBookName(item.bookId, t);
+    const referenceLabel = formatBibleSearchReference(item, (bookId) => getTranslatedBookName(bookId, t));
 
     return (
       <TouchableOpacity
@@ -1055,7 +1056,7 @@ export function BibleBrowserScreen() {
                       ]}
                     >
                       <Text style={[styles.audioBookName, { color: colors.biblePrimaryText }]}>
-                        {book.name}
+                        {getTranslatedBookName(book.id, t)}
                       </Text>
                       <TouchableOpacity
                         style={[

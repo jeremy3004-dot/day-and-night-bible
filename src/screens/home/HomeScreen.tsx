@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { bibleTranslations, getBookById } from '../../constants';
+import { bibleTranslations, getBookById, getTranslatedBookName } from '../../constants';
 import { config } from '../../constants/config';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useProgressStore, useBibleStore } from '../../stores';
@@ -152,7 +152,7 @@ export function HomeScreen() {
   };
 
   const dailyReferenceLabel = dailyScripture
-    ? `${getBookById(dailyScripture.bookId)?.name || dailyScripture.bookId} ${dailyScripture.chapter}${
+    ? `${getTranslatedBookName(dailyScripture.bookId, t)} ${dailyScripture.chapter}${
         dailyScripture.verse ? `:${dailyScripture.verse}` : ''
       }`
     : null;

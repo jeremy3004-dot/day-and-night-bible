@@ -20,7 +20,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { getBookById, getBookIcon } from '../../constants';
+import { getBookById, getBookIcon, getTranslatedBookName } from '../../constants';
 import { config } from '../../constants/config';
 import { useTheme } from '../../contexts/ThemeContext';
 import { layout, radius, shadows, spacing, typography } from '../../design/system';
@@ -662,7 +662,7 @@ export function BibleReaderScreen() {
       detail: 'share',
     });
     await Share.share({
-      message: `${book.name} ${chapter}`,
+      message: `${getTranslatedBookName(bookId, t)} ${chapter}`,
     });
   };
 
@@ -912,7 +912,7 @@ export function BibleReaderScreen() {
 
         <View style={styles.listenMetaBlock}>
           <Text style={[styles.listenChapterTitle, { color: colors.biblePrimaryText }]}>
-            {book.name} {chapter}
+            {getTranslatedBookName(bookId, t)} {chapter}
           </Text>
           <Text style={[styles.listenChapterMeta, { color: colors.bibleSecondaryText }]}>
             {t('bible.verseCount', { count: verses.length })}
@@ -945,8 +945,8 @@ export function BibleReaderScreen() {
             </Text>
             <Text style={[styles.listenTimeCenterText, { color: colors.bibleSecondaryText }]}>
               {highlightedVerse != null
-                ? `${book.name} ${chapter}:${highlightedVerse}`
-                : `${book.name} ${chapter}`}
+                ? `${getTranslatedBookName(bookId, t)} ${chapter}:${highlightedVerse}`
+                : `${getTranslatedBookName(bookId, t)} ${chapter}`}
             </Text>
             <Text style={[styles.listenTimeText, { color: colors.bibleSecondaryText }]}>
               -{formatTime(remainingDuration)}
@@ -1164,7 +1164,7 @@ export function BibleReaderScreen() {
           ]}
         >
           <Text style={[styles.feedbackTitle, { color: colors.biblePrimaryText }]}>
-            {t('bible.noVersesAvailable', { book: book.name, chapter })}
+            {t('bible.noVersesAvailable', { book: getTranslatedBookName(bookId, t), chapter })}
           </Text>
           <Text style={[styles.feedbackBody, { color: colors.bibleSecondaryText }]}>
             {t('bible.fullBibleComingSoon')}
@@ -1316,7 +1316,7 @@ export function BibleReaderScreen() {
             },
           ]}
         >
-          {book.name} {chapter}
+          {getTranslatedBookName(bookId, t)} {chapter}
         </Text>
         {primarySectionHeading ? (
           <Text
@@ -1388,7 +1388,7 @@ export function BibleReaderScreen() {
               style={[styles.persistentReaderChapterLabel, { color: colors.biblePrimaryText }]}
               numberOfLines={1}
             >
-              {book.name} {chapter}
+              {getTranslatedBookName(bookId, t)} {chapter}
             </Text>
           </TouchableOpacity>
 
@@ -1474,7 +1474,7 @@ export function BibleReaderScreen() {
           {!showMinimalListenChrome && (
             <>
               <Text style={[styles.title, { color: colors.biblePrimaryText }]}>
-                {book.name} {chapter}
+                {getTranslatedBookName(bookId, t)} {chapter}
               </Text>
               <TouchableOpacity
                 style={[
@@ -1653,7 +1653,7 @@ export function BibleReaderScreen() {
             ]}
           >
             <Text style={[styles.actionSheetTitle, { color: colors.biblePrimaryText }]}>
-              {book.name} {chapter}
+              {getTranslatedBookName(bookId, t)} {chapter}
             </Text>
 
             {[
@@ -1886,7 +1886,7 @@ export function BibleReaderScreen() {
                 {translationLabel}
               </Text>
               <Text style={[styles.followAlongTitle, { color: colors.biblePrimaryText }]}>
-                {book.name} {chapter}
+                {getTranslatedBookName(bookId, t)} {chapter}
               </Text>
             </View>
           </View>
