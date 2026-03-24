@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Image,
   Modal,
   NativeScrollEvent,
@@ -514,9 +513,6 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
               scrollToSection('story');
               playAudio();
             }}
-            onAddNote={() => {
-              Alert.alert('Note feature coming soon');
-            }}
             onShareApp={() => {
               Share.share({ message: 'Check out EveryBible!' }).catch(() => undefined);
             }}
@@ -938,7 +934,6 @@ interface ApplicationSectionProps {
   questions: string[];
   colors: ThemeColors;
   onListenAgain: () => void;
-  onAddNote: () => void;
   onShareApp: () => void;
 }
 
@@ -946,7 +941,6 @@ function ApplicationSection({
   questions,
   colors,
   onListenAgain,
-  onAddNote,
   onShareApp,
 }: ApplicationSectionProps) {
   return (
@@ -963,18 +957,6 @@ function ApplicationSection({
             >
               <Text style={[styles.actionButtonText, { color: colors.accentPrimary }]}>
                 Listen to Story Again
-              </Text>
-            </TouchableOpacity>
-          );
-        } else if (idx === 3) {
-          actionButton = (
-            <TouchableOpacity
-              style={[styles.actionButton, { borderColor: colors.accentPrimary }]}
-              onPress={onAddNote}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.actionButtonText, { color: colors.accentPrimary }]}>
-                Add Note
               </Text>
             </TouchableOpacity>
           );

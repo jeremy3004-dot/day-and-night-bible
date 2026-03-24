@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../../contexts/ThemeContext';
+import { rootNavigationRef } from '../../navigation/rootNavigation';
 import { layout, radius, spacing, typography } from '../../design/system';
 import { getBookById } from '../../constants';
 import { fetchAnnotations } from '../../services/annotations';
@@ -89,10 +90,19 @@ export function AnnotationsScreen() {
     return `${bookName} ${a.chapter}:${verse}`;
   };
 
+  const navigateToBible = (item: UserAnnotation) => {
+    if (!rootNavigationRef.isReady()) return;
+    rootNavigationRef.navigate('Bible', {
+      screen: 'BibleReader',
+      params: { bookId: item.book, chapter: item.chapter, focusVerse: item.verse_start },
+    });
+  };
+
   const renderItem = ({ item }: { item: UserAnnotation }) => (
     <TouchableOpacity
       style={[styles.card, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]}
       activeOpacity={0.7}
+      onPress={() => navigateToBible(item)}
     >
       <View style={styles.cardHeader}>
         <View style={styles.cardIconRow}>
