@@ -1127,5 +1127,7 @@ export const ne = {
     bundled: 'समावेश',
     download: 'डाउनलोड',
     publicDomain: 'सार्वजनिक डोमेन',
+    cloudLibrary: 'क्लाउड पुस्तकालय',
+    downloading: 'डाउनलोड गर्दै...',
   },
 } as const;

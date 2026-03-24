@@ -1131,5 +1131,7 @@ export const es = {
     bundled: 'Incluido',
     download: 'Descargar',
     publicDomain: 'Dominio público',
+    cloudLibrary: 'Biblioteca en la nube',
+    downloading: 'Descargando...',
   },
 } as const;
