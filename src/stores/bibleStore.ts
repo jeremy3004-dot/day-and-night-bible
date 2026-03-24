@@ -362,10 +362,77 @@ export const useBibleStore = create<BibleState>()(
           return;
         }
 
-        // Remote text-pack downloads are not yet implemented for other translations.
-        set({
-          error: 'Translation downloads coming soon! Currently only BSB, WEB, and ASV are available.',
-        });
+        // Already downloaded and installed — no-op
+        if (translation?.isDownloaded && translation?.textPackLocalPath) {
+          return;
+        }
+
+        // Cloud download from Supabase bible_verses table
+        try {
+          set((state) => ({
+            error: null,
+            downloadProgress: {
+              translationId,
+              progress: 0,
+              status: 'downloading' as const,
+            },
+            translations: state.translations.map((t) =>
+              t.id === translationId
+                ? { ...t, installState: 'downloading' as const }
+                : t
+            ),
+          }));
+
+          const { downloadCloudTranslation } = await import('../services/bible/cloudTranslationService');
+
+          const localPath = await downloadCloudTranslation(translationId, (progress) => {
+            const pct =
+              progress.totalVerses > 0
+                ? Math.round((progress.versesDownloaded / progress.totalVerses) * 100)
+                : 0;
+            set({
+              downloadProgress: {
+                translationId,
+                progress: pct,
+                status:
+                  progress.phase === 'error'
+                    ? 'error'
+                    : progress.phase === 'complete'
+                      ? 'completed'
+                      : 'downloading',
+                error: progress.error,
+              },
+            });
+          });
+
+          // Activate the installed pack — sets textPackLocalPath, isDownloaded, installState
+          set((state) => ({
+            downloadProgress: null,
+            translations: state.translations.map((t) =>
+              t.id === translationId
+                ? {
+                    ...t,
+                    isDownloaded: true,
+                    hasText: true,
+                    installState: 'installed' as const,
+                    textPackLocalPath: localPath,
+                    activeTextPackVersion: '1',
+                  }
+                : t
+            ),
+          }));
+        } catch (err) {
+          const message = err instanceof Error ? err.message : 'Download failed';
+          set((state) => ({
+            error: message,
+            downloadProgress: null,
+            translations: state.translations.map((t) =>
+              t.id === translationId
+                ? { ...t, installState: 'failed' as const, lastInstallError: message }
+                : t
+            ),
+          }));
+        }
       },
 
       downloadAllBooks: async (translationId: string) => {
