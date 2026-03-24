@@ -35,6 +35,7 @@ import {
 } from '../../services/gather/gatherBibleService';
 import { getChapterAudioUrl } from '../../services/audio/audioService';
 import type { MeetingSectionType } from '../../types/gather';
+import { useGatherStore } from '../../stores/gatherStore';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -71,6 +72,10 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
   // -------------------------------------------------------------------------
   // State
   // -------------------------------------------------------------------------
+
+  const markLessonComplete = useGatherStore((s) => s.markLessonComplete);
+  const unmarkLessonComplete = useGatherStore((s) => s.unmarkLessonComplete);
+  const isComplete = useGatherStore((s) => s.isLessonComplete(parentId, lessonId));
 
   const [activeSection, setActiveSection] = useState<MeetingSectionType>('fellowship');
   const [headerTitle, setHeaderTitle] = useState<string>(lesson?.title ?? '');
@@ -518,8 +523,40 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
           />
         </View>
 
+        {/* Mark as Completed button */}
+        <TouchableOpacity
+          onPress={() =>
+            isComplete
+              ? unmarkLessonComplete(parentId, lessonId)
+              : markLessonComplete(parentId, lessonId)
+          }
+          style={[
+            styles.completeButton,
+            {
+              backgroundColor: isComplete ? colors.cardBackground : colors.accentGreen,
+              borderColor: isComplete ? colors.accentGreen : 'transparent',
+              borderWidth: isComplete ? 1.5 : 0,
+            },
+          ]}
+          activeOpacity={0.8}
+        >
+          <Ionicons
+            name={isComplete ? 'checkmark-circle' : 'checkmark-circle-outline'}
+            size={22}
+            color={isComplete ? colors.accentGreen : '#fff'}
+          />
+          <Text
+            style={[
+              styles.completeButtonText,
+              { color: isComplete ? colors.accentGreen : '#fff' },
+            ]}
+          >
+            {isComplete ? t('gather.completed') : t('gather.markComplete')}
+          </Text>
+        </TouchableOpacity>
+
         {/* Bottom padding so last content isn't hidden behind bottom bar */}
-        <View style={{ height: 160 }} />
+        <View style={{ height: 220 }} />
       </ScrollView>
 
       {/* Fixed bottom bar */}
@@ -976,6 +1013,21 @@ function ApplicationSection({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  completeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    marginHorizontal: layout.screenPadding,
+    marginTop: spacing.xxl,
+    paddingVertical: 16,
+    borderRadius: radius.lg,
+  },
+  completeButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    letterSpacing: 0.2,
   },
   notFoundContainer: {
     flex: 1,

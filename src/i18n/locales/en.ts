@@ -485,6 +485,7 @@ export const en = {
     download: 'Download',
     removeDownload: 'Remove Download',
     markComplete: 'Mark as Complete',
+    completed: 'Completed',
     markIncomplete: 'Mark as Incomplete',
     manageBookmarks: 'Manage Bookmarks',
     lessonComplete: 'Lesson Complete',
