@@ -673,6 +673,8 @@ export const hi = {
     bundled: 'शामिल',
     download: 'डाउनलोड',
     publicDomain: 'सार्वजनिक डोमेन',
+    cloudLibrary: 'क्लाउड लाइब्रेरी',
+    downloading: 'डाउनलोड हो रहा है...',
   },
   gather: {
     title: 'इकट्ठा',

@@ -671,6 +671,8 @@ export const en = {
     bundled: 'Bundled',
     download: 'Download',
     publicDomain: 'Public Domain',
+    cloudLibrary: 'Cloud Library',
+    downloading: 'Downloading...',
   },
   gather: {
     title: 'Gather',

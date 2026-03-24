@@ -31,20 +31,34 @@ type PreferenceField = 'primary' | 'secondary' | 'audio';
 interface TranslationSection {
   title: string;
   data: TranslationCatalogEntry[];
+  sectionKey: 'installed' | 'available';
 }
 
-function groupByLanguage(translations: TranslationCatalogEntry[]): TranslationSection[] {
-  const map = new Map<string, TranslationCatalogEntry[]>();
+function groupTranslationsByInstallState(
+  translations: TranslationCatalogEntry[],
+  isLocallyAvailableFn: (id: string) => boolean,
+  installedLabel: string,
+  availableLabel: string
+): TranslationSection[] {
+  const installed: TranslationCatalogEntry[] = [];
+  const available: TranslationCatalogEntry[] = [];
 
   for (const entry of translations) {
-    const lang = entry.language_name;
-    if (!map.has(lang)) {
-      map.set(lang, []);
+    if (isLocallyAvailableFn(entry.translation_id)) {
+      installed.push(entry);
+    } else {
+      available.push(entry);
     }
-    map.get(lang)!.push(entry);
   }
 
-  return Array.from(map.entries()).map(([title, data]) => ({ title, data }));
+  const sections: TranslationSection[] = [];
+  if (installed.length > 0) {
+    sections.push({ title: installedLabel, data: installed, sectionKey: 'installed' });
+  }
+  if (available.length > 0) {
+    sections.push({ title: availableLabel, data: available, sectionKey: 'available' });
+  }
+  return sections;
 }
 
 function getLicenseLabel(licenseType: string | null, t: (key: string) => string): string {
@@ -62,22 +76,32 @@ export function TranslationBrowserScreen() {
   const { t } = useTranslation();
 
   const setCurrentTranslation = useBibleStore((state) => state.setCurrentTranslation);
+  const storeTranslations = useBibleStore((state) => state.translations);
+  const storeProgress = useBibleStore((state) => state.downloadProgress);
 
-  const [translations, setTranslations] = useState<TranslationCatalogEntry[]>([]);
+  const [catalogEntries, setCatalogEntries] = useState<TranslationCatalogEntry[]>([]);
   const [preferences, setPreferences] = useState<UserTranslationPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [savingField, setSavingField] = useState<PreferenceField | null>(null);
-
-  const sections = groupByLanguage(translations);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   // Returns true if a translation ID is available to read locally (bundled text or installed pack).
   // Uses getState() so it is not a reactive dependency and won't re-run the load callback.
-  const isLocallyAvailable = useCallback((translationId: string): boolean => {
-    const local = useBibleStore
-      .getState()
-      .translations.find((tr) => tr.id === translationId.toLowerCase());
-    return Boolean(local?.hasText || local?.isDownloaded);
-  }, []);
+  const isLocallyAvailable = useCallback(
+    (translationId: string): boolean => {
+      // Also check reactive storeTranslations so the list refreshes after download completes
+      const local = storeTranslations.find((tr) => tr.id === translationId.toLowerCase());
+      return Boolean(local?.hasText || local?.isDownloaded);
+    },
+    [storeTranslations]
+  );
+
+  const sections = groupTranslationsByInstallState(
+    catalogEntries,
+    isLocallyAvailable,
+    t('translations.installed'),
+    t('translations.available')
+  );
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -88,7 +112,7 @@ export function TranslationBrowserScreen() {
       ]);
 
       if (catalogResult.success && catalogResult.data && catalogResult.data.length > 0) {
-        setTranslations(catalogResult.data);
+        setCatalogEntries(catalogResult.data);
       } else {
         // Offline or empty catalog: surface locally-available translations as a fallback.
         const localState = useBibleStore.getState().translations;
@@ -112,7 +136,7 @@ export function TranslationBrowserScreen() {
             created_at: '',
             updated_at: '',
           }));
-        setTranslations(fallback);
+        setCatalogEntries(fallback);
       }
       if (prefsResult.success) {
         setPreferences(prefsResult.data ?? null);
@@ -125,6 +149,47 @@ export function TranslationBrowserScreen() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const handleDownload = async (entry: TranslationCatalogEntry) => {
+    const storeTranslationId = entry.translation_id.toLowerCase();
+    setDownloadingId(storeTranslationId);
+
+    // Ensure the translation exists in bibleStore.translations
+    // (add it if it only exists in the Supabase catalog but not locally)
+    const state = useBibleStore.getState();
+    const existsInStore = state.translations.some((tr) => tr.id === storeTranslationId);
+    if (!existsInStore) {
+      useBibleStore.setState((prev) => ({
+        translations: [
+          ...prev.translations,
+          {
+            id: storeTranslationId,
+            name: entry.name,
+            abbreviation: entry.abbreviation,
+            language: entry.language_name,
+            description: entry.license_type ?? '',
+            copyright: entry.license_type ?? 'Public Domain',
+            isDownloaded: false,
+            downloadedBooks: [],
+            downloadedAudioBooks: [],
+            totalBooks: 66,
+            sizeInMB: 5,
+            hasText: false,
+            hasAudio: entry.has_audio,
+            audioGranularity: 'none' as const,
+            source: 'runtime' as const,
+            installState: 'remote-only' as const,
+          },
+        ],
+      }));
+    }
+
+    try {
+      await useBibleStore.getState().downloadTranslation(storeTranslationId);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const handleSetPrimary = async (translation: TranslationCatalogEntry) => {
     setSavingField('primary');
@@ -148,9 +213,9 @@ export function TranslationBrowserScreen() {
   };
 
   const showPreferencePicker = (field: PreferenceField) => {
-    if (translations.length === 0) return;
+    if (catalogEntries.length === 0) return;
 
-    const options = translations.map((tr) => ({
+    const options = catalogEntries.map((tr) => ({
       text: `${tr.abbreviation} – ${tr.name}`,
       onPress: async () => {
         setSavingField(field);
@@ -222,7 +287,7 @@ export function TranslationBrowserScreen() {
 
   const getTranslationLabel = (id: string | null | undefined): string => {
     if (!id) return t('common.notSet');
-    const match = translations.find((tr) => tr.translation_id === id);
+    const match = catalogEntries.find((tr) => tr.translation_id === id);
     if (!match) return id;
     return `${match.abbreviation} – ${match.name}`;
   };
@@ -232,18 +297,39 @@ export function TranslationBrowserScreen() {
   const audioId = preferences?.audio_translation ?? null;
 
   const renderSectionHeader = ({ section }: { section: TranslationSection }) => (
-    <Text style={[styles.sectionHeader, { color: colors.secondaryText, backgroundColor: colors.background }]}>
+    <Text
+      style={[
+        styles.sectionHeader,
+        { color: colors.secondaryText, backgroundColor: colors.background },
+      ]}
+    >
       {section.title}
     </Text>
   );
 
-  const renderTranslation = ({ item, index, section }: { item: TranslationCatalogEntry; index: number; section: TranslationSection }) => {
+  const renderTranslation = ({
+    item,
+    index,
+    section,
+  }: {
+    item: TranslationCatalogEntry;
+    index: number;
+    section: TranslationSection;
+  }) => {
+    const storeId = item.translation_id.toLowerCase();
     const isPrimary = item.translation_id === primaryId;
     const isLast = index === section.data.length - 1;
     const licenseLabel = getLicenseLabel(item.license_type, t);
     const isPublicDomain =
       item.license_type?.toLowerCase().includes('public') ||
       item.license_type?.toLowerCase().includes('pd');
+
+    const isInstalled = isLocallyAvailable(item.translation_id);
+    const isCurrentlyDownloading = downloadingId === storeId;
+    const downloadPct =
+      isCurrentlyDownloading && storeProgress?.translationId === storeId
+        ? storeProgress.progress
+        : null;
 
     return (
       <TouchableOpacity
@@ -253,7 +339,14 @@ export function TranslationBrowserScreen() {
           isLast && styles.lastRow,
           isPrimary && { backgroundColor: colors.cardBorder + '40' },
         ]}
-        onPress={() => handleSetPrimary(item)}
+        onPress={() => {
+          if (isInstalled) {
+            handleSetPrimary(item);
+          } else if (!isCurrentlyDownloading) {
+            handleDownload(item);
+          }
+        }}
+        disabled={isCurrentlyDownloading}
         accessibilityRole="button"
         accessibilityLabel={`${item.name}, ${item.abbreviation}`}
         accessibilityState={{ selected: isPrimary }}
@@ -262,7 +355,9 @@ export function TranslationBrowserScreen() {
           <View style={styles.translationTitleRow}>
             <Text style={[styles.translationName, { color: colors.primaryText }]}>{item.name}</Text>
             <View style={[styles.chip, { backgroundColor: colors.cardBorder }]}>
-              <Text style={[styles.chipText, { color: colors.secondaryText }]}>{item.abbreviation}</Text>
+              <Text style={[styles.chipText, { color: colors.secondaryText }]}>
+                {item.abbreviation}
+              </Text>
             </View>
           </View>
 
@@ -306,13 +401,31 @@ export function TranslationBrowserScreen() {
                 accessibilityLabel="Has audio"
               />
             ) : null}
+
+            {isCurrentlyDownloading ? (
+              <Text style={[styles.badgeText, { color: colors.secondaryText }]}>
+                {downloadPct !== null
+                  ? `${t('translations.downloading')} ${downloadPct}%`
+                  : t('translations.downloading')}
+              </Text>
+            ) : null}
           </View>
         </View>
 
-        {isPrimary ? (
+        {/* Right side: check, download icon, or spinner */}
+        {isInstalled && isPrimary ? (
           <Ionicons name="checkmark-circle" size={22} color={colors.accentPrimary} />
-        ) : (
+        ) : isInstalled ? (
           <View style={styles.checkPlaceholder} />
+        ) : isCurrentlyDownloading ? (
+          <ActivityIndicator size="small" color={colors.accentPrimary} />
+        ) : (
+          <Ionicons
+            name="cloud-download-outline"
+            size={22}
+            color={colors.accentPrimary}
+            accessibilityLabel={t('translations.download')}
+          />
         )}
       </TouchableOpacity>
     );
@@ -446,9 +559,11 @@ export function TranslationBrowserScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Available Translations header */}
-            <Text style={[styles.groupLabel, { color: colors.secondaryText, marginTop: spacing.xl }]}>
-              {t('translations.available')}
+            {/* Cloud Library header */}
+            <Text
+              style={[styles.groupLabel, { color: colors.secondaryText, marginTop: spacing.xl }]}
+            >
+              {t('translations.cloudLibrary')}
             </Text>
 
             {isLoading ? (
