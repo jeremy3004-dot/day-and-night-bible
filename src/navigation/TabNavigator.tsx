@@ -37,7 +37,7 @@ export function TabNavigator() {
         tabBarActiveTintColor: colors.tabActive,
         tabBarInactiveTintColor: colors.tabInactive,
         tabBarStyle:
-          route.name === 'Bible' &&
+          (route.name === 'Bible' || route.name === 'Learn') &&
           shouldHideTabBarOnNestedRoute(getFocusedRouteNameFromRoute(route))
             ? { display: 'none' }
             : defaultTabBarStyle,
