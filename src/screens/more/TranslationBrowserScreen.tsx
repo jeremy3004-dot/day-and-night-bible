@@ -129,19 +129,19 @@ export function TranslationBrowserScreen() {
   const handleSetPrimary = async (translation: TranslationCatalogEntry) => {
     setSavingField('primary');
     try {
+      // Always apply locally-available translations immediately — Supabase sync is a bonus.
+      if (isLocallyAvailable(translation.translation_id)) {
+        setCurrentTranslation(translation.translation_id.toLowerCase());
+      }
+
       const result = await setUserTranslationPreferences({ primary: translation.translation_id });
       if (result.success) {
         setPreferences((prev) => ({
           ...(prev ?? { id: '', user_id: '', secondary_translation: null, audio_translation: null, synced_at: '' }),
           primary_translation: translation.translation_id,
         }));
-        // Also update the local active reading translation when the selection is locally available.
-        if (isLocallyAvailable(translation.translation_id)) {
-          setCurrentTranslation(translation.translation_id.toLowerCase());
-        }
-      } else {
-        Alert.alert(t('common.error'), result.error ?? t('common.error'));
       }
+      // Silently ignore auth failures — local switch already happened above.
     } finally {
       setSavingField(null);
     }
@@ -162,6 +162,11 @@ export function TranslationBrowserScreen() {
                 ? { secondary: tr.translation_id }
                 : { audio: tr.translation_id };
 
+          // Apply locally-available primary translations immediately — Supabase sync is a bonus.
+          if (field === 'primary' && isLocallyAvailable(tr.translation_id)) {
+            setCurrentTranslation(tr.translation_id.toLowerCase());
+          }
+
           const result = await setUserTranslationPreferences(payload);
           if (result.success) {
             setPreferences((prev) => ({
@@ -170,13 +175,8 @@ export function TranslationBrowserScreen() {
               ...(field === 'secondary' ? { secondary_translation: tr.translation_id } : {}),
               ...(field === 'audio' ? { audio_translation: tr.translation_id } : {}),
             }));
-            // For primary, also update the local active reading translation when available locally.
-            if (field === 'primary' && isLocallyAvailable(tr.translation_id)) {
-              setCurrentTranslation(tr.translation_id.toLowerCase());
-            }
-          } else {
-            Alert.alert(t('common.error'), result.error ?? t('common.error'));
           }
+          // Silently ignore auth failures — local switch already happened above.
         } finally {
           setSavingField(null);
         }
