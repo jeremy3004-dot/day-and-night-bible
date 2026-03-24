@@ -282,6 +282,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 21. Content Versioning & Multiple Translations                                 | 2/2            | Backend + frontend complete (translation browser + preferences)    | 2026-03-22 |
 | 22. Gather Tab — Waha-style Foundations, Topics & Meeting Format               | 0/4            | Planned                                                            | -          |
 | 23. Foundations Content Restructure                                            | 0/1            | Planned                                                            | -          |
+| 28. Multi-Translation Supabase Library                                         | 0/2            | Planned                                                            | -          |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -532,9 +533,11 @@ Plans:
 
 ### Phase 28: Multi-Translation Supabase Library
 
-**Goal:** Build a Supabase-backed multi-translation Bible library: import 211 full public-domain Bibles (OT+NT) from eBible.org and scrollmapper/bible_databases into Supabase Postgres, add download-on-demand flow in the app so users can browse and install any translation offline.
+**Goal:** Build a Supabase-backed multi-translation Bible library: import public-domain full Bibles (OT+NT) from eBible.org into Supabase Postgres, add download-on-demand flow in the app so users can browse and install any translation offline.
+**Requirements**: MULTI-01
 **Depends on:** Phase 27
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 28 to break down)
+- [ ] 28-01-PLAN.md — Supabase bible_verses table migration, anon RLS, and TypeScript eBible.org import script
+- [ ] 28-02-PLAN.md — Cloud translation download service, bibleStore wiring, and TranslationBrowserScreen download UI
