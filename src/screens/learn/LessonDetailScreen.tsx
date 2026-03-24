@@ -552,7 +552,7 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
         </TouchableOpacity>
 
         {/* Bottom padding so last content isn't hidden behind bottom bar */}
-        <View style={{ height: 220 }} />
+        <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Fixed bottom bar */}
