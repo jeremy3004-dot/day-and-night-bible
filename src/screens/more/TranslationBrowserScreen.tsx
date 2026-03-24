@@ -103,17 +103,18 @@ export function TranslationBrowserScreen() {
     [storeTranslations]
   );
 
-  // Build unique language filter list from catalog, preserving encounter order
+  // Build unique language filter list from catalog, deduplicating by language_name
+  // so 'en' and 'eng' both labeled 'English' collapse into one pill.
   const languageFilters = useMemo<LanguageFilter[]>(() => {
     const seen = new Set<string>();
     const langs: LanguageFilter[] = [];
     for (const entry of catalogEntries) {
-      if (!seen.has(entry.language_code)) {
-        seen.add(entry.language_code);
-        langs.push({ code: entry.language_code, label: entry.language_name });
+      const label = entry.language_name;
+      if (!seen.has(label)) {
+        seen.add(label);
+        langs.push({ code: label, label });
       }
     }
-    // Sort alphabetically by label; English first if present
     langs.sort((a, b) => {
       if (a.label === 'English') return -1;
       if (b.label === 'English') return 1;
@@ -124,7 +125,7 @@ export function TranslationBrowserScreen() {
 
   const filteredEntries = useMemo<TranslationCatalogEntry[]>(() => {
     if (selectedLanguage === 'all') return catalogEntries;
-    return catalogEntries.filter((e) => e.language_code === selectedLanguage);
+    return catalogEntries.filter((e) => e.language_name === selectedLanguage);
   }, [catalogEntries, selectedLanguage]);
 
   const sections = groupTranslationsByInstallState(
