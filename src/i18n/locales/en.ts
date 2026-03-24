@@ -674,6 +674,7 @@ export const en = {
     publicDomain: 'Public Domain',
     cloudLibrary: 'Cloud Library',
     downloading: 'Downloading...',
+    downloadPrompt: 'Download {{name}} (~{{size}} MB) for offline reading?',
   },
   gather: {
     title: 'Gather',

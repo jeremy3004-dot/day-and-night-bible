@@ -676,6 +676,7 @@ export const hi = {
     publicDomain: 'सार्वजनिक डोमेन',
     cloudLibrary: 'क्लाउड लाइब्रेरी',
     downloading: 'डाउनलोड हो रहा है...',
+    downloadPrompt: 'ऑफलाइन पढ़ने के लिए {{name}} (~{{size}} MB) डाउनलोड करें?',
   },
   gather: {
     title: 'इकट्ठा',
