@@ -1134,5 +1134,6 @@ export const es = {
     publicDomain: 'Dominio público',
     cloudLibrary: 'Biblioteca en la nube',
     downloading: 'Descargando...',
+    downloadPrompt: '¿Descargar {{name}} (~{{size}} MB) para leer sin conexión?',
   },
 } as const;

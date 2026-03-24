@@ -1130,5 +1130,6 @@ export const ne = {
     publicDomain: 'सार्वजनिक डोमेन',
     cloudLibrary: 'क्लाउड पुस्तकालय',
     downloading: 'डाउनलोड गर्दै...',
+    downloadPrompt: 'अफलाइन पढ्नका लागि {{name}} (~{{size}} MB) डाउनलोड गर्नुहोस्?',
   },
 } as const;

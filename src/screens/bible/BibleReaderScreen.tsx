@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -119,7 +119,6 @@ export function BibleReaderScreen() {
     playbackSequenceEntries = [],
   } = route.params;
   const { colors } = useTheme();
-  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const autoplayKeyRef = useRef<string | null>(null);
   const sessionKeyRef = useRef<string | null>(null);
@@ -155,6 +154,7 @@ export function BibleReaderScreen() {
   const translations = useBibleStore((state) => state.translations);
   const setCurrentTranslation = useBibleStore((state) => state.setCurrentTranslation);
   const downloadAudioForBook = useBibleStore((state) => state.downloadAudioForBook);
+  const downloadTranslation = useBibleStore((state) => state.downloadTranslation);
   const setPlaybackSequence = useAudioStore((state) => state.setPlaybackSequence);
   const toggleFavorite = useLibraryStore((state) => state.toggleFavorite);
   const addChapterToDefaultPlaylist = useLibraryStore((state) => state.addChapterToDefaultPlaylist);
@@ -256,8 +256,8 @@ export function BibleReaderScreen() {
   const primarySectionHeading =
     verses.find((verse) => verse.heading?.trim())?.heading?.trim() ?? null;
   const firstHeadingVerseId = verses.find((verse) => verse.heading?.trim())?.id ?? null;
-  const premiumTopInset = insets.top + 12;
-  const premiumBottomInset = insets.bottom + 18;
+  const premiumTopInset = 12;
+  const premiumBottomInset = 18;
   const topChromeOpacity = readerScrollY.interpolate({
     inputRange: [0, READER_TOP_CHROME_DISMISS_DISTANCE * 0.7, READER_TOP_CHROME_DISMISS_DISTANCE],
     outputRange: [1, 0.88, 0],
@@ -606,6 +606,24 @@ export function BibleReaderScreen() {
 
     if (selectionState.reason === 'audio-unavailable') {
       Alert.alert(t('common.error'), t('bible.audioDownloadFailed'), [{ text: t('common.ok') }]);
+      return;
+    }
+
+    // Cloud translation that hasn't been downloaded yet — offer to download it
+    if (translation.installState === 'remote-only' || translation.source === 'runtime') {
+      Alert.alert(
+        translation.name,
+        t('translations.downloadPrompt', { name: translation.name, size: translation.sizeInMB }),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('translations.download'),
+            onPress: () => {
+              void downloadTranslation(translation.id);
+            },
+          },
+        ]
+      );
       return;
     }
 
@@ -1421,7 +1439,7 @@ export function BibleReaderScreen() {
           {
             borderBottomColor: colors.bibleDivider,
             borderBottomWidth: showMinimalListenChrome ? 0 : 1,
-            paddingTop: insets.top + spacing.md,
+            paddingTop: spacing.md,
           },
         ]}
       >
@@ -1561,7 +1579,7 @@ export function BibleReaderScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.bibleBackground }]}
-      edges={['bottom']}
+      edges={['top', 'bottom']}
     >
       {showPremiumReadMode ? renderPremiumReadLayout() : renderLegacyReaderLayout()}
 
@@ -1834,7 +1852,9 @@ export function BibleReaderScreen() {
                               >
                                 {selectionState.isSelectable
                                   ? t('bible.available')
-                                  : t('common.comingSoon')}
+                                  : (translation.installState === 'remote-only' || translation.source === 'runtime')
+                                    ? t('translations.download')
+                                    : t('common.comingSoon')}
                               </Text>
                             </View>
                           </View>
