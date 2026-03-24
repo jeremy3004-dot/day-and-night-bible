@@ -1421,6 +1421,7 @@ export function BibleReaderScreen() {
           {
             borderBottomColor: colors.bibleDivider,
             borderBottomWidth: showMinimalListenChrome ? 0 : 1,
+            paddingTop: insets.top + spacing.md,
           },
         ]}
       >
@@ -1560,7 +1561,7 @@ export function BibleReaderScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.bibleBackground }]}
-      edges={['top', 'bottom']}
+      edges={['bottom']}
     >
       {showPremiumReadMode ? renderPremiumReadLayout() : renderLegacyReaderLayout()}
 

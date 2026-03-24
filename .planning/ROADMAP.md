@@ -282,6 +282,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 21. Content Versioning & Multiple Translations                                 | 2/2            | Backend + frontend complete (translation browser + preferences)    | 2026-03-22 |
 | 22. Gather Tab — Waha-style Foundations, Topics & Meeting Format               | 0/4            | Planned                                                            | -          |
 | 23. Foundations Content Restructure                                            | 0/1            | Planned                                                            | -          |
+| 28. Multi-Translation Supabase Library                                         | 1/2 | In Progress|  |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -511,3 +512,32 @@ Plans:
 
 Plans:
 - [x] TBD (run /gsd:plan-phase 24 to break down) (completed 2026-03-23)
+
+### Phase 26: UX Completeness — Navigation Gaps
+
+**Goal:** Remove broken navigation stubs and dead-end screens so every tappable element leads somewhere intentional.
+**Depends on:** Phase 24
+**Plans:** 1/1 plans complete
+
+Plans:
+- [x] 26-01-PLAN.md — Fix navigation stubs: AnnotationsScreen placeholder, LessonDetailScreen note button removal
+
+### Phase 27: Translation Downloads — WEB & ASV
+
+**Goal:** Wire WEB and ASV translations (already bundled in bible-bsb-v2.db) so they are selectable and immediately readable in the Translation Browser with offline catalog fallback.
+**Depends on:** Phase 26
+**Plans:** 1/1 plans complete
+
+Plans:
+- [x] 27-01-PLAN.md — Fix downloadTranslation stub, wire TranslationBrowserScreen to bibleStore, add offline catalog fallback
+
+### Phase 28: Multi-Translation Supabase Library
+
+**Goal:** Build a Supabase-backed multi-translation Bible library: import public-domain full Bibles (OT+NT) from eBible.org into Supabase Postgres, add download-on-demand flow in the app so users can browse and install any translation offline.
+**Requirements**: MULTI-01
+**Depends on:** Phase 27
+**Plans:** 1/2 plans executed
+
+Plans:
+- [x] 28-01-PLAN.md — Supabase bible_verses table migration, anon RLS, and TypeScript eBible.org import script
+- [ ] 28-02-PLAN.md — Cloud translation download service, bibleStore wiring, and TranslationBrowserScreen download UI
