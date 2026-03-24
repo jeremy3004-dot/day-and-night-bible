@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import { getBookById } from '../../constants';
+import { getBookById, getTranslatedBookName } from '../../constants';
 import { useAudioPlayer } from '../../hooks';
 import { useAudioStore, useBibleStore } from '../../stores';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
@@ -83,7 +83,7 @@ export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
       >
         <View style={styles.copy}>
           <Text style={[styles.title, { color: colors.primaryText }]} numberOfLines={1}>
-            {book.name} {displayChapter}
+            {getTranslatedBookName(displayBookId ?? book.id, t)} {displayChapter}
           </Text>
           <Text style={[styles.subtitle, { color: colors.secondaryText }]} numberOfLines={1}>
             {status === 'playing' ? t('audio.nowPlaying') : t('audio.readyToResume')}
