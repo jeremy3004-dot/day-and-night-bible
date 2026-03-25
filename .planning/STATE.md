@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 30-03-PLAN.md (Follow Along modal spring animation + device verification, 2 tasks, 1 file, phase 30 fully complete)
-last_updated: "2026-03-25T12:00:00Z"
+stopped_at: Completed 31-01-PLAN.md (Notification service extraction, foreground handler, Android channels, 2 tasks, 9 files)
+last_updated: "2026-03-25T03:11:00Z"
 progress:
   total_phases: 34
   completed_phases: 23
   total_plans: 56
-  completed_plans: 57
+  completed_plans: 58
 ---
 
 # Project State
@@ -64,6 +64,7 @@ _Updated after each plan completion_
 | Phase 30-animated-chapter-swipe P01 | 3m | 2 tasks | 5 files |
 | Phase 30-animated-chapter-swipe P02 | 4m | 2 tasks | 1 file |
 | Phase 30-animated-chapter-swipe P03 | ~2m | 2 tasks (1 auto + 1 human-verify) | 1 file |
+| Phase 31-push-notification-implementation P01 | ~6m | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,9 @@ Recent decisions affecting current work:
 - [Phase 30-animated-chapter-swipe P02]: Use inline threshold logic in .onEnd worklet (not resolveSwipeChapterNavigation import) to avoid potential Reanimated Babel plugin bundling issues with imported functions in worklet context
 - [Phase 30-animated-chapter-swipe P02]: persistentReaderBottomBar stays outside GestureDetector so bottom nav buttons do not translate during swipe
 - [Phase 30-animated-chapter-swipe P03]: Follow Along modal uses transparent Modal + inner Animated.View because React Native's native animationType hides Reanimated enter animation behind an opaque backdrop; SlideOutDown uses fixed 250ms (not spring) for fast natural exit
+- [Phase 31-push-notification-implementation P01]: Use cancelScheduledNotificationAsync('daily-reading-reminder') not cancelAllScheduledNotificationsAsync — preserves future group alert notifications from being destroyed when disabling daily reminders
+- [Phase 31-push-notification-implementation P01]: setupNotificationHandler() called at module scope before any React component renders — ensures foreground handler is registered before any notification can arrive
+- [Phase 31-push-notification-implementation P01]: setupAndroidChannels() called in AppContent useEffect (not startup coordinator) — channels are idempotent so mount timing is safe and avoids coordinator complexity
 
 ### Pending Todos
 
@@ -201,6 +205,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-25T12:00:00Z
-Stopped at: Completed 30-03-PLAN.md (Follow Along modal spring animation + device verification, Phase 30 all 3 plans complete)
+Last session: 2026-03-25T03:11:00Z
+Stopped at: Completed 31-01-PLAN.md (Notification service extraction, foreground handler, Android channels, 2 tasks, 9 files)
 Resume file: None

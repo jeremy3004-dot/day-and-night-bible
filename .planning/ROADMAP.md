@@ -576,7 +576,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 31-01-PLAN.md — Extract notification service, add foreground handler in App.tsx, fix daily reminder scheduling, set up Android channels
+- [x] 31-01-PLAN.md — Extract notification service, add foreground handler in App.tsx, fix daily reminder scheduling, set up Android channels
 - [ ] 31-02-PLAN.md — Push token registration to user_devices, send-group-notification Edge Function, group session alert trigger
 
 ### Phase 32: Bible Verse Deep Linking
