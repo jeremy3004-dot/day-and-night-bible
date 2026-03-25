@@ -1,12 +1,10 @@
 import { supabase, isSupabaseConfigured } from '../supabase';
 import type { UserAnnotation } from '../supabase/types';
-
-// Composite key that uniquely identifies an annotation's position and type.
-// Used for additive merge: same position+type from two sources → pick latest updated_at.
-type AnnotationCompositeKey = `${string}|${number}|${number}|${string}`;
-
-const makeCompositeKey = (a: UserAnnotation): AnnotationCompositeKey =>
-  `${a.book}|${a.chapter}|${a.verse_start}|${a.type}`;
+import {
+  mergeAnnotationLists,
+  indexAnnotationsByKey,
+  selectAnnotationsToPush,
+} from './annotationMerge';
 
 export interface AnnotationResult<T = undefined> {
   success: boolean;
@@ -248,49 +246,17 @@ export const syncAnnotations = async (
 
     const remoteAnnotations = (remoteData as UserAnnotation[]) ?? [];
 
-    // -- Step 2: Build composite-key maps ------------------------------------
-    // Remote map: composite key → annotation
-    const remoteByKey = new Map<AnnotationCompositeKey, UserAnnotation>();
-    for (const r of remoteAnnotations) {
-      remoteByKey.set(makeCompositeKey(r), r);
-    }
-
-    // Local map: composite key → annotation (used for merge)
-    const localByKey = new Map<AnnotationCompositeKey, UserAnnotation>();
-    for (const l of localAnnotations) {
-      localByKey.set(makeCompositeKey(l), l);
-    }
-
-    // -- Step 3: Additive merge (latest updated_at wins) ---------------------
-    const mergedByKey = new Map<AnnotationCompositeKey, UserAnnotation>();
-
-    // Start with all local entries
-    for (const [key, local] of localByKey) {
-      mergedByKey.set(key, local);
-    }
-
-    // Overlay remote entries where remote is newer
-    for (const [key, remote] of remoteByKey) {
-      const existing = mergedByKey.get(key);
-      if (!existing || remote.updated_at > existing.updated_at) {
-        mergedByKey.set(key, remote);
-      }
-    }
-
-    const merged = Array.from(mergedByKey.values());
+    // -- Steps 2-3: Build key index and perform additive merge ---------------
+    const remoteByKey = indexAnnotationsByKey(remoteAnnotations);
+    const merged = mergeAnnotationLists(localAnnotations, remoteAnnotations);
 
     // -- Step 4: Push local annotations that are newer than remote -----------
     const now = new Date().toISOString();
-    const toPush: UserAnnotation[] = [];
-
-    for (const local of localAnnotations) {
-      const key = makeCompositeKey(local);
-      const remote = remoteByKey.get(key);
-
-      if (!remote || local.updated_at > remote.updated_at) {
-        toPush.push({ ...local, user_id: user.id, synced_at: now });
-      }
-    }
+    const toPush = selectAnnotationsToPush(localAnnotations, remoteByKey).map((a) => ({
+      ...a,
+      user_id: user.id,
+      synced_at: now,
+    }));
 
     if (toPush.length > 0) {
       const { error: pushError } = await supabase
