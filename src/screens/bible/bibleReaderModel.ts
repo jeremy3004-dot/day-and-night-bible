@@ -43,6 +43,8 @@ interface EstimatedFollowAlongVerseInput {
   currentPosition: number;
   duration: number;
   fallbackVerse?: number;
+  /** Exact verse start times from aeneas alignment. When provided, used instead of word-weight estimation. */
+  timestamps?: Record<number, number> | null;
 }
 
 interface ShouldAutoplayChapterAudioInput {
@@ -237,6 +239,7 @@ export const getEstimatedFollowAlongVerse = ({
   currentPosition,
   duration,
   fallbackVerse,
+  timestamps,
 }: EstimatedFollowAlongVerseInput): number | null => {
   if (verses.length === 0) {
     return fallbackVerse ?? null;
@@ -244,6 +247,22 @@ export const getEstimatedFollowAlongVerse = ({
 
   if (duration <= 0 || Number.isNaN(currentPosition) || currentPosition < 0) {
     return fallbackVerse ?? verses[0]?.verse ?? null;
+  }
+
+  // When exact timestamps are available, use them directly instead of word-weight estimation.
+  if (timestamps) {
+    const verseNums = (Object.keys(timestamps) as string[]).map(Number).sort((a, b) => a - b);
+    if (verseNums.length > 0) {
+      let current = verseNums[0];
+      for (const vn of verseNums) {
+        if (timestamps[vn] <= currentPosition) {
+          current = vn;
+        } else {
+          break;
+        }
+      }
+      return current;
+    }
   }
 
   const totalWeight = verses.reduce((sum, verse) => sum + getVerseWeight(verse), 0);
@@ -339,6 +358,34 @@ export const shouldSyncReaderToActiveAudioChapter = ({
   }
 
   return previousActiveAudioBookId === bookId && previousActiveAudioChapter === chapter;
+};
+
+// --- Swipe chapter navigation ---
+
+export const SWIPE_THRESHOLD = 80;
+export const SWIPE_VELOCITY_MIN = 600;
+
+interface SwipeChapterNavigationInput {
+  translationX: number;
+  velocityX: number;
+  hasNextChapter: boolean;
+  hasPrevChapter: boolean;
+}
+
+export type SwipeNavigationResult = 'next' | 'prev' | null;
+
+export const resolveSwipeChapterNavigation = ({
+  translationX,
+  velocityX,
+  hasNextChapter,
+  hasPrevChapter,
+}: SwipeChapterNavigationInput): SwipeNavigationResult => {
+  const wantsNext = translationX < -SWIPE_THRESHOLD || velocityX < -SWIPE_VELOCITY_MIN;
+  const wantsPrev = translationX > SWIPE_THRESHOLD || velocityX > SWIPE_VELOCITY_MIN;
+
+  if (wantsNext && hasNextChapter) return 'next';
+  if (wantsPrev && hasPrevChapter) return 'prev';
+  return null;
 };
 
 function countWords(text: string): number {
