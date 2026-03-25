@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed Phase 28 Plan 02 — Cloud translation download service and TranslationBrowserScreen UI
-last_updated: "2026-03-24T12:10:18.218Z"
+status: Ready to execute
+stopped_at: "Checkpoint: Phase 29 Plan 01 — awaiting device verification for MMKV stores"
+last_updated: "2026-03-25T01:32:29.824Z"
 progress:
-  total_phases: 30
+  total_phases: 34
   completed_phases: 20
-  total_plans: 54
-  completed_plans: 52
+  total_plans: 56
+  completed_plans: 53
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** When someone opens the app, they can reliably read or listen to scripture and continue their discipleship journey even when network conditions are weak or backend features are partially unavailable.
-**Current focus:** Phase 28 — multi-translation-supabase-library
+**Current focus:** Phase 29 — mmkv-state-persistence-upgrade
 
 ## Current Position
 
-Phase: 28
-Plan: Not started
+Phase: 29 (mmkv-state-persistence-upgrade) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Plan: Not started
 _Updated after each plan completion_
 | Phase 28-multi-translation-supabase-library P01 | 4 | 2 tasks | 4 files |
 | Phase 28 P02 | 7m | 2 tasks | 8 files |
+| Phase 29-mmkv-state-persistence-upgrade P01 | 7 | 2 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 28]: Use expo-file-system/legacy for cloudTranslationService filesystem ops; new v2 API does not expose documentDirectory on its top-level namespace
 - [Phase 28]: Fetch Supabase bible_verses in pages of 5000 to respect free-tier response size limits
 - [Phase 28]: Dynamic import() of cloudTranslationService in bibleStore to keep bundled-only app startup lean
+- [Phase 29-mmkv-state-persistence-upgrade]: Pin react-native-mmkv to 2.12.2 (no caret) — prevents accidental v3 install which requires New Architecture and crashes on newArchEnabled=false builds
+- [Phase 29-mmkv-state-persistence-upgrade]: Use dynamic require() in migrateFromAsyncStorage for native deps so STORE_KEYS and migrateStoreKeys can be imported in Node test runner without native module resolution
 
 ### Pending Todos
 
@@ -186,6 +189,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-24T12:05:32.414Z
-Stopped at: Completed Phase 28 Plan 02 — Cloud translation download service and TranslationBrowserScreen UI
+Last session: 2026-03-25T01:32:29.821Z
+Stopped at: Checkpoint: Phase 29 Plan 01 — awaiting device verification for MMKV stores
 Resume file: None

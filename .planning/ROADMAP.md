@@ -283,7 +283,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 22. Gather Tab — Waha-style Foundations, Topics & Meeting Format               | 0/4            | Planned                                                            | -          |
 | 23. Foundations Content Restructure                                            | 0/1            | Planned                                                            | -          |
 | 28. Multi-Translation Supabase Library                                         | 2/2 | Complete    | 2026-03-24 |
-| 29. MMKV State Persistence Upgrade                                             | 0/2            | Planned                                                            | -          |
+| 29. MMKV State Persistence Upgrade                                             | 1/2 | In Progress|  |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -548,10 +548,10 @@ Plans:
 **Goal:** Swap AsyncStorage for MMKV across all Zustand stores to eliminate cold-start hydration lag and improve persistence reliability; add TanStack Query for Supabase data fetching.
 **Requirements**: PERF-01, AUTH-03
 **Depends on:** Phase 28
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 29-01-PLAN.md — MMKV storage adapter, migration helper, and all-store swap
+- [x] 29-01-PLAN.md — MMKV storage adapter, migration helper, and all-store swap
 - [ ] 29-02-PLAN.md — TanStack Query setup with QueryClientProvider and RN focus/online managers
 
 ### Phase 30: Animated Chapter Swipe and Reader Gestures
