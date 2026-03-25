@@ -9,7 +9,7 @@
 
 - [ ] **AUTH-01**: User can create an account with email and password
 - [ ] **AUTH-02**: User can sign in with Apple on iOS and Google on supported builds
-- [ ] **AUTH-03**: User session persists securely across app restarts
+- [x] **AUTH-03**: User session persists securely across app restarts
 - [ ] **SYNC-01**: Signed-in user can sync reading progress and current reading position across devices
 - [ ] **SYNC-02**: Signed-in user can sync user preferences such as theme, language, locale, and reminder settings
 
@@ -44,7 +44,7 @@
 ### Engagement And Performance
 
 - [ ] **ENG-01**: User can view daily reading activity and streak progress in a calendar surface backed by existing reading data
-- [ ] **PERF-01**: Long Bible browse and scripture-result lists remain responsive on device without changing the current read/listen flow
+- [x] **PERF-01**: Long Bible browse and scripture-result lists remain responsive on device without changing the current read/listen flow
 
 ### Release Quality
 
