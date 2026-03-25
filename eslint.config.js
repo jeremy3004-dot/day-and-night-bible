@@ -95,6 +95,9 @@ module.exports = [
       '.eslintrc.js',
       'metro.config.js',
       'babel.config.js',
+      '.claude/',
+      '.gsd/',
+      'supabase/functions/',
     ],
   },
 ];

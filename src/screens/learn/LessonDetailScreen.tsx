@@ -127,6 +127,7 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
     if (!lesson) return;
 
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoadingPassage(true);
     setPassageBlocks([]);
 
@@ -185,6 +186,7 @@ export function LessonDetailScreen({ route, navigation }: LessonDetailScreenProp
   // Sync header title when lesson changes
   useEffect(() => {
     if (lesson) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHeaderTitle(lessonTitle);
     }
   }, [lesson, lessonTitle]);

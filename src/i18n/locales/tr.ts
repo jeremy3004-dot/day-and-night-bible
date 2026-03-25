@@ -497,7 +497,7 @@ export const tr = {
     fellowshipQ2: 'Bu hafta sizi ne strese soktu ve işlerin daha iyi gitmesi için neye ihtiyacınız var?',
     fellowshipQ3: 'Topluluğunuzdaki insanların ihtiyaçları neler ve dile getirdiğimiz ihtiyaçları karşılamak için birbirimize nasıl yardım edebiliriz?',
     fellowshipQ4: 'Şimdi, bugünkü hikayeyi Tanrı\'dan okuyalım...',
-    applicationQ1: 'Şimdi, birinin bu pasajı kendi sözleriyle, sanki hiç duymamış bir arkadaşına anlatıyormuş gibi yeniden anlattıralım. Bir şey atlayıp atlamadığını veya yanlışlıkla bir şey ekleyip eklemediğini kontrol edelim. Böyle bir durumda sormak için \"Bunu hikayede nerede buluyorsun?\" diyebiliriz.',
+    applicationQ1: 'Şimdi, birinin bu pasajı kendi sözleriyle, sanki hiç duymamış bir arkadaşına anlatıyormuş gibi yeniden anlattıralım. Bir şey atlayıp atlamadığını veya yanlışlıkla bir şey ekleyip eklemediğini kontrol edelim. Böyle bir durumda sormak için "Bunu hikayede nerede buluyorsun?" diyebiliriz.',
     applicationQ2: 'Bu hikaye bize Tanrı, O\'nun karakteri ve ne yaptığı hakkında ne öğretiyor?',
     applicationQ3: 'Bu hikayeden kendimiz dahil insanlar hakkında ne öğreniyoruz?',
     applicationQ4: 'Bu hafta bu hikaydeki Tanrı\'nın gerçeğini hayatınıza nasıl uygulayacaksınız? Yapacağınız spesifik bir eylem veya şey nedir?',

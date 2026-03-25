@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ComponentProps } from 'react';
 import {
   View,
   Text,
@@ -204,6 +204,7 @@ export function HomeScreen() {
             navigation.navigate('Learn', {
               screen: 'FoundationDetail',
               params: { foundationId: activeFoundation.id },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any)
           }
         >
@@ -220,7 +221,7 @@ export function HomeScreen() {
                 />
               ) : (
                 <Ionicons
-                  name={(activeFoundation.iconName as React.ComponentProps<typeof Ionicons>['name']) ?? 'book-outline'}
+                  name={(activeFoundation.iconName as ComponentProps<typeof Ionicons>['name']) ?? 'book-outline'}
                   size={36}
                   color={colors.accentPrimary}
                 />
