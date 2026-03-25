@@ -1,6 +1,7 @@
-import { supabase, isSupabaseConfigured } from '../supabase';
+import { supabase, isSupabaseConfigured, getCurrentUserId } from '../supabase';
 import type { GroupMemberRecord, GroupRecord, GroupSessionRecord, InsertTables } from '../supabase';
 import { assertSyncedGroupServiceReady } from './groupServiceGuards';
+import i18n from '../../i18n';
 
 export interface SyncedGroup extends GroupRecord {
   group_members: GroupMemberRecord[];
@@ -13,9 +14,7 @@ async function requireSignedInUserForSyncedGroupAction(action: string) {
   const {
     data: { user },
     error: authError,
-  } = backendConfigured
-    ? await supabase.auth.getUser()
-    : { data: { user: null }, error: null };
+  } = backendConfigured ? await supabase.auth.getUser() : { data: { user: null }, error: null };
 
   if (authError) {
     throw new Error(authError.message);
@@ -223,15 +222,40 @@ export async function recordSyncedGroupSession(values: {
     notes: values.notes ?? {},
   };
 
-  const { data, error } = await supabase
-    .from('group_sessions')
-    .insert(insert)
-    .select('*')
-    .single();
+  const { data, error } = await supabase.from('group_sessions').insert(insert).select('*').single();
 
   if (error) {
     throw new Error(error.message);
   }
+
+  // Fire-and-forget: notify other group members about the new session.
+  // This must run AFTER the successful insert so that a push failure never
+  // blocks or rolls back the session record. getCurrentUserId() may return
+  // null in edge cases; the Edge Function handles exclude_user_id gracefully.
+  void (async () => {
+    try {
+      // Fetch the group name so the notification body is meaningful.
+      const { data: groupData } = await supabase
+        .from('groups')
+        .select('name')
+        .eq('id', values.groupId)
+        .maybeSingle();
+
+      const groupName = (groupData as { name?: string } | null)?.name ?? '';
+      const excludeUserId = await getCurrentUserId();
+
+      await supabase.functions.invoke('send-group-notification', {
+        body: {
+          group_id: values.groupId,
+          title: i18n.t('notifications.groupSessionTitle'),
+          body: i18n.t('notifications.groupSessionBody', { groupName }),
+          exclude_user_id: excludeUserId ?? undefined,
+        },
+      });
+    } catch {
+      // Non-fatal: push notification failure must not surface to the caller
+    }
+  })();
 
   return data as GroupSessionRecord;
 }
