@@ -20,6 +20,8 @@ import Animated, {
   Extrapolation,
   withSpring,
   runOnJS,
+  SlideInDown,
+  SlideOutDown,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { BlurView } from 'expo-blur';
@@ -1963,10 +1965,15 @@ export function BibleReaderScreen() {
 
       <Modal
         visible={showFollowAlongText}
-        animationType="slide"
+        transparent
+        animationType="none"
         onRequestClose={() => setShowFollowAlongText(false)}
       >
-        <View style={[styles.followAlongContainer, { backgroundColor: colors.bibleBackground }]}>
+        <Animated.View
+          entering={SlideInDown.springify().damping(20).stiffness(200)}
+          exiting={SlideOutDown.duration(250)}
+          style={[styles.followAlongContainer, { backgroundColor: colors.bibleBackground }]}
+        >
           <View
             style={[
               styles.followAlongHeader,
@@ -2047,7 +2054,7 @@ export function BibleReaderScreen() {
               );
             })}
           </ScrollView>
-        </View>
+        </Animated.View>
       </Modal>
 
       <AnnotationActionSheet
