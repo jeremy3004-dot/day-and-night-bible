@@ -18,7 +18,10 @@ import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolation,
+  withSpring,
+  runOnJS,
 } from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -63,6 +66,8 @@ import type { BibleStackParamList, BibleReaderScreenProps } from '../../navigati
 import {
   READER_HERO_COLLAPSE_DISTANCE,
   READER_TOP_CHROME_DISMISS_DISTANCE,
+  SWIPE_THRESHOLD,
+  SWIPE_VELOCITY_MIN,
   buildReaderChapterRouteParams,
   getEstimatedFollowAlongVerse,
   getInitialChapterSessionMode,
@@ -318,6 +323,50 @@ export function BibleReaderScreen() {
         ),
       },
     ],
+  }));
+
+  const swipeX = useSharedValue(0);
+  const swipeInFlightRef = useRef(false);
+
+  const handleSwipeNavigation = (direction: 'next' | 'prev') => {
+    if (swipeInFlightRef.current) return;
+    swipeInFlightRef.current = true;
+
+    if (direction === 'next') {
+      void handleNextReadChapter().finally(() => {
+        setTimeout(() => {
+          swipeInFlightRef.current = false;
+        }, 150);
+      });
+    } else {
+      void handlePreviousReadChapter().finally(() => {
+        setTimeout(() => {
+          swipeInFlightRef.current = false;
+        }, 150);
+      });
+    }
+  };
+
+  const swipeGesture = Gesture.Pan()
+    .activeOffsetX([-15, 15])
+    .failOffsetY([-10, 10])
+    .onUpdate((event) => {
+      'worklet';
+      swipeX.value = event.translationX;
+    })
+    .onEnd((event) => {
+      'worklet';
+      const wantsNext =
+        event.translationX < -SWIPE_THRESHOLD || event.velocityX < -SWIPE_VELOCITY_MIN;
+      const wantsPrev =
+        event.translationX > SWIPE_THRESHOLD || event.velocityX > SWIPE_VELOCITY_MIN;
+      if (wantsNext && hasNextChapter) runOnJS(handleSwipeNavigation)('next');
+      else if (wantsPrev && hasPrevChapter) runOnJS(handleSwipeNavigation)('prev');
+      swipeX.value = withSpring(0, { damping: 30, stiffness: 300 });
+    });
+
+  const swipeStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: swipeX.value }],
   }));
 
   useEffect(() => {
@@ -1243,161 +1292,167 @@ export function BibleReaderScreen() {
 
   const renderPremiumReadLayout = () => (
     <View style={styles.premiumReaderLayout}>
-      <Animated.View
-        style={[styles.floatingReaderTopBar, { top: premiumTopInset }, topChromeAnimatedStyle]}
-      >
-        <TouchableOpacity
-          style={styles.touchableGlassButton}
-          activeOpacity={0.9}
-          onPress={() => navigation.navigate('BibleBrowser')}
-        >
-          <GlassSurface style={styles.glassIconButton} intensity={44}>
-            <Ionicons name="arrow-back" size={20} color={colors.biblePrimaryText} />
-          </GlassSurface>
-        </TouchableOpacity>
-
-        {showSessionModeRail ? (
-          <GlassSurface
-            style={styles.floatingReaderModeRail}
-            contentStyle={styles.floatingReaderModeRailContent}
+      <GestureDetector gesture={swipeGesture}>
+        <Animated.View style={[{ flex: 1 }, swipeStyle]}>
+          <Animated.View
+            style={[styles.floatingReaderTopBar, { top: premiumTopInset }, topChromeAnimatedStyle]}
           >
-            {(['listen', 'read'] as const).map((mode) => {
-              const isSelected = chapterSessionMode === mode;
-              const isDisabled = mode === 'listen' ? !audioEnabled : !canReadDisplayedChapter;
+            <TouchableOpacity
+              style={styles.touchableGlassButton}
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate('BibleBrowser')}
+            >
+              <GlassSurface style={styles.glassIconButton} intensity={44}>
+                <Ionicons name="arrow-back" size={20} color={colors.biblePrimaryText} />
+              </GlassSurface>
+            </TouchableOpacity>
 
-              return (
-                <TouchableOpacity
-                  key={mode}
+            {showSessionModeRail ? (
+              <GlassSurface
+                style={styles.floatingReaderModeRail}
+                contentStyle={styles.floatingReaderModeRailContent}
+              >
+                {(['listen', 'read'] as const).map((mode) => {
+                  const isSelected = chapterSessionMode === mode;
+                  const isDisabled = mode === 'listen' ? !audioEnabled : !canReadDisplayedChapter;
+
+                  return (
+                    <TouchableOpacity
+                      key={mode}
+                      style={[
+                        styles.floatingReaderModeButton,
+                        isSelected ? { backgroundColor: colors.bibleControlBackground } : null,
+                        isDisabled ? styles.disabledSessionModeButton : null,
+                      ]}
+                      disabled={isDisabled}
+                      onPress={() => handleSessionModePress(mode)}
+                    >
+                      <Text
+                        style={[
+                          styles.floatingReaderModeLabel,
+                          {
+                            color: isSelected ? colors.bibleBackground : colors.bibleSecondaryText,
+                          },
+                        ]}
+                      >
+                        {mode === 'listen' ? t('bible.listen') : t('bible.read')}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </GlassSurface>
+            ) : (
+              <View style={styles.floatingReaderModeSpacer} />
+            )}
+
+            <TouchableOpacity
+              style={styles.touchableGlassButton}
+              activeOpacity={0.9}
+              onPress={() => {
+                setShowFontSizeSheet(false);
+                setShowTranslationSheet(false);
+                setShowChapterActionsSheet(true);
+              }}
+            >
+              <GlassSurface style={styles.glassIconButton} intensity={44}>
+                <Ionicons name="ellipsis-horizontal" size={20} color={colors.biblePrimaryText} />
+              </GlassSurface>
+            </TouchableOpacity>
+          </Animated.View>
+
+          <Animated.View
+            style={[
+              styles.floatingReaderTranslationDock,
+              { top: premiumTopInset + 62 },
+              topChromeAnimatedStyle,
+            ]}
+          >
+            <TouchableOpacity
+              style={styles.floatingReaderTranslationButtonTouchable}
+              activeOpacity={canShowTranslationSheet ? 0.9 : 1}
+              disabled={!canShowTranslationSheet}
+              onPress={handleOpenTranslationOptions}
+            >
+              <GlassSurface
+                style={styles.floatingReaderTranslationButton}
+                contentStyle={styles.floatingReaderTranslationButtonContent}
+                intensity={40}
+              >
+                <Text
                   style={[
-                    styles.floatingReaderModeButton,
-                    isSelected ? { backgroundColor: colors.bibleControlBackground } : null,
-                    isDisabled ? styles.disabledSessionModeButton : null,
+                    styles.floatingReaderTranslationButtonLabel,
+                    {
+                      color: canShowTranslationSheet
+                        ? colors.biblePrimaryText
+                        : colors.bibleSecondaryText,
+                    },
                   ]}
-                  disabled={isDisabled}
-                  onPress={() => handleSessionModePress(mode)}
+                  numberOfLines={1}
                 >
-                  <Text
-                    style={[
-                      styles.floatingReaderModeLabel,
-                      {
-                        color: isSelected ? colors.bibleBackground : colors.bibleSecondaryText,
-                      },
-                    ]}
-                  >
-                    {mode === 'listen' ? t('bible.listen') : t('bible.read')}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </GlassSurface>
-        ) : (
-          <View style={styles.floatingReaderModeSpacer} />
-        )}
+                  {translationLabel}
+                </Text>
+              </GlassSurface>
+            </TouchableOpacity>
+          </Animated.View>
 
-        <TouchableOpacity
-          style={styles.touchableGlassButton}
-          activeOpacity={0.9}
-          onPress={() => {
-            setShowFontSizeSheet(false);
-            setShowTranslationSheet(false);
-            setShowChapterActionsSheet(true);
-          }}
-        >
-          <GlassSurface style={styles.glassIconButton} intensity={44}>
-            <Ionicons name="ellipsis-horizontal" size={20} color={colors.biblePrimaryText} />
-          </GlassSurface>
-        </TouchableOpacity>
-      </Animated.View>
-
-      <Animated.View
-        style={[
-          styles.floatingReaderTranslationDock,
-          { top: premiumTopInset + 62 },
-          topChromeAnimatedStyle,
-        ]}
-      >
-        <TouchableOpacity
-          style={styles.floatingReaderTranslationButtonTouchable}
-          activeOpacity={canShowTranslationSheet ? 0.9 : 1}
-          disabled={!canShowTranslationSheet}
-          onPress={handleOpenTranslationOptions}
-        >
-          <GlassSurface
-            style={styles.floatingReaderTranslationButton}
-            contentStyle={styles.floatingReaderTranslationButtonContent}
-            intensity={40}
+          <Animated.View
+            pointerEvents="none"
+            style={[styles.floatingReaderHero, { top: premiumTopInset + 124 }, heroAnimatedStyle]}
           >
             <Text
               style={[
-                styles.floatingReaderTranslationButtonLabel,
+                styles.premiumReaderTitle,
                 {
-                  color: canShowTranslationSheet
-                    ? colors.biblePrimaryText
-                    : colors.bibleSecondaryText,
+                  color: colors.biblePrimaryText,
+                  fontSize: scaleValue(typography.readingDisplay.fontSize),
+                  lineHeight: scaleValue(typography.readingDisplay.lineHeight),
                 },
               ]}
-              numberOfLines={1}
             >
-              {translationLabel}
+              {getTranslatedBookName(bookId, t)} {chapter}
             </Text>
-          </GlassSurface>
-        </TouchableOpacity>
-      </Animated.View>
+            {primarySectionHeading ? (
+              <Text
+                style={[
+                  styles.premiumReaderSubtitle,
+                  {
+                    color: colors.bibleSecondaryText,
+                    fontSize: scaleValue(typography.readingHeading.fontSize),
+                    lineHeight: scaleValue(typography.readingHeading.lineHeight),
+                  },
+                ]}
+              >
+                {primarySectionHeading}
+              </Text>
+            ) : null}
+          </Animated.View>
 
-      <Animated.View
-        pointerEvents="none"
-        style={[styles.floatingReaderHero, { top: premiumTopInset + 124 }, heroAnimatedStyle]}
-      >
-        <Text
-          style={[
-            styles.premiumReaderTitle,
-            {
-              color: colors.biblePrimaryText,
-              fontSize: scaleValue(typography.readingDisplay.fontSize),
-              lineHeight: scaleValue(typography.readingDisplay.lineHeight),
-            },
-          ]}
-        >
-          {getTranslatedBookName(bookId, t)} {chapter}
-        </Text>
-        {primarySectionHeading ? (
-          <Text
-            style={[
-              styles.premiumReaderSubtitle,
+          <Animated.ScrollView
+            ref={scrollViewRef}
+            style={styles.scrollView}
+            showsVerticalScrollIndicator={false}
+            scrollEventThrottle={16}
+            onScroll={scrollHandler}
+            onScrollBeginDrag={() => {
+              setShowFontSizeSheet((current) =>
+                getNextFontSizeSheetVisibility(current, 'scrollStart')
+              );
+              setShowTranslationSheet((current) =>
+                getNextTranslationSheetVisibility(current, canShowTranslationSheet, 'dismiss')
+              );
+            }}
+            contentContainerStyle={[
+              styles.premiumReaderScrollContent,
               {
-                color: colors.bibleSecondaryText,
-                fontSize: scaleValue(typography.readingHeading.fontSize),
-                lineHeight: scaleValue(typography.readingHeading.lineHeight),
+                paddingTop: premiumTopInset + 208,
+                paddingBottom: premiumBottomInset + 108,
               },
             ]}
           >
-            {primarySectionHeading}
-          </Text>
-        ) : null}
-      </Animated.View>
-
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={scrollHandler}
-        onScrollBeginDrag={() => {
-          setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'scrollStart'));
-          setShowTranslationSheet((current) =>
-            getNextTranslationSheetVisibility(current, canShowTranslationSheet, 'dismiss')
-          );
-        }}
-        contentContainerStyle={[
-          styles.premiumReaderScrollContent,
-          {
-            paddingTop: premiumTopInset + 208,
-            paddingBottom: premiumBottomInset + 108,
-          },
-        ]}
-      >
-        <View style={styles.premiumReaderContentShell}>{renderReaderVerses(true)}</View>
-      </Animated.ScrollView>
+            <View style={styles.premiumReaderContentShell}>{renderReaderVerses(true)}</View>
+          </Animated.ScrollView>
+        </Animated.View>
+      </GestureDetector>
 
       <View style={[styles.persistentReaderBottomBar, { bottom: premiumBottomInset }]}>
         <GlassSurface
