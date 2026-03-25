@@ -283,6 +283,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 22. Gather Tab — Waha-style Foundations, Topics & Meeting Format               | 0/4            | Planned                                                            | -          |
 | 23. Foundations Content Restructure                                            | 0/1            | Planned                                                            | -          |
 | 28. Multi-Translation Supabase Library                                         | 2/2 | Complete    | 2026-03-24 |
+| 29. MMKV State Persistence Upgrade                                             | 0/2            | Planned                                                            | -          |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -541,3 +542,44 @@ Plans:
 Plans:
 - [x] 28-01-PLAN.md — Supabase bible_verses table migration, anon RLS, and TypeScript eBible.org import script
 - [x] 28-02-PLAN.md — Cloud translation download service, bibleStore wiring, and TranslationBrowserScreen download UI
+
+### Phase 29: MMKV State Persistence Upgrade
+
+**Goal:** Swap AsyncStorage for MMKV across all Zustand stores to eliminate cold-start hydration lag and improve persistence reliability; add TanStack Query for Supabase data fetching.
+**Requirements**: PERF-01, AUTH-03
+**Depends on:** Phase 28
+**Plans:** 2 plans
+
+Plans:
+- [ ] 29-01-PLAN.md — MMKV storage adapter, migration helper, and all-store swap
+- [ ] 29-02-PLAN.md — TanStack Query setup with QueryClientProvider and RN focus/online managers
+
+### Phase 30: Animated Chapter Swipe and Reader Gestures
+
+**Goal:** Add swipe left/right chapter navigation and scroll-driven header collapse in the Bible reader using react-native-reanimated; improve Follow Along modal transitions.
+**Requirements**: TBD
+**Depends on:** Phase 29
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 30 to break down)
+
+### Phase 31: Push Notification Implementation
+
+**Goal:** Complete the scaffolded push notification system with APNs/FCM credentials, token registration, daily reading reminders, and group session alerts using expo-push-notifications patterns.
+**Requirements**: TBD
+**Depends on:** Phase 30
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 31 to break down)
+
+### Phase 32: Bible Verse Deep Linking
+
+**Goal:** Implement deep link scheme (everybible://bible/john/3/16) and universal links so users can share and open specific Bible verses from external apps, messages, and the web.
+**Requirements**: TBD
+**Depends on:** Phase 31
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 32 to break down)
