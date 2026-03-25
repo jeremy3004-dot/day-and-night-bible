@@ -296,6 +296,92 @@ test('uses the focused verse as a graceful follow-along fallback when timing is 
   );
 });
 
+test('uses exact timestamps instead of word-weight estimation when provided', () => {
+  const verses = [
+    { id: 1, bookId: 'GEN', chapter: 1, verse: 1, text: 'In the beginning God created the heavens and the earth.' },
+    { id: 2, bookId: 'GEN', chapter: 1, verse: 2, text: 'The earth was formless and empty.' },
+    { id: 3, bookId: 'GEN', chapter: 1, verse: 3, text: 'God said let there be light and there was light.' },
+  ];
+  const timestamps = { 1: 0, 2: 5000, 3: 12000 };
+
+  // At position 0ms, verse 1 should be active
+  assert.equal(
+    getEstimatedFollowAlongVerse({
+      verses,
+      currentPosition: 0,
+      duration: 20000,
+      timestamps,
+    }),
+    1
+  );
+
+  // At position 7000ms (between verse 2 start and verse 3 start), verse 2 active
+  assert.equal(
+    getEstimatedFollowAlongVerse({
+      verses,
+      currentPosition: 7000,
+      duration: 20000,
+      timestamps,
+    }),
+    2
+  );
+
+  // At position 15000ms (after verse 3 start), verse 3 active
+  assert.equal(
+    getEstimatedFollowAlongVerse({
+      verses,
+      currentPosition: 15000,
+      duration: 20000,
+      timestamps,
+    }),
+    3
+  );
+
+  // At position exactly at verse 3 start, verse 3 active
+  assert.equal(
+    getEstimatedFollowAlongVerse({
+      verses,
+      currentPosition: 12000,
+      duration: 20000,
+      timestamps,
+    }),
+    3
+  );
+});
+
+test('falls back to word-weight estimation when timestamps are null', () => {
+  const verses = [
+    { id: 1, bookId: 'GEN', chapter: 1, verse: 1, text: 'Short' },
+    { id: 2, bookId: 'GEN', chapter: 1, verse: 2, text: 'A much longer verse with many more words in it' },
+  ];
+
+  // With null timestamps, should use word-weight fallback (verse 2 occupies most of the timeline)
+  const result = getEstimatedFollowAlongVerse({
+    verses,
+    currentPosition: 45000,
+    duration: 60000,
+    timestamps: null,
+  });
+  assert.equal(result, 2);
+});
+
+test('timestamps with a single verse return that verse for any position', () => {
+  const verses = [
+    { id: 1, bookId: 'OBA', chapter: 1, verse: 1, text: 'The vision of Obadiah.' },
+  ];
+  const timestamps = { 1: 0 };
+
+  assert.equal(
+    getEstimatedFollowAlongVerse({
+      verses,
+      currentPosition: 5000,
+      duration: 10000,
+      timestamps,
+    }),
+    1
+  );
+});
+
 test('does not autoplay a chapter again when that chapter is already the active audio session', () => {
   assert.equal(
     shouldAutoplayChapterAudio({
