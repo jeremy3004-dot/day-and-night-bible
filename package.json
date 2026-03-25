@@ -19,7 +19,9 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "eas-build-pre-install": "bash scripts/eas-preinstall.sh",
     "build:bible-db": "python3 scripts/build_bible_db.py",
-    "verify:bible-db": "python3 scripts/build_bible_db.py --verify"
+    "verify:bible-db": "python3 scripts/build_bible_db.py --verify",
+    "generate-timestamps": "python3 scripts/batch_timestamps.py",
+    "extract-verse-text": "python3 scripts/extract_verse_text.py"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

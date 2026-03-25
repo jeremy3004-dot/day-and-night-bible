@@ -250,12 +250,14 @@ export const getEstimatedFollowAlongVerse = ({
   }
 
   // When exact timestamps are available, use them directly instead of word-weight estimation.
+  // NOTE: timestamps are in SECONDS; currentPosition from expo-av is in MILLISECONDS.
   if (timestamps) {
     const verseNums = (Object.keys(timestamps) as string[]).map(Number).sort((a, b) => a - b);
     if (verseNums.length > 0) {
+      const currentPositionSeconds = currentPosition / 1000;
       let current = verseNums[0];
       for (const vn of verseNums) {
-        if (timestamps[vn] <= currentPosition) {
+        if (timestamps[vn] <= currentPositionSeconds) {
           current = vn;
         } else {
           break;
