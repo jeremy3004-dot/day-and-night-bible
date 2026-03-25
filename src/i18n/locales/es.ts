@@ -110,8 +110,7 @@ export const es = {
     audioSavedOffline: 'Guardado para escucha sin conexión',
     audioDownloadFailed: 'No pudimos descargar este audio en este momento.',
     available: 'Disponible',
-    translationComingSoon:
-      '{{name}} estará disponible para descargar en una actualización futura.',
+    translationComingSoon: '{{name}} estará disponible para descargar en una actualización futura.',
     failedToLoad: 'No pudimos cargar este capítulo en este momento.',
     noVersesAvailable: '{{book}} {{chapter}} aún no tiene texto escrito.',
     fullBibleComingSoon:
@@ -267,6 +266,12 @@ export const es = {
     deleteAccountError: 'No se pudo eliminar la cuenta. Por favor inténtalo de nuevo.',
     notSignedIn: 'Debes iniciar sesión para eliminar tu cuenta.',
     delete: 'Borrar',
+  },
+  notifications: {
+    channelDailyReminder: 'Recordatorio diario de lectura',
+    channelGroupAlerts: 'Alertas de sesiones grupales',
+    groupSessionTitle: 'Sesion grupal completada',
+    groupSessionBody: 'Se registro una sesion en {{groupName}}',
   },
   more: {
     title: 'Más',
@@ -453,8 +458,10 @@ export const es = {
     chapters: 'Capítulos',
     nowReading: 'Abierto en la pestaña Biblia',
     openAndPlay: 'Abrir y reproducir',
-    chapterStudiesSubtitle: 'Estudios temáticos de capítulos diseñados para lectura y escucha en contexto completo.',
-    chapterStudiesBody: 'Cada estudio abre capítulos completos para que la reproducción de audio y la lectura sean confiables y en contexto.',
+    chapterStudiesSubtitle:
+      'Estudios temáticos de capítulos diseñados para lectura y escucha en contexto completo.',
+    chapterStudiesBody:
+      'Cada estudio abre capítulos completos para que la reproducción de audio y la lectura sean confiables y en contexto.',
     playChapterSubtitle: 'Abrir y reproducir',
     lessons: {
       // Campo de Entrada
@@ -524,7 +531,8 @@ export const es = {
     title: 'Reunir',
     foundations: 'Fundamentos',
     topics: 'Temas',
-    infoBanner: 'Ayuda a otros a comenzar su camino de descubrir a Dios por sí mismos en la Biblia.',
+    infoBanner:
+      'Ayuda a otros a comenzar su camino de descubrir a Dios por sí mismos en la Biblia.',
     topicsBanner:
       'Si tu grupo tiene una necesidad específica, haz algunas lecciones temáticas antes de regresar a tus lecciones fundamentales o de entrenamiento.',
     getStarted: 'Comienza con los fundamentos',
@@ -550,17 +558,25 @@ export const es = {
     manageBookmarks: 'Administrar marcadores',
     lessonComplete: 'Lección completa',
     readTheStory: 'Leer la historia →',
-    fellowshipQ1: '¿Basándote en lo que ha pasado desde la última vez que nos reunimos, por qué estás agradecido?',
+    fellowshipQ1:
+      '¿Basándote en lo que ha pasado desde la última vez que nos reunimos, por qué estás agradecido?',
     fellowshipQ2: '¿Qué te ha estresado esta semana y qué necesitas para que las cosas mejoren?',
-    fellowshipQ3: '¿Cuáles son las necesidades de las personas en tu comunidad y cómo podemos ayudarnos mutuamente a satisfacer las necesidades que hemos expresado?',
+    fellowshipQ3:
+      '¿Cuáles son las necesidades de las personas en tu comunidad y cómo podemos ayudarnos mutuamente a satisfacer las necesidades que hemos expresado?',
     fellowshipQ4: 'Ahora, leamos la historia de Dios de hoy...',
-    applicationQ1: 'Ahora, pidamos a alguien que vuelva a contar este pasaje con sus propias palabras, como si le estuviera contando a un amigo que nunca lo ha escuchado. Ayudémosle si omite algo o agrega algo por error. Si eso sucede, podemos preguntar: "¿Dónde encuentras eso en la historia?"',
+    applicationQ1:
+      'Ahora, pidamos a alguien que vuelva a contar este pasaje con sus propias palabras, como si le estuviera contando a un amigo que nunca lo ha escuchado. Ayudémosle si omite algo o agrega algo por error. Si eso sucede, podemos preguntar: "¿Dónde encuentras eso en la historia?"',
     applicationQ2: '¿Qué nos enseña esta historia sobre Dios, su carácter y lo que hace?',
-    applicationQ3: '¿Qué aprendemos sobre las personas, incluidos nosotros mismos, de esta historia?',
-    applicationQ4: '¿Cómo aplicarás la verdad de Dios de esta historia en tu vida esta semana? ¿Cuál es una acción o cosa específica que harás?',
-    applicationQ5: '¿Con quién compartirás una verdad de esta historia antes de que nos reunamos de nuevo? ¿Conoces a otros que también les gustaría descubrir la Palabra de Dios en esta aplicación como nosotros?',
-    applicationQ6: 'Cuando se acerque el final de nuestra reunión, decidamos cuándo nos reuniremos de nuevo y quién facilitará nuestra próxima reunión.',
-    applicationQ7: 'Te animamos a tomar nota de lo que dijiste que harás y a releer esta historia en los días antes de que nos reunamos de nuevo. El facilitador puede compartir el texto o el audio de la historia si alguien no lo tiene. Al salir, pidamos al Señor que nos ayude.',
+    applicationQ3:
+      '¿Qué aprendemos sobre las personas, incluidos nosotros mismos, de esta historia?',
+    applicationQ4:
+      '¿Cómo aplicarás la verdad de Dios de esta historia en tu vida esta semana? ¿Cuál es una acción o cosa específica que harás?',
+    applicationQ5:
+      '¿Con quién compartirás una verdad de esta historia antes de que nos reunamos de nuevo? ¿Conoces a otros que también les gustaría descubrir la Palabra de Dios en esta aplicación como nosotros?',
+    applicationQ6:
+      'Cuando se acerque el final de nuestra reunión, decidamos cuándo nos reuniremos de nuevo y quién facilitará nuestra próxima reunión.',
+    applicationQ7:
+      'Te animamos a tomar nota de lo que dijiste que harás y a releer esta historia en los días antes de que nos reunamos de nuevo. El facilitador puede compartir el texto o el audio de la historia si alguien no lo tiene. Al salir, pidamos al Señor que nos ayude.',
     foundation1Title: 'La historia de Dios',
     foundation1Desc: 'Desde la creación hasta el nacimiento de Jesús',
     foundation2Title: 'La vida y el ministerio de Jesús',
@@ -947,15 +963,19 @@ export const es = {
   },
   harvestStudies: {
     christologyTitle: 'Cristología',
-    christologyDesc: 'Estudios sostenidos por capítulos sobre quién es Jesús, su misión, muerte, resurrección y reinado.',
+    christologyDesc:
+      'Estudios sostenidos por capítulos sobre quién es Jesús, su misión, muerte, resurrección y reinado.',
     gospelTitle: 'El Evangelio',
-    gospelDesc: 'Estudios por capítulos sobre el pecado, la gracia, la justificación y la salvación en Cristo.',
+    gospelDesc:
+      'Estudios por capítulos sobre el pecado, la gracia, la justificación y la salvación en Cristo.',
     prayerTitle: 'Oración',
     prayerDesc: 'Modelos y enseñanzas que fortalecen la vida de oración diaria.',
     loveAndChristianLivingTitle: 'El amor y la vida cristiana',
-    loveAndChristianLivingDesc: 'Capítulos prácticos para caminar en amor, santidad y obediencia guiada por el Espíritu.',
+    loveAndChristianLivingDesc:
+      'Capítulos prácticos para caminar en amor, santidad y obediencia guiada por el Espíritu.',
     discipleshipTitle: 'Discipulado',
-    discipleshipDesc: 'Enseñanzas sobre seguir a Jesús con obediencia, rendición y prioridades del reino.',
+    discipleshipDesc:
+      'Enseñanzas sobre seguir a Jesús con obediencia, rendición y prioridades del reino.',
     churchTitle: 'La Iglesia',
     churchDesc: 'La identidad, unidad y misión de la iglesia en acción.',
     missionHarvestTitle: 'Misión / Cosecha',
@@ -987,7 +1007,8 @@ export const es = {
     noActivePlans: 'Aún no has iniciado ningún plan',
     bibleIn1Year: {
       title: 'La Biblia en un año',
-      description: 'Lee toda la Biblia en 365 días con lecturas diarias del Antiguo y Nuevo Testamento.',
+      description:
+        'Lee toda la Biblia en 365 días con lecturas diarias del Antiguo y Nuevo Testamento.',
     },
     newTestament90: {
       title: 'El Nuevo Testamento en 90 días',
@@ -1007,7 +1028,8 @@ export const es = {
     },
     chronological: {
       title: 'Biblia cronológica',
-      description: 'Lee la Biblia en el orden en que ocurrieron los eventos, de Génesis a Apocalipsis.',
+      description:
+        'Lee la Biblia en el orden en que ocurrieron los eventos, de Génesis a Apocalipsis.',
     },
     epistles30: {
       title: 'Las Epístolas en 30 días',
@@ -1015,7 +1037,8 @@ export const es = {
     },
     sermonMount7: {
       title: 'El Sermón del Monte',
-      description: 'Una inmersión profunda de una semana en la enseñanza más famosa de Jesús en Mateo 5-7.',
+      description:
+        'Una inmersión profunda de una semana en la enseñanza más famosa de Jesús en Mateo 5-7.',
     },
   },
   annotations: {
@@ -1064,23 +1087,27 @@ export const es = {
     goBack: 'Volver',
     joinCode: 'Código de acceso',
     share: 'Compartir',
-    syncedProgress: 'El progreso sincronizado aparecerá después de que se habilite el lanzamiento de sesiones.',
+    syncedProgress:
+      'El progreso sincronizado aparecerá después de que se habilite el lanzamiento de sesiones.',
     lessonsCompleted_one: '{{count}} lección completada',
     lessonsCompleted_other: '{{count}} lecciones completadas',
     nextLesson: 'Siguiente: {{title}}',
     startGroupSession: 'Iniciar sesión de grupo',
     saveSyncedSession: 'Guardar sesión sincronizada',
     syncedGroupPreview: 'Vista previa del grupo sincronizado',
-    syncedGroupPreviewBody: 'La grabación de sesiones sincronizadas seguras no está disponible hasta que la configuración del backend y el acceso con sesión iniciada estén listos.',
+    syncedGroupPreviewBody:
+      'La grabación de sesiones sincronizadas seguras no está disponible hasta que la configuración del backend y el acceso con sesión iniciada estén listos.',
     readOnlySyncedMembership: 'Membresía sincronizada de solo lectura',
-    readOnlySyncedMembershipBody: 'Este grupo sincronizado provino de tu cuenta con sesión iniciada. Los nombres de los miembros y el historial de lecciones aparecerán aquí a medida que avance el lanzamiento.',
+    readOnlySyncedMembershipBody:
+      'Este grupo sincronizado provino de tu cuenta con sesión iniciada. Los nombres de los miembros y el historial de lecciones aparecerán aquí a medida que avance el lanzamiento.',
     members: 'Miembros ({{count}})',
     you: ' (tú)',
     leader: 'Líder',
     joinedRecently: 'Se unió recientemente',
     joinedDate: 'Se unió el {{date}}',
     leaveGroup: 'Salir del grupo',
-    leaveGroupLeaderMessage: 'Como líder, salir transferirá el liderazgo al miembro más antiguo. ¿Estás seguro?',
+    leaveGroupLeaderMessage:
+      'Como líder, salir transferirá el liderazgo al miembro más antiguo. ¿Estás seguro?',
     leaveGroupMemberMessage: '¿Estás seguro de que quieres salir de este grupo?',
     leave: 'Salir',
     session: {
@@ -1092,13 +1119,16 @@ export const es = {
       duration10min: '~10 minutos',
       saving: 'Guardando...',
       completeSession: 'Completar sesión',
-      syncedNotice: 'Completar esta sesión guardará un registro sincronizado para tu grupo con sesión iniciada.',
-      lookBackDescription: 'Comienza verificando cómo todos aplicaron la lección de la semana pasada. Esto genera responsabilidad y celebra la obediencia.',
+      syncedNotice:
+        'Completar esta sesión guardará un registro sincronizado para tu grupo con sesión iniciada.',
+      lookBackDescription:
+        'Comienza verificando cómo todos aplicaron la lección de la semana pasada. Esto genera responsabilidad y celebra la obediencia.',
       lookBackQ1: '¿Cómo obedeciste lo que aprendiste la última vez?',
       lookBackQ2: '¿Con quién lo compartiste? ¿Qué pasó?',
       lookBackQ3: '¿Qué desafíos enfrentaste?',
       discussTogether: 'Discutan juntos:',
-      lookBackTip: '¡Celebra los logros! Anima a los que obedecieron. Anima gentilmente a los que no lo hicieron a intentarlo esta semana.',
+      lookBackTip:
+        '¡Celebra los logros! Anima a los que obedecieron. Anima gentilmente a los que no lo hicieron a intentarlo esta semana.',
       lookUpDescription: 'Lean las Escrituras juntos y descubran lo que Dios está enseñando.',
       discoveryQuestions: 'Preguntas de descubrimiento:',
       lookUpQ1: '¿Qué enseña este pasaje sobre Dios?',
@@ -1106,17 +1136,20 @@ export const es = {
       lookUpQ3: '¿Hay un ejemplo a seguir o evitar?',
       lookUpQ4: '¿Hay un mandamiento para obedecer?',
       lessonQuestions: 'Preguntas de la lección:',
-      lookForwardDescription: 'Comprométete a obedecer lo que aprendiste y compartirlo con alguien más.',
+      lookForwardDescription:
+        'Comprométete a obedecer lo que aprendiste y compartirlo con alguien más.',
       keyTakeaway: 'Conclusión clave:',
       thisWeeksPractice: 'La práctica de esta semana:',
       commitTogether: 'Comprométanse juntos:',
       lookForwardQ1: '"Lo haré..." - ¿Cómo obedecerás esta enseñanza?',
       lookForwardQ2: '"Lo compartiré con..." - ¿A quién le enseñarás esto?',
-      closingPrayer: 'Cierren en oración. Pide a Dios que ayude a cada persona a obedecer y compartir lo que aprendió. Ora por las personas con las que compartirán.',
+      closingPrayer:
+        'Cierren en oración. Pide a Dios que ayude a cada persona a obedecer y compartir lo que aprendió. Ora por las personas con las que compartirán.',
     },
     syncSession: {
       unavailableTitle: 'Sesión sincronizada no disponible',
-      backendUnavailable: 'Esta versión no está configurada para la grabación de grupos sincronizados aún.',
+      backendUnavailable:
+        'Esta versión no está configurada para la grabación de grupos sincronizados aún.',
       signInRequired: 'Debes iniciar sesión antes de guardar una sesión de grupo sincronizada.',
       saveFailedTitle: 'No se pudo guardar la sesión sincronizada',
       saveFailedDefault: 'No se pudo guardar la sesión del grupo sincronizado.',

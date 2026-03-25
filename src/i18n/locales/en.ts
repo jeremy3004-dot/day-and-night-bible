@@ -266,6 +266,12 @@ export const en = {
     notSignedIn: 'You must be signed in to delete your account.',
     delete: 'Delete',
   },
+  notifications: {
+    channelDailyReminder: 'Daily Reading Reminder',
+    channelGroupAlerts: 'Group Session Alerts',
+    groupSessionTitle: 'Group Session Completed',
+    groupSessionBody: 'A session was recorded in {{groupName}}',
+  },
   more: {
     title: 'More',
     guestUser: 'Guest User',
@@ -447,8 +453,10 @@ export const en = {
     chapters: 'Chapters',
     nowReading: 'Now open in Bible tab',
     openAndPlay: 'Open & play',
-    chapterStudiesSubtitle: 'Topical chapter studies designed for full-context reading and listening across the Bible.',
-    chapterStudiesBody: 'Each study opens full chapters so audio playback and reading stay reliable and in context across devices.',
+    chapterStudiesSubtitle:
+      'Topical chapter studies designed for full-context reading and listening across the Bible.',
+    chapterStudiesBody:
+      'Each study opens full chapters so audio playback and reading stay reliable and in context across devices.',
     playChapterSubtitle: 'Open & play',
     lessons: {
       // Entry field
@@ -509,10 +517,11 @@ export const en = {
     completed: 'Completed',
     progress: 'Progress',
     noPlans: 'No reading plans available',
-    noActivePlans: 'You haven\'t started any plans yet',
+    noActivePlans: "You haven't started any plans yet",
     bibleIn1Year: {
       title: 'Bible in One Year',
-      description: 'Read through the entire Bible in 365 days with daily Old and New Testament readings.',
+      description:
+        'Read through the entire Bible in 365 days with daily Old and New Testament readings.',
     },
     newTestament90: {
       title: 'New Testament in 90 Days',
@@ -540,7 +549,7 @@ export const en = {
     },
     sermonMount7: {
       title: 'Sermon on the Mount',
-      description: 'A week-long deep dive into Jesus\' most famous teaching in Matthew 5-7.',
+      description: "A week-long deep dive into Jesus' most famous teaching in Matthew 5-7.",
     },
   },
   annotations: {
@@ -581,16 +590,19 @@ export const en = {
     startGroupSession: 'Start Group Session',
     saveSyncedSession: 'Save Synced Session',
     syncedGroupPreview: 'Synced group preview',
-    syncedGroupPreviewBody: 'Secure synced session recording is not available until backend configuration and signed-in access are both ready for this build.',
+    syncedGroupPreviewBody:
+      'Secure synced session recording is not available until backend configuration and signed-in access are both ready for this build.',
     readOnlySyncedMembership: 'Read-only synced membership',
-    readOnlySyncedMembershipBody: 'This synced group came from your signed-in account. Member names and synced lesson history will appear here as rollout continues.',
+    readOnlySyncedMembershipBody:
+      'This synced group came from your signed-in account. Member names and synced lesson history will appear here as rollout continues.',
     members: 'Members ({{count}})',
     you: ' (you)',
     leader: 'Leader',
     joinedRecently: 'Joined recently',
     joinedDate: 'Joined {{date}}',
     leaveGroup: 'Leave Group',
-    leaveGroupLeaderMessage: 'As the leader, leaving will transfer leadership to the next oldest member. Are you sure?',
+    leaveGroupLeaderMessage:
+      'As the leader, leaving will transfer leadership to the next oldest member. Are you sure?',
     leaveGroupMemberMessage: 'Are you sure you want to leave this group?',
     leave: 'Leave',
     session: {
@@ -603,12 +615,14 @@ export const en = {
       saving: 'Saving...',
       completeSession: 'Complete Session',
       syncedNotice: 'Completing this session will save a synced record for your signed-in group.',
-      lookBackDescription: "Start by checking in on how everyone applied last week's lesson. This builds accountability and celebrates obedience.",
+      lookBackDescription:
+        "Start by checking in on how everyone applied last week's lesson. This builds accountability and celebrates obedience.",
       lookBackQ1: 'How did you obey what you learned last time?',
       lookBackQ2: 'Who did you share it with? What happened?',
       lookBackQ3: 'What challenges did you face?',
       discussTogether: 'Discuss Together:',
-      lookBackTip: "Celebrate wins! Encourage those who obeyed. Gently encourage those who didn't to try again this week.",
+      lookBackTip:
+        "Celebrate wins! Encourage those who obeyed. Gently encourage those who didn't to try again this week.",
       lookUpDescription: 'Read the Scripture together and discover what God is teaching.',
       discoveryQuestions: 'Discovery Questions:',
       lookUpQ1: 'What does this passage teach about God?',
@@ -616,13 +630,15 @@ export const en = {
       lookUpQ3: 'Is there an example to follow or avoid?',
       lookUpQ4: 'Is there a command to obey?',
       lessonQuestions: 'Lesson Questions:',
-      lookForwardDescription: 'Commit to obeying what you learned and sharing it with someone else.',
+      lookForwardDescription:
+        'Commit to obeying what you learned and sharing it with someone else.',
       keyTakeaway: 'Key Takeaway:',
       thisWeeksPractice: "This Week's Practice:",
       commitTogether: 'Commit Together:',
       lookForwardQ1: '"I will..." - How will you obey this teaching?',
       lookForwardQ2: '"I will share with..." - Who will you teach this to?',
-      closingPrayer: "Close in prayer. Ask God to help each person obey and share what they've learned. Pray for the people they'll share with.",
+      closingPrayer:
+        "Close in prayer. Ask God to help each person obey and share what they've learned. Pray for the people they'll share with.",
     },
     syncSession: {
       unavailableTitle: 'Synced session unavailable',
@@ -706,17 +722,25 @@ export const en = {
     manageBookmarks: 'Manage Bookmarks',
     lessonComplete: 'Lesson Complete',
     readTheStory: 'Read the Story →',
-    fellowshipQ1: 'Based on what has happened with you since the last time we met, what is something you are thankful for?',
-    fellowshipQ2: 'What has stressed you out this week, and what do you need for things to be better?',
-    fellowshipQ3: "What are the needs of the people in your community, and how can we help each other meet the needs we've expressed?",
+    fellowshipQ1:
+      'Based on what has happened with you since the last time we met, what is something you are thankful for?',
+    fellowshipQ2:
+      'What has stressed you out this week, and what do you need for things to be better?',
+    fellowshipQ3:
+      "What are the needs of the people in your community, and how can we help each other meet the needs we've expressed?",
     fellowshipQ4: "Now, let's read today's story from God...",
-    applicationQ1: "Now, let's have someone retell this passage in their own words, as though they were telling a friend who has never heard it. Let's help them if they leave anything out or add anything by mistake. If that happens we can ask, \"Where do you find that in the story?\"",
+    applicationQ1:
+      'Now, let\'s have someone retell this passage in their own words, as though they were telling a friend who has never heard it. Let\'s help them if they leave anything out or add anything by mistake. If that happens we can ask, "Where do you find that in the story?"',
     applicationQ2: 'What does this story teach us about God, his character, and what he does?',
     applicationQ3: 'What do we learn about people, including ourselves, from this story?',
-    applicationQ4: "How will you apply God's truth from this story in your life this week? What is a specific action or thing you will do?",
-    applicationQ5: "Who will you share a truth from this story with before we meet again? Do you know others who would also like to discover God's word in this app like we are?",
-    applicationQ6: 'As our meeting comes to a close, let\'s decide when we will meet again and who will facilitate our next meeting.',
-    applicationQ7: "We encourage you to make note of what you said you will do, and to re-read this story in the days before we meet again. The facilitator can share the story text or audio if anyone doesn't have it. As we go, let's ask the Lord to help us.",
+    applicationQ4:
+      "How will you apply God's truth from this story in your life this week? What is a specific action or thing you will do?",
+    applicationQ5:
+      "Who will you share a truth from this story with before we meet again? Do you know others who would also like to discover God's word in this app like we are?",
+    applicationQ6:
+      "As our meeting comes to a close, let's decide when we will meet again and who will facilitate our next meeting.",
+    applicationQ7:
+      "We encourage you to make note of what you said you will do, and to re-read this story in the days before we meet again. The facilitator can share the story text or audio if anyone doesn't have it. As we go, let's ask the Lord to help us.",
     foundation1Title: 'The Story of God',
     foundation1Desc: 'Creation to the birth of Jesus',
     foundation2Title: 'The Life and Ministry of Jesus',
@@ -1103,15 +1127,18 @@ export const en = {
   },
   harvestStudies: {
     christologyTitle: 'Christology',
-    christologyDesc: 'Sustained chapter studies on who Jesus is, His mission, death, resurrection, and reign.',
+    christologyDesc:
+      'Sustained chapter studies on who Jesus is, His mission, death, resurrection, and reign.',
     gospelTitle: 'The Gospel',
     gospelDesc: 'Chapter-based studies on sin, grace, justification, and salvation through Christ.',
     prayerTitle: 'Prayer',
     prayerDesc: 'Models and teachings that strengthen daily prayer life.',
     loveAndChristianLivingTitle: 'Love and Christian Living',
-    loveAndChristianLivingDesc: 'Practical chapters for walking in love, holiness, and Spirit-led obedience.',
+    loveAndChristianLivingDesc:
+      'Practical chapters for walking in love, holiness, and Spirit-led obedience.',
     discipleshipTitle: 'Discipleship',
-    discipleshipDesc: 'Teachings on following Jesus with obedience, surrender, and kingdom priorities.',
+    discipleshipDesc:
+      'Teachings on following Jesus with obedience, surrender, and kingdom priorities.',
     churchTitle: 'The Church',
     churchDesc: 'The identity, unity, and mission of the church in action.',
     missionHarvestTitle: 'Mission / Harvest',
