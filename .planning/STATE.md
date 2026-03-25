@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: In Progress
-stopped_at: Completed 31-02-PLAN.md (Push token registration, send-group-notification Edge Function, group session alert trigger, 2 tasks, 6 files)
-last_updated: "2026-03-25T03:22:00Z"
+stopped_at: Completed 32-01-PLAN.md (Deep link parser, linking config, share action upgrade, 3 tasks, 10 files)
+last_updated: "2026-03-25T03:37:00Z"
 progress:
   total_phases: 34
   completed_phases: 23
   total_plans: 56
-  completed_plans: 59
+  completed_plans: 60
 ---
 
 # Project State
@@ -66,6 +66,7 @@ _Updated after each plan completion_
 | Phase 30-animated-chapter-swipe P03 | ~2m | 2 tasks (1 auto + 1 human-verify) | 1 file |
 | Phase 31-push-notification-implementation P01 | ~6m | 2 tasks | 9 files |
 | Phase 31-push-notification-implementation P02 | ~4m | 2 tasks | 6 files |
+| Phase 32-bible-verse-deep-linking P01 | ~6m | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -123,6 +124,9 @@ Recent decisions affecting current work:
 - [Phase 31-push-notification-implementation P02]: Cache push token in module-level cachedPushToken variable — avoids async Supabase read in sign-out path and keeps deactivatePushToken gate-able without a round-trip
 - [Phase 31-push-notification-implementation P02]: Fire-and-forget group notification uses void IIFE with internal try/catch — enables awaiting getCurrentUserId() inside without leaking an async promise to recordSyncedGroupSession's caller
 - [Phase 31-push-notification-implementation P02]: Edge Function fetches group name from groups table internally — keeps recordSyncedGroupSession API stable (no groupName param added), avoids a breaking API change
+- [Phase 32-bible-verse-deep-linking P01]: Extract buildBibleNavState as pure function separate from linkingConfig so Node.js test runner can test routing logic without expo-linking/react-native dependency
+- [Phase 32-bible-verse-deep-linking P01]: Derive SLUG_TO_BOOK_ID from bibleBooks array at module scope — single source of truth, no hardcoded slug map
+- [Phase 32-bible-verse-deep-linking P01]: Add psalm alias to SLUG_TO_BOOK_ID (Psalms canonical name but users expect singular form)
 
 ### Pending Todos
 
@@ -209,6 +213,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-25T03:22:00Z
-Stopped at: Completed 31-02-PLAN.md (Push token registration, send-group-notification Edge Function, group session alert trigger, 2 tasks, 6 files)
+Last session: 2026-03-25T03:37:00Z
+Stopped at: Completed 32-01-PLAN.md (Deep link parser, linking config, share action upgrade, 3 tasks, 10 files)
 Resume file: None
