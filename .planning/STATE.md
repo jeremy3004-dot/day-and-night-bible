@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: "Completed Phase 29 Plan 01 — MMKV persistence upgrade device-verified. Ready for 29-02."
-last_updated: "2026-03-25T02:00:00.000Z"
+stopped_at: "Completed Phase 29 Plan 02 — TanStack Query foundation wired, all 2 tasks complete. Phase 29 complete."
+last_updated: "2026-03-25T01:45:21Z"
 progress:
   total_phases: 34
-  completed_phases: 20
+  completed_phases: 21
   total_plans: 56
-  completed_plans: 54
+  completed_plans: 55
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** When someone opens the app, they can reliably read or listen to scripture and continue their discipleship journey even when network conditions are weak or backend features are partially unavailable.
-**Current focus:** Phase 29 — mmkv-state-persistence-upgrade
+**Current focus:** Phase 30 — animated-chapter-swipe-and-reader-gestures
 
 ## Current Position
 
-Phase: 29 (mmkv-state-persistence-upgrade) — EXECUTING
-Plan: 2 of 2
+Phase: 29 (mmkv-state-persistence-upgrade) — COMPLETE
+Phase: 30 (animated-chapter-swipe-and-reader-gestures) — NEXT
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ _Updated after each plan completion_
 | Phase 28-multi-translation-supabase-library P01 | 4 | 2 tasks | 4 files |
 | Phase 28 P02 | 7m | 2 tasks | 8 files |
 | Phase 29-mmkv-state-persistence-upgrade P01 | 7 | 3 tasks | 18 files |
+| Phase 29-mmkv-state-persistence-upgrade P02 | 2m | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,8 @@ Recent decisions affecting current work:
 - [Phase 28]: Dynamic import() of cloudTranslationService in bibleStore to keep bundled-only app startup lean
 - [Phase 29-mmkv-state-persistence-upgrade]: Pin react-native-mmkv to 2.12.2 (no caret) — prevents accidental v3 install which requires New Architecture and crashes on newArchEnabled=false builds
 - [Phase 29-mmkv-state-persistence-upgrade]: Use dynamic require() in migrateFromAsyncStorage for native deps so STORE_KEYS and migrateStoreKeys can be imported in Node test runner without native module resolution
+- [Phase 29-mmkv-state-persistence-upgrade P02]: QueryClientProvider placed as outermost provider in App() — wraps all other providers so future useQuery hooks work regardless of which provider tree they sit in
+- [Phase 29-mmkv-state-persistence-upgrade P02]: No Supabase calls migrated in this plan — additive foundation only; existing fetch patterns untouched
 
 ### Pending Todos
 
@@ -189,6 +192,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-25T02:00:00.000Z
-Stopped at: Completed 29-01-PLAN.md (MMKV persistence upgrade, all 3 tasks complete including device verification)
+Last session: 2026-03-25T01:45:21Z
+Stopped at: Completed 29-02-PLAN.md (TanStack Query foundation, 2 tasks, TypeScript clean, 62 tests pass)
 Resume file: None

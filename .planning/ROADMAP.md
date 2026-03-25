@@ -548,11 +548,11 @@ Plans:
 **Goal:** Swap AsyncStorage for MMKV across all Zustand stores to eliminate cold-start hydration lag and improve persistence reliability; add TanStack Query for Supabase data fetching.
 **Requirements**: PERF-01, AUTH-03
 **Depends on:** Phase 28
-**Plans:** 1/2 plans executed (29-01 device-verified complete 2026-03-25)
+**Plans:** 2/2 plans complete (phase complete 2026-03-25)
 
 Plans:
 - [x] 29-01-PLAN.md — MMKV storage adapter, migration helper, and all-store swap
-- [ ] 29-02-PLAN.md — TanStack Query setup with QueryClientProvider and RN focus/online managers
+- [x] 29-02-PLAN.md — TanStack Query setup with QueryClientProvider and RN focus/online managers
 
 ### Phase 30: Animated Chapter Swipe and Reader Gestures
 
