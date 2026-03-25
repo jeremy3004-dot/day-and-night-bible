@@ -152,6 +152,10 @@ Recent decisions affecting current work:
 - Phase 26 completed: UX completeness — navigation stubs removed (AnnotationsScreen, LessonDetailScreen note button)
 - Phase 27 completed: Translation downloads WEB & ASV — bundled in bible-bsb-v2.db, TranslationBrowserScreen wired
 - Phase 28 added: Multi-Translation Supabase Library — 211 public-domain full Bibles (OT+NT) from eBible.org into Supabase, download-on-demand in app
+- Phase 29 added: MMKV State Persistence Upgrade — swap AsyncStorage for MMKV across all Zustand stores to eliminate cold-start hydration lag
+- Phase 30 added: Animated Chapter Swipe and Reader Gestures — swipe navigation + scroll-driven header collapse using rn-reanimated
+- Phase 31 added: Push Notification Implementation — complete APNs/FCM setup, token registration, daily reading reminders, group alerts
+- Phase 32 added: Bible Verse Deep Linking — everybible://bible/john/3/16 deep link scheme + share verse functionality
 
 ### Blockers/Concerns
 
