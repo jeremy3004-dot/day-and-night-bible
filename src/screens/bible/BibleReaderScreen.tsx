@@ -5,6 +5,7 @@ import {
   Alert,
   Image,
   Modal,
+  Platform,
   ScrollView,
   Share,
   StyleSheet,
@@ -41,7 +42,7 @@ import {
   upsertAnnotation,
   softDeleteAnnotation,
 } from '../../services/annotations/annotationService';
-import { getChapter } from '../../services/bible';
+import { buildBibleDeepLink, getChapter } from '../../services/bible';
 import { getChapterPresentationMode } from '../../services/bible/presentation';
 import { getChapterTimestamps } from '../../services/bible/verseTimestamps';
 import type { VerseTimestamps } from '../../services/bible/verseTimestamps';
@@ -774,9 +775,14 @@ export function BibleReaderScreen() {
       source: 'reader-actions',
       detail: 'share',
     });
-    await Share.share({
-      message: `${getTranslatedBookName(bookId, t)} ${chapter}`,
-    });
+    const bookName = getTranslatedBookName(bookId, t);
+    const url = buildBibleDeepLink(bookId, chapter);
+    const text = `${bookName} ${chapter}`;
+    await Share.share(
+      Platform.OS === 'android'
+        ? { message: url ? `${text}\n${url}` : text }
+        : { message: text, url }
+    );
   };
 
   const handleDownloadCurrentBookAudio = async () => {

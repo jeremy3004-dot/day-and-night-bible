@@ -587,4 +587,4 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 32-01-PLAN.md — Deep link parser service + tests, linking config in RootNavigator, share button URL upgrade
+- [x] 32-01-PLAN.md — Deep link parser service + tests, linking config in RootNavigator, share button URL upgrade

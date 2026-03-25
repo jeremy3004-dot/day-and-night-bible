@@ -134,6 +134,7 @@ export function PrivacyPreferencesScreen() {
               iconSource={standardIconImage}
               isSelected={selectedMode === 'standard'}
               onPress={() => selectMode('standard')}
+              styles={styles}
               title={t('onboarding.standardIconTitle')}
             />
             <PrivacyModeOption
@@ -142,6 +143,7 @@ export function PrivacyPreferencesScreen() {
               iconSource={discreetIconImage}
               isSelected={selectedMode === 'discreet'}
               onPress={() => selectMode('discreet')}
+              styles={styles}
               title={t('onboarding.discreetIconTitle')}
             />
           </View>
@@ -194,6 +196,7 @@ interface PrivacyModeOptionProps {
   iconSource: ReturnType<typeof require>;
   isSelected: boolean;
   onPress: () => void;
+  styles: ReturnType<typeof createStyles>;
   title: string;
 }
 
@@ -203,10 +206,9 @@ function PrivacyModeOption({
   iconSource,
   isSelected,
   onPress,
+  styles,
   title,
 }: PrivacyModeOptionProps) {
-  const styles = createStyles(colors);
-
   return (
     <TouchableOpacity
       style={[
@@ -308,10 +310,17 @@ const createStyles = (colors: ThemeColors) =>
       borderRadius: radius.lg,
       padding: layout.denseCardPadding,
     },
+<<<<<<< HEAD
     optionIconImage: {
       width: 40,
       height: 40,
       borderRadius: radius.md,
+=======
+    optionAppIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 11,
+>>>>>>> origin/jeremy3004-dot/check-skills-access
     },
     optionCopy: {
       flex: 1,

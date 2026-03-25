@@ -343,7 +343,7 @@ export const gatherFoundations: GatherFoundation[] = [
     id: 'foundation-4',
     number: 4,
     title: 'Life as a Disciple',
-    description: 'Being and growing in personal discipleship',
+    description: 'Growing in obedience, prayer, and spiritual habits',
     iconName: 'footsteps-outline',
     iconImage: 'foundation-4',
     lessons: [
@@ -423,7 +423,7 @@ export const gatherFoundations: GatherFoundation[] = [
     id: 'foundation-5',
     number: 5,
     title: 'Life as a Jesus Community',
-    description: 'Being and growing as the church together',
+    description: 'Belonging together, serving together, worshipping together',
     iconName: 'people-outline',
     iconImage: 'foundation-5',
     lessons: [
@@ -503,7 +503,7 @@ export const gatherFoundations: GatherFoundation[] = [
     id: 'foundation-6',
     number: 6,
     title: 'Life as a Leader',
-    description: 'Being and growing as servant leaders',
+    description: 'Reproducing disciples and leading others',
     iconName: 'flag-outline',
     iconImage: 'foundation-6',
     lessons: [
@@ -583,7 +583,7 @@ export const gatherFoundations: GatherFoundation[] = [
     id: 'foundation-7',
     number: 7,
     title: 'Sharing the Good News',
-    description: 'Called and sent to every people and nation',
+    description: 'Reaching out with the gospel to every people and nation',
     iconName: 'megaphone-outline',
     iconImage: 'foundation-7',
     lessons: [
