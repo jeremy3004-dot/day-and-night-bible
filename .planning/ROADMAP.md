@@ -563,7 +563,7 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 30-01-PLAN.md — Install reanimated 3.x + gesture-handler 2.x, add GestureHandlerRootView, create swipe model with tests
+- [x] 30-01-PLAN.md — Install reanimated 3.x + gesture-handler 2.x, add GestureHandlerRootView, create swipe model with tests
 - [ ] 30-02-PLAN.md — Replace Animated.Value scroll system with Reanimated useAnimatedScrollHandler + add swipe gesture
 - [ ] 30-03-PLAN.md — Follow Along modal spring transition + device build checkpoint
 

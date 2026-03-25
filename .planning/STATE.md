@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: "Completed Phase 29 Plan 02 — TanStack Query foundation wired, all 2 tasks complete. Phase 29 complete."
-last_updated: "2026-03-25T01:45:21Z"
+status: In Progress
+stopped_at: Completed 30-01-PLAN.md (gesture foundation, 2 tasks, reanimated+gesture-handler installed, 71 tests pass)
+last_updated: "2026-03-25T06:00:00.000Z"
 progress:
   total_phases: 34
   completed_phases: 21
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 ## Current Position
 
-Phase: 29 (mmkv-state-persistence-upgrade) — COMPLETE
+Phase: 30
 Phase: 30 (animated-chapter-swipe-and-reader-gestures) — NEXT
 
 ## Performance Metrics
@@ -61,6 +61,7 @@ _Updated after each plan completion_
 | Phase 28 P02 | 7m | 2 tasks | 8 files |
 | Phase 29-mmkv-state-persistence-upgrade P01 | 7 | 3 tasks | 18 files |
 | Phase 29-mmkv-state-persistence-upgrade P02 | 2m | 2 tasks | 4 files |
+| Phase 30-animated-chapter-swipe P01 | 3m | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,8 @@ Recent decisions affecting current work:
 - [Phase 29-mmkv-state-persistence-upgrade]: Use dynamic require() in migrateFromAsyncStorage for native deps so STORE_KEYS and migrateStoreKeys can be imported in Node test runner without native module resolution
 - [Phase 29-mmkv-state-persistence-upgrade P02]: QueryClientProvider placed as outermost provider in App() — wraps all other providers so future useQuery hooks work regardless of which provider tree they sit in
 - [Phase 29-mmkv-state-persistence-upgrade P02]: No Supabase calls migrated in this plan — additive foundation only; existing fetch patterns untouched
+- [Phase 30-animated-chapter-swipe P01]: Pin react-native-reanimated to ~3.19.5 explicitly — npx expo install without a pin resolves to 4.x which requires New Architecture and crashes on newArchEnabled=false builds
+- [Phase 30-animated-chapter-swipe P01]: Place swipe threshold constants and resolveSwipeChapterNavigation in bibleReaderModel.ts alongside existing reader model constants — keeps the model surface cohesive and avoids a new file for a small addition
 
 ### Pending Todos
 
@@ -192,6 +195,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-25T01:45:21Z
-Stopped at: Completed 29-02-PLAN.md (TanStack Query foundation, 2 tasks, TypeScript clean, 62 tests pass)
+Last session: 2026-03-25T06:00:00Z
+Stopped at: Completed 30-01-PLAN.md (gesture foundation, 2 tasks, reanimated+gesture-handler installed, 71 tests pass)
 Resume file: None
