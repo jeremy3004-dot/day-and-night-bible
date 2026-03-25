@@ -44,17 +44,6 @@ export async function configureAudioMode(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 /**
- * AVPlaybackStatus is kept here temporarily for backward-compatibility with
- * consumers that reference it. New code should use the track-player event
- * types instead.
- */
-export interface AudioPlayerCallbacks {
-  onStatusUpdate?: (status: TrackPlayerProgressSnapshot) => void;
-  onPlaybackFinished?: () => void;
-  onError?: (error: string) => void;
-}
-
-/**
  * Snapshot that onStatusUpdate receives. It mirrors the subset of
  * AVPlaybackStatus that useAudioPlayer actually reads. Using our own type
  * decouples the hook from expo-av.
@@ -69,6 +58,12 @@ export interface TrackPlayerProgressSnapshot {
   error?: string;
 }
 
+export interface AudioPlayerCallbacks {
+  onStatusUpdate?: (status: TrackPlayerProgressSnapshot) => void;
+  onPlaybackFinished?: () => void;
+  onError?: (error: string) => void;
+}
+
 // ---------------------------------------------------------------------------
 // AudioPlayer class
 // ---------------------------------------------------------------------------
@@ -78,6 +73,14 @@ class AudioPlayer {
   private isConfigured = false;
   private subscriptions: Subscription[] = [];
   private loaded = false;
+
+  // Merged state — progress and playback-state arrive as separate events from
+  // the track-player wrapper. We merge them here so onStatusUpdate always
+  // delivers a complete snapshot to useAudioPlayer.
+  private lastPositionMillis = 0;
+  private lastDurationMillis = 0;
+  private lastIsPlaying = false;
+  private lastIsBuffering = false;
 
   async configure(): Promise<void> {
     if (this.isConfigured) return;
@@ -92,6 +95,17 @@ class AudioPlayer {
 
   // -- event wiring --------------------------------------------------------
 
+  private emitSnapshot(): void {
+    this.callbacks.onStatusUpdate?.({
+      isLoaded: true,
+      positionMillis: this.lastPositionMillis,
+      durationMillis: this.lastDurationMillis,
+      isPlaying: this.lastIsPlaying,
+      isBuffering: this.lastIsBuffering,
+      didJustFinish: false,
+    });
+  }
+
   private wireSubscriptions(): void {
     // Clean up any previous subscriptions
     for (const sub of this.subscriptions) {
@@ -101,31 +115,18 @@ class AudioPlayer {
 
     this.subscriptions.push(
       TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (data: PlaybackProgressEvent) => {
-        this.callbacks.onStatusUpdate?.({
-          isLoaded: true,
-          positionMillis: data.position * 1000,
-          durationMillis: data.duration * 1000,
-          isPlaying: false, // overridden by state listener below
-          isBuffering: false,
-          didJustFinish: false,
-        });
+        this.lastPositionMillis = data.position * 1000;
+        this.lastDurationMillis = data.duration * 1000;
+        this.emitSnapshot();
       })
     );
 
     this.subscriptions.push(
       TrackPlayer.addEventListener(Event.PlaybackState, (data: PlaybackStateEvent) => {
-        const isPlaying = data.state === State.Playing;
-        const isBuffering =
+        this.lastIsPlaying = data.state === State.Playing;
+        this.lastIsBuffering =
           data.state === State.Buffering || data.state === State.Loading;
-
-        this.callbacks.onStatusUpdate?.({
-          isLoaded: true,
-          positionMillis: 0, // Will be filled by progress events
-          durationMillis: 0,
-          isPlaying,
-          isBuffering,
-          didJustFinish: false,
-        });
+        this.emitSnapshot();
       })
     );
 
@@ -146,6 +147,11 @@ class AudioPlayer {
 
   async loadAndPlay(url: string, rate: PlaybackRate = 1.0): Promise<void> {
     await this.configure();
+    // Reset merged state for new track
+    this.lastPositionMillis = 0;
+    this.lastDurationMillis = 0;
+    this.lastIsPlaying = false;
+    this.lastIsBuffering = true;
     await TrackPlayer.loadAndPlay(url, rate);
     this.loaded = true;
   }
@@ -177,6 +183,10 @@ class AudioPlayer {
   async stop(): Promise<void> {
     await TrackPlayer.stop();
     this.loaded = false;
+    this.lastPositionMillis = 0;
+    this.lastDurationMillis = 0;
+    this.lastIsPlaying = false;
+    this.lastIsBuffering = false;
   }
 
   async seekTo(positionMs: number): Promise<void> {
