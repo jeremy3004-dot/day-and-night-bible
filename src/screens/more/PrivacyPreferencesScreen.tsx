@@ -130,6 +130,7 @@ export function PrivacyPreferencesScreen() {
               icon="book-outline"
               isSelected={selectedMode === 'standard'}
               onPress={() => selectMode('standard')}
+              styles={styles}
               title={t('onboarding.standardIconTitle')}
             />
             <PrivacyModeOption
@@ -138,6 +139,7 @@ export function PrivacyPreferencesScreen() {
               icon="calculator-outline"
               isSelected={selectedMode === 'discreet'}
               onPress={() => selectMode('discreet')}
+              styles={styles}
               title={t('onboarding.discreetIconTitle')}
             />
           </View>
@@ -190,6 +192,7 @@ interface PrivacyModeOptionProps {
   icon: keyof typeof Ionicons.glyphMap;
   isSelected: boolean;
   onPress: () => void;
+  styles: ReturnType<typeof createStyles>;
   title: string;
 }
 
@@ -199,10 +202,9 @@ function PrivacyModeOption({
   icon,
   isSelected,
   onPress,
+  styles,
   title,
 }: PrivacyModeOptionProps) {
-  const styles = createStyles(colors);
-
   return (
     <TouchableOpacity
       style={[

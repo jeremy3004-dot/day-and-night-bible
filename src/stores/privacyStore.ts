@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { PrivacyAppIconMode } from '../types';
 import {
+  applyPrivacyAppIcon,
   clearPrivacySettings,
   loadPrivacySettings,
   updatePrivacyMode,
@@ -87,6 +88,12 @@ export const usePrivacyStore = create<PrivacyState>()((set, get) => ({
         isLocked: false,
       });
 
+      // Defer icon change until after navigation and re-renders complete to
+      // prevent the concurrent Zustand + AppState cascade that OOMs Hermes GC.
+      setTimeout(() => {
+        void applyPrivacyAppIcon('discreet');
+      }, 400);
+
       return {
         success: true,
         errorKey: null,
@@ -99,6 +106,11 @@ export const usePrivacyStore = create<PrivacyState>()((set, get) => ({
       hasPin: false,
       isLocked: false,
     });
+
+    // Defer icon change until after navigation and re-renders complete.
+    setTimeout(() => {
+      void applyPrivacyAppIcon('standard');
+    }, 400);
 
     return {
       success: true,

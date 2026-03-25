@@ -38,7 +38,12 @@ export const loadPrivacySettings = async (): Promise<StoredPrivacySettings> => {
 
 export const savePrivacySettings = async (settings: StoredPrivacySettings): Promise<void> => {
   await SecureStore.setItemAsync(privacySettingsKey, JSON.stringify(settings));
-  await setPrivacyAppIcon(settings.mode);
+  // Icon change is intentionally deferred — callers should call applyPrivacyAppIcon
+  // after navigation completes to avoid an OOM crash from concurrent Zustand + AppState churn.
+};
+
+export const applyPrivacyAppIcon = async (mode: PrivacyAppIconMode): Promise<void> => {
+  await setPrivacyAppIcon(mode);
 };
 
 export const clearPrivacySettings = async (): Promise<void> => {
