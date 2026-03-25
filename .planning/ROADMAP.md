@@ -283,7 +283,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 05.1 → 6 → 7 
 | 22. Gather Tab — Waha-style Foundations, Topics & Meeting Format               | 0/4            | Planned                                                            | -          |
 | 23. Foundations Content Restructure                                            | 0/1            | Planned                                                            | -          |
 | 28. Multi-Translation Supabase Library                                         | 2/2 | Complete    | 2026-03-24 |
-| 29. MMKV State Persistence Upgrade                                             | 2/2 | In Progress (Plan 01 complete, Plan 02 pending) | 2026-03-25 |
+| 29. MMKV State Persistence Upgrade                                             | 2/2 | Complete    | 2026-03-25 |
+| 30. Animated Chapter Swipe and Reader Gestures                                 | 0/3 | Planned     | -          |
 
 ### Phase 12.1: Premium liquid-glass reader chrome and scroll-collapse motion (INSERTED)
 
@@ -548,7 +549,7 @@ Plans:
 **Goal:** Swap AsyncStorage for MMKV across all Zustand stores to eliminate cold-start hydration lag and improve persistence reliability; add TanStack Query for Supabase data fetching.
 **Requirements**: PERF-01, AUTH-03
 **Depends on:** Phase 28
-**Plans:** 2/2 plans complete (phase complete 2026-03-25)
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 29-01-PLAN.md — MMKV storage adapter, migration helper, and all-store swap
@@ -557,12 +558,14 @@ Plans:
 ### Phase 30: Animated Chapter Swipe and Reader Gestures
 
 **Goal:** Add swipe left/right chapter navigation and scroll-driven header collapse in the Bible reader using react-native-reanimated; improve Follow Along modal transitions.
-**Requirements**: TBD
+**Requirements**: SWIPE-01, SWIPE-02, SWIPE-03, SCROLL-01, MODAL-01, AUDIO-01
 **Depends on:** Phase 29
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 30 to break down)
+- [ ] 30-01-PLAN.md — Install reanimated 3.x + gesture-handler 2.x, add GestureHandlerRootView, create swipe model with tests
+- [ ] 30-02-PLAN.md — Replace Animated.Value scroll system with Reanimated useAnimatedScrollHandler + add swipe gesture
+- [ ] 30-03-PLAN.md — Follow Along modal spring transition + device build checkpoint
 
 ### Phase 31: Push Notification Implementation
 
