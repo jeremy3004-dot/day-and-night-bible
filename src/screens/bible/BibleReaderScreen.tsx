@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -120,6 +120,7 @@ export function BibleReaderScreen() {
   } = route.params;
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const safeInsets = useSafeAreaInsets();
   const autoplayKeyRef = useRef<string | null>(null);
   const sessionKeyRef = useRef<string | null>(null);
   const previousActiveAudioBookIdRef = useRef<string | null>(null);
@@ -1577,9 +1578,8 @@ export function BibleReaderScreen() {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.bibleBackground }]}
-      edges={['top', 'bottom']}
+    <View
+      style={[styles.container, { backgroundColor: colors.bibleBackground, paddingTop: safeInsets.top, paddingBottom: safeInsets.bottom }]}
     >
       {showPremiumReadMode ? renderPremiumReadLayout() : renderLegacyReaderLayout()}
 
@@ -1981,7 +1981,7 @@ export function BibleReaderScreen() {
           (a) => a.verse_start === selectedVerse && a.type === 'bookmark' && !a.deleted_at
         )}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
