@@ -53,6 +53,8 @@ yarn-error.*
 /android
 .env
 .claude-flow/
+.claude/worktrees/
+.bg-shell/
 every-bible-485319-82e2f287e3f8.json
 
 # Build artifacts

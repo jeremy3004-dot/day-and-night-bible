@@ -266,7 +266,7 @@ async function add(track: Track | Track[]): Promise<void> {
         shouldPlay: false,
         rate: currentRate,
         shouldCorrectPitch: true,
-        progressUpdateIntervalMillis: 500,
+        progressUpdateIntervalMillis: 100,
       },
       handleAVStatus
     );

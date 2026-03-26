@@ -149,8 +149,8 @@ test('premium read mode uses animated overlay chrome with blur-backed glass surf
 
   assert.match(
     source,
-    /Animated\.event\(/,
-    'BibleReaderScreen should derive the premium reader motion from scroll-driven Animated events'
+    /useAnimatedScrollHandler\(/,
+    'BibleReaderScreen should derive the premium reader motion from scroll-driven animated scroll handlers'
   );
 
   assert.match(
@@ -337,7 +337,7 @@ test('premium read chapter arrows transfer active audio before syncing the displ
 
   assert.match(
     source,
-    /const handleReadChapterNavigation = async \(target: \{ bookId: string; chapter: number \} \| null\) => \{[\s\S]*shouldTransferActiveAudioOnChapterChange\([\s\S]*await playChapter\(target\.bookId, target\.chapter\);[\s\S]*syncReaderReference\(target\.bookId, target\.chapter\);/s,
+    /const handleReadChapterNavigation = async \([\s\S]*?target:\s*\{ bookId: string; chapter: number \} \| null[\s\S]*?=> \{[\s\S]*?shouldTransferActiveAudioOnChapterChange\([\s\S]*?await playChapter\(target\.bookId, target\.chapter\);[\s\S]*?syncReaderReference\(target\.bookId, target\.chapter\);/s,
     'BibleReaderScreen should hand active audio off to the next chapter before syncing the read view'
   );
 });

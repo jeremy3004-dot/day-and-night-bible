@@ -7,4 +7,10 @@ export {
   syncTranslationPreferences,
   type TranslationServiceResult,
   type TranslationPreferencesInput,
+  mapCatalogEntryToBibleTranslation,
 } from './translationService';
+export {
+  bootstrapRuntimeTranslations,
+  reconcilePrimaryTranslationPreference,
+  bootstrapRuntimeTranslationsAndPreferences,
+} from './runtimeTranslationBootstrap';

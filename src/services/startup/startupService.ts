@@ -2,6 +2,7 @@ interface StartupCoordinatorDependencies {
   initializeAuth: () => Promise<void>;
   initializePrivacy: () => Promise<void>;
   preloadBibleData: () => Promise<void>;
+  preloadRuntimeTranslations?: () => Promise<void>;
   migrateStorage?: () => Promise<void>;
   scheduleTask?: (task: () => Promise<void> | void) => () => void;
   onWarmupError?: (error: unknown) => void;
@@ -25,6 +26,7 @@ export const createStartupCoordinator = ({
   initializeAuth,
   initializePrivacy,
   preloadBibleData,
+  preloadRuntimeTranslations,
   migrateStorage,
   scheduleTask = defaultScheduleTask,
   onWarmupError,
@@ -59,6 +61,9 @@ export const createStartupCoordinator = ({
   startDeferredWarmups: () =>
     scheduleTask(async () => {
       try {
+        if (preloadRuntimeTranslations) {
+          await preloadRuntimeTranslations();
+        }
         await preloadBibleData();
       } catch (error) {
         onWarmupError?.(error);

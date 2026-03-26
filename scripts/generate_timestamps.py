@@ -268,6 +268,65 @@ def process_chapter(
             return label, False, "alignment failed"
 
 
+# ─────────────────────────── Public API for batch_timestamps.py ───────────────────────────
+
+# Lazy-load the verse index once per process (shared across threads)
+_verse_index: dict | None = None
+_verse_index_lock = threading.Lock()
+
+
+def _get_verse_index(translation_id: str) -> dict:
+    global _verse_index
+    with _verse_index_lock:
+        if _verse_index is None:
+            _verse_index = load_verse_index(translation_id)
+    return _verse_index
+
+
+def generate_chapter_timestamps(
+    db_path: str,
+    translation_id: str,
+    book_id: str,
+    chapter: int,
+    out_path,
+    force: bool,
+    model_name: str = "base",
+) -> bool:
+    """
+    Self-contained entry point called by batch_timestamps.py.
+    Loads verse data + model lazily, fetches audio, runs alignment.
+    Returns True on success or skip (already exists), False on failure.
+    """
+    out_path = Path(out_path)
+
+    if not force and out_path.exists():
+        return True
+
+    verse_index = _get_verse_index(translation_id)
+    verses = verse_index.get((book_id, chapter), [])
+    if not verses:
+        return False
+
+    if translation_id == "web":
+        audio_url = web_audio_url(book_id, chapter)
+    else:
+        audio_url = bsb_audio_url(book_id, chapter)
+
+    model = get_model(model_name)
+
+    _, success, _ = process_chapter(
+        translation=translation_id,
+        book_id=book_id,
+        chapter=chapter,
+        verses=verses,
+        output_path=out_path,
+        audio_url=audio_url,
+        force=force,
+        model=model,
+    )
+    return success
+
+
 # ─────────────────────────── Main ───────────────────────────
 
 def main():

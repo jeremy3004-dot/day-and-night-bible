@@ -197,8 +197,11 @@ export const useBibleStore = create<BibleState>()(
           return;
         }
 
-        if (translation.isDownloaded || translation.hasText) {
-          set({ currentTranslation: translationId });
+        const hasInstalledTextPack = Boolean(translation.textPackLocalPath);
+        const hasReadableText = translation.hasText && (translation.source !== 'runtime' || hasInstalledTextPack);
+
+        if (translation.isDownloaded || hasReadableText) {
+          set({ currentTranslation: translationId, error: null });
           return;
         }
 
@@ -211,7 +214,7 @@ export const useBibleStore = create<BibleState>()(
           });
 
           if (availability.canPlayAudio) {
-            set({ currentTranslation: translationId });
+            set({ currentTranslation: translationId, error: null });
           }
         }
       },
@@ -349,14 +352,21 @@ export const useBibleStore = create<BibleState>()(
 
       downloadTranslation: async (translationId: string, _bookId?: string) => {
         const translation = get().translations.find((t) => t.id === translationId);
+        const hasInstalledTextPack = Boolean(translation?.textPackLocalPath);
+        const isBundledSeed = Boolean(
+          translation?.hasText && translation?.source !== 'runtime' && !hasInstalledTextPack
+        );
 
-        // Translations bundled in the main database (hasText: true at seed time) are
-        // immediately available — no download needed. Mark as downloaded and clear error.
-        if (translation?.hasText) {
+        // Bundled seeded translations are already present in the app's bundled database.
+        // Mark them available, but do not pretend runtime/cloud translations are installed
+        // unless a local pack path exists.
+        if (translation && isBundledSeed) {
           set((state) => ({
             error: null,
             translations: state.translations.map((t) =>
-              t.id === translationId ? { ...t, isDownloaded: true, installState: 'seeded' as const } : t
+              t.id === translationId
+                ? { ...t, isDownloaded: true, installState: 'seeded' as const }
+                : t
             ),
           }));
           return;
@@ -377,9 +387,7 @@ export const useBibleStore = create<BibleState>()(
               status: 'downloading' as const,
             },
             translations: state.translations.map((t) =>
-              t.id === translationId
-                ? { ...t, installState: 'downloading' as const }
-                : t
+              t.id === translationId ? { ...t, installState: 'downloading' as const } : t
             ),
           }));
 
@@ -407,7 +415,9 @@ export const useBibleStore = create<BibleState>()(
 
           // Activate the installed pack — sets textPackLocalPath, isDownloaded, installState
           set((state) => ({
+            currentTranslation: state.currentTranslation === translationId ? translationId : state.currentTranslation,
             downloadProgress: null,
+            error: null,
             translations: state.translations.map((t) =>
               t.id === translationId
                 ? {

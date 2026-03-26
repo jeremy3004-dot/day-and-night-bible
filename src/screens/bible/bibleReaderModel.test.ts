@@ -302,7 +302,8 @@ test('uses exact timestamps instead of word-weight estimation when provided', ()
     { id: 2, bookId: 'GEN', chapter: 1, verse: 2, text: 'The earth was formless and empty.' },
     { id: 3, bookId: 'GEN', chapter: 1, verse: 3, text: 'God said let there be light and there was light.' },
   ];
-  const timestamps = { 1: 0, 2: 5000, 3: 12000 };
+  // NOTE: timestamps are stored in seconds, while currentPosition is milliseconds.
+  const timestamps = { 1: 0, 2: 5, 3: 12 };
 
   // At position 0ms, verse 1 should be active
   assert.equal(

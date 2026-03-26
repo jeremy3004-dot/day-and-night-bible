@@ -27,6 +27,12 @@ export function useAudioPlayer(translationId: string = 'bsb') {
   >(null);
   const [sleepTimerNow, setSleepTimerNow] = useState(() => Date.now());
 
+  // Interpolation refs — track the last real poll so we can estimate position
+  // between 100ms ticks using wall-clock time. Cleared on seek/pause/stop.
+  const lastPollPositionRef = useRef<number>(0);
+  const lastPollTimeRef = useRef<number>(0);
+  const interpolationTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const {
     status,
     currentTranslationId,
@@ -163,12 +169,34 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       setPosition(snapshot.positionMillis);
       setDuration(snapshot.durationMillis || 0);
 
+      // Record the real poll anchor for interpolation
+      lastPollPositionRef.current = snapshot.positionMillis;
+      lastPollTimeRef.current = Date.now();
+
       if (snapshot.isPlaying) {
         setStatus('playing');
-      } else if (snapshot.isBuffering) {
-        setStatus('loading');
+
+        // Start 50ms interpolation timer if not already running
+        if (!interpolationTimerRef.current) {
+          interpolationTimerRef.current = setInterval(() => {
+            const playbackRate = useAudioStore.getState().playbackRate ?? 1.0;
+            const elapsed = Date.now() - lastPollTimeRef.current;
+            const interpolated = lastPollPositionRef.current + elapsed * playbackRate;
+            useAudioStore.getState().setPosition(interpolated);
+          }, 50);
+        }
       } else {
-        setStatus('paused');
+        // Not playing — stop interpolation and clear the timer
+        if (interpolationTimerRef.current) {
+          clearInterval(interpolationTimerRef.current);
+          interpolationTimerRef.current = null;
+        }
+
+        if (snapshot.isBuffering) {
+          setStatus('loading');
+        } else {
+          setStatus('paused');
+        }
       }
     },
     [setPosition, setDuration, setStatus]
@@ -273,6 +301,14 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       onPlaybackFinished: handlePlaybackFinished,
       onError: setError,
     });
+
+    return () => {
+      // Clean up interpolation timer when hook unmounts
+      if (interpolationTimerRef.current) {
+        clearInterval(interpolationTimerRef.current);
+        interpolationTimerRef.current = null;
+      }
+    };
   }, [handleStatusUpdate, handlePlaybackFinished, setError]);
 
   useEffect(() => {
@@ -326,6 +362,11 @@ export function useAudioPlayer(translationId: string = 'bsb') {
 
   // Pause playback
   const pause = useCallback(async () => {
+    // Stop interpolation immediately so position freezes at pause point
+    if (interpolationTimerRef.current) {
+      clearInterval(interpolationTimerRef.current);
+      interpolationTimerRef.current = null;
+    }
     await audioPlayer.pause();
     setStatus('paused');
     if (currentBookId && currentChapter && duration > 0) {
@@ -339,12 +380,19 @@ export function useAudioPlayer(translationId: string = 'bsb') {
 
   // Resume playback
   const resume = useCallback(async () => {
+    // Reset poll anchor so interpolation starts fresh from the current position
+    lastPollPositionRef.current = useAudioStore.getState().currentPosition;
+    lastPollTimeRef.current = Date.now();
     await audioPlayer.resume();
     setStatus('playing');
   }, [setStatus]);
 
   // Stop playback completely
   const stop = useCallback(async () => {
+    if (interpolationTimerRef.current) {
+      clearInterval(interpolationTimerRef.current);
+      interpolationTimerRef.current = null;
+    }
     if (currentBookId && currentChapter && duration > 0) {
       useLibraryStore.getState().recordHistory(
         currentBookId,
@@ -393,6 +441,9 @@ export function useAudioPlayer(translationId: string = 'bsb') {
   // Seek to position
   const seekTo = useCallback(
     async (positionMs: number) => {
+      // Reset interpolation anchor to the seek target so we don't overshoot
+      lastPollPositionRef.current = positionMs;
+      lastPollTimeRef.current = Date.now();
       await audioPlayer.seekTo(positionMs);
       setPosition(positionMs);
     },

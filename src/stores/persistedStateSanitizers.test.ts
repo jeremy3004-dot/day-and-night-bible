@@ -80,7 +80,7 @@ test('sanitizePersistedBibleState falls back when a retired translation is selec
   assert.equal(sanitized.currentTranslation, 'bsb');
 });
 
-test('sanitizePersistedBibleState preserves valid runtime translations alongside seeded ones', () => {
+test('sanitizePersistedBibleState preserves valid runtime translations alongside seeded ones but falls back current selection until installed', () => {
   const sanitized = sanitizePersistedBibleState({
     currentTranslation: 'niv',
     translations: [
@@ -123,7 +123,7 @@ test('sanitizePersistedBibleState preserves valid runtime translations alongside
 
   const runtimeTranslation = sanitized.translations.find((translation) => translation.id === 'niv');
 
-  assert.equal(sanitized.currentTranslation, 'niv');
+  assert.equal(sanitized.currentTranslation, 'bsb');
   assert.ok(runtimeTranslation);
   assert.equal(runtimeTranslation.source, 'runtime');
   assert.equal(runtimeTranslation.installState, 'remote-only');
@@ -133,6 +133,49 @@ test('sanitizePersistedBibleState preserves valid runtime translations alongside
   assert.deepEqual(runtimeTranslation.downloadedAudioBooks, ['MAT']);
   assert.ok(sanitized.translations.some((translation) => translation.id === 'bsb'));
 });
+
+test('sanitizePersistedBibleState falls back when runtime translation is not locally readable', () => {
+  const sanitized = sanitizePersistedBibleState({
+    currentTranslation: 'NIV',
+    translations: [
+      {
+        id: 'NIV',
+        name: 'New International Version',
+        abbreviation: 'NIV',
+        language: 'English',
+        description: 'Runtime translation from backend catalog',
+        copyright: 'Example License',
+        isDownloaded: false,
+        downloadedBooks: [],
+        downloadedAudioBooks: [],
+        totalBooks: 66,
+        sizeInMB: 5.2,
+        hasText: true,
+        hasAudio: false,
+        audioGranularity: 'none',
+        source: 'runtime',
+        installState: 'installed',
+        catalog: {
+          version: '2026.03.21',
+          updatedAt: '2026-03-21T10:00:00.000Z',
+          text: {
+            format: 'sqlite',
+            version: '2026.03.21',
+            downloadUrl: 'https://cdn.example.com/niv.sqlite',
+            sha256: 'sha256-text',
+          },
+        },
+      },
+    ],
+  });
+
+  assert.equal(sanitized.currentTranslation, 'bsb');
+  const runtime = sanitized.translations.find((translation) => translation.id === 'niv');
+  assert.ok(runtime);
+  assert.equal(runtime.installState, 'remote-only');
+  assert.equal(runtime.isDownloaded, false);
+});
+
 
 test('sanitizePersistedBibleState drops malformed runtime translations', () => {
   const sanitized = sanitizePersistedBibleState({
@@ -175,7 +218,6 @@ test('sanitizePersistedBibleState drops malformed runtime translations', () => {
     false
   );
 });
-
 test('sanitizePersistedProgressState removes invalid chapter entries', () => {
   const sanitized = sanitizePersistedProgressState({
     chaptersRead: {

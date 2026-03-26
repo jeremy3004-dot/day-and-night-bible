@@ -104,9 +104,26 @@ const sanitizeIsoDateString = (value: unknown): string | null => {
   return Number.isNaN(Date.parse(value)) ? null : value;
 };
 
-const sanitizeTranslationId = (value: unknown): string | null =>
-  typeof value === 'string' && supportedBibleTranslationIds.has(value) ? value : null;
+const sanitizeTranslationId = (value: unknown): string | null => {
+  if (typeof value !== 'string') {
+    return null;
+  }
 
+  const normalized = value.trim().toLowerCase();
+  return supportedBibleTranslationIds.has(normalized) ? normalized : null;
+};
+
+const isReadableTranslation = (translation: BibleTranslation): boolean => {
+  if (translation.isDownloaded) {
+    return true;
+  }
+
+  if (!translation.hasText) {
+    return false;
+  }
+
+  return translation.source !== 'runtime' || Boolean(translation.textPackLocalPath);
+};
 const sanitizeBookId = (value: unknown): string | null =>
   typeof value === 'string' && getBookById(value) ? value : null;
 
@@ -255,8 +272,11 @@ const hydrateSeededTranslation = (
     persisted?.downloadedAudioBooks,
     defaultTranslation.downloadedAudioBooks
   );
-
-  return {
+  const textPackLocalPath = sanitizeOptionalString(persisted?.textPackLocalPath);
+  const installState = validInstallStates.has(persisted?.installState as TranslationInstallState)
+    ? (persisted?.installState as TranslationInstallState)
+    : getDefaultInstallState(defaultTranslation);
+  const hydrated: BibleTranslation = {
     ...defaultTranslation,
     isDownloaded:
       typeof persisted?.isDownloaded === 'boolean'
@@ -265,19 +285,26 @@ const hydrateSeededTranslation = (
     downloadedBooks,
     downloadedAudioBooks,
     source: 'bundled',
-    installState: validInstallStates.has(persisted?.installState as TranslationInstallState)
-      ? (persisted?.installState as TranslationInstallState)
-      : getDefaultInstallState(defaultTranslation),
+    installState,
     activeTextPackVersion: sanitizeOptionalString(persisted?.activeTextPackVersion),
     pendingTextPackVersion: sanitizeOptionalString(persisted?.pendingTextPackVersion),
     pendingTextPackLocalPath: sanitizeOptionalString(persisted?.pendingTextPackLocalPath),
-    textPackLocalPath: sanitizeOptionalString(persisted?.textPackLocalPath),
+    textPackLocalPath,
     rollbackTextPackVersion: sanitizeOptionalString(persisted?.rollbackTextPackVersion),
     rollbackTextPackLocalPath: sanitizeOptionalString(persisted?.rollbackTextPackLocalPath),
     lastInstallError: sanitizeOptionalString(persisted?.lastInstallError),
     catalog: sanitizeTranslationCatalog(persisted?.catalog) ?? defaultTranslation.catalog,
     activeDownloadJob: sanitizeTranslationDownloadJob(persisted?.activeDownloadJob),
   };
+
+  if (hydrated.source === 'bundled' && hydrated.hasText) {
+    hydrated.isDownloaded = true;
+    if (hydrated.installState === 'remote-only') {
+      hydrated.installState = 'seeded';
+    }
+  }
+
+  return hydrated;
 };
 
 const sanitizeRuntimeTranslation = (value: unknown): BibleTranslation | null => {
@@ -285,7 +312,7 @@ const sanitizeRuntimeTranslation = (value: unknown): BibleTranslation | null => 
     return null;
   }
 
-  const id = sanitizeRequiredString(value.id);
+  const id = sanitizeRequiredString(value.id)?.toLowerCase();
   const name = sanitizeRequiredString(value.name);
   const abbreviation = sanitizeRequiredString(value.abbreviation);
   const language = sanitizeRequiredString(value.language);
@@ -325,7 +352,7 @@ const sanitizeRuntimeTranslation = (value: unknown): BibleTranslation | null => 
     return null;
   }
 
-  return {
+  const runtimeTranslation: BibleTranslation = {
     id,
     name,
     abbreviation,
@@ -354,6 +381,13 @@ const sanitizeRuntimeTranslation = (value: unknown): BibleTranslation | null => 
     catalog,
     activeDownloadJob: sanitizeTranslationDownloadJob(value.activeDownloadJob),
   };
+
+  if (!runtimeTranslation.textPackLocalPath && runtimeTranslation.installState === 'installed') {
+    runtimeTranslation.installState = 'remote-only';
+    runtimeTranslation.isDownloaded = false;
+  }
+
+  return runtimeTranslation;
 };
 
 export const getDefaultBibleTranslations = (): BibleTranslation[] =>
@@ -495,15 +529,24 @@ export const sanitizePersistedBibleState = (value: unknown) => {
       : 1;
   const preferredChapterLaunchMode: 'listen' | 'read' =
     persisted.preferredChapterLaunchMode === 'listen' ? 'listen' : 'read';
+  const normalizedCurrentTranslation =
+    typeof persisted.currentTranslation === 'string'
+      ? persisted.currentTranslation.trim().toLowerCase()
+      : null;
+  const selectedTranslation = normalizedCurrentTranslation
+    ? translations.find((translation) => translation.id === normalizedCurrentTranslation)
+    : null;
 
   return {
     currentBook,
     currentChapter,
     preferredChapterLaunchMode,
     currentTranslation:
-      typeof persisted.currentTranslation === 'string' &&
-      translationIds.has(persisted.currentTranslation)
-        ? persisted.currentTranslation
+      normalizedCurrentTranslation &&
+      translationIds.has(normalizedCurrentTranslation) &&
+      selectedTranslation &&
+      isReadableTranslation(selectedTranslation)
+        ? normalizedCurrentTranslation
         : 'bsb',
     translations,
   };

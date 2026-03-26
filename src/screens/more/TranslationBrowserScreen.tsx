@@ -20,10 +20,12 @@ import {
   listAvailableTranslations,
   getUserTranslationPreferences,
   setUserTranslationPreferences,
+  mapCatalogEntryToBibleTranslation,
 } from '../../services/translations/translationService';
 import type { TranslationCatalogEntry, UserTranslationPreferences } from '../../services/supabase/types';
 import type { MoreStackParamList } from '../../navigation/types';
 import { useBibleStore } from '../../stores/bibleStore';
+import { isTranslationReadableLocally } from '../bible/bibleTranslationModel';
 
 type NavigationProp = NativeStackNavigationProp<MoreStackParamList, 'TranslationBrowser'>;
 
@@ -96,9 +98,15 @@ export function TranslationBrowserScreen() {
   // Uses getState() so it is not a reactive dependency and won't re-run the load callback.
   const isLocallyAvailable = useCallback(
     (translationId: string): boolean => {
-      // Also check reactive storeTranslations so the list refreshes after download completes
       const local = storeTranslations.find((tr) => tr.id === translationId.toLowerCase());
-      return Boolean(local?.hasText || local?.isDownloaded);
+      return local
+        ? isTranslationReadableLocally({
+            isDownloaded: local.isDownloaded,
+            hasText: local.hasText,
+            source: local.source,
+            textPackLocalPath: local.textPackLocalPath,
+          })
+        : false;
     },
     [storeTranslations]
   );
@@ -145,6 +153,14 @@ export function TranslationBrowserScreen() {
 
       if (catalogResult.success && catalogResult.data && catalogResult.data.length > 0) {
         setCatalogEntries(catalogResult.data);
+        const currentStoreTranslations = useBibleStore.getState().translations;
+        const runtimeTranslations = catalogResult.data.map((entry) =>
+          mapCatalogEntryToBibleTranslation(
+            entry,
+            currentStoreTranslations.find((translation) => translation.id === entry.translation_id)
+          )
+        );
+        useBibleStore.getState().applyRuntimeCatalog(runtimeTranslations);
       } else {
         // Offline or empty catalog: surface locally-available translations as a fallback.
         const localState = useBibleStore.getState().translations;
@@ -152,7 +168,7 @@ export function TranslationBrowserScreen() {
           .filter((tr) => tr.hasText || tr.isDownloaded)
           .map((tr) => ({
             id: tr.id,
-            translation_id: tr.id.toUpperCase(),
+            translation_id: tr.id,
             name: tr.name,
             abbreviation: tr.abbreviation,
             language_code: 'en',
@@ -169,6 +185,16 @@ export function TranslationBrowserScreen() {
             updated_at: '',
           }));
         setCatalogEntries(fallback);
+        useBibleStore.getState().applyRuntimeCatalog(
+          fallback.map((entry) =>
+            mapCatalogEntryToBibleTranslation(
+              entry,
+              useBibleStore
+                .getState()
+                .translations.find((translation) => translation.id === entry.translation_id)
+            )
+          )
+        );
       }
       if (prefsResult.success) {
         setPreferences(prefsResult.data ?? null);

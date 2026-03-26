@@ -8,18 +8,46 @@ interface TranslationSelectionOptions {
   hasText: boolean;
   hasAudio: boolean;
   canPlayAudio: boolean;
+  source?: 'bundled' | 'runtime';
+  textPackLocalPath?: string | null;
 }
 
 export const isAudioOnlyTranslation = (translation: Pick<TranslationSelectionOptions, 'hasText' | 'hasAudio'>): boolean =>
   !translation.hasText && translation.hasAudio;
+
+export const isTranslationReadableLocally = ({
+  isDownloaded,
+  hasText,
+  source,
+  textPackLocalPath,
+}: Pick<TranslationSelectionOptions, 'isDownloaded' | 'hasText' | 'source' | 'textPackLocalPath'>): boolean => {
+  if (isDownloaded) {
+    return true;
+  }
+
+  if (!hasText) {
+    return false;
+  }
+
+  return source !== 'runtime' || Boolean(textPackLocalPath);
+};
 
 export const getTranslationSelectionState = ({
   isDownloaded,
   hasText,
   hasAudio,
   canPlayAudio,
+  source,
+  textPackLocalPath,
 }: TranslationSelectionOptions): TranslationSelectionState => {
-  if (isDownloaded || hasText) {
+  if (
+    isTranslationReadableLocally({
+      isDownloaded,
+      hasText,
+      source,
+      textPackLocalPath,
+    })
+  ) {
     return { isSelectable: true, reason: null };
   }
 

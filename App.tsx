@@ -10,8 +10,10 @@ import * as Notifications from 'expo-notifications';
 import { useFonts } from 'expo-font';
 import { openAuthFlow, type PendingAuthMode } from './src/navigation/rootNavigation';
 import { initBibleData } from './src/services/bible/bibleService';
+import { bootstrapRuntimeTranslationsAndPreferences } from './src/services/translations';
 import { migrateFromAsyncStorage } from './src/stores/migrateFromAsyncStorage';
 import { useAuthStore } from './src/stores/authStore';
+import { useBibleStore } from './src/stores/bibleStore';
 import { usePrivacyStore } from './src/stores/privacyStore';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
 import { PrivacyLockScreen } from './src/components/privacy/PrivacyLockScreen';
@@ -55,12 +57,14 @@ function LoadingScreen({ onInitialAuthRequest }: LoadingScreenProps) {
   const initializePrivacy = usePrivacyStore((state) => state.initialize);
   const isPrivacyLocked = usePrivacyStore((state) => state.isLocked);
   const preferences = useAuthStore((state) => state.preferences);
+  const reattachAudioDownloads = useBibleStore((state) => state.reattachAudioDownloads);
   const startupCoordinator = useMemo(
     () =>
       createStartupCoordinator({
         initializeAuth,
         initializePrivacy,
         preloadBibleData: initBibleData,
+        preloadRuntimeTranslations: bootstrapRuntimeTranslationsAndPreferences,
         migrateStorage: migrateFromAsyncStorage,
         scheduleTask: (task) => {
           const handle = InteractionManager.runAfterInteractions(() => {
@@ -133,6 +137,16 @@ function LoadingScreen({ onInitialAuthRequest }: LoadingScreenProps) {
       }
     };
   }, [isReady, preferences.onboardingCompleted, startupCoordinator]);
+
+  useEffect(() => {
+    if (!isReady || !preferences.onboardingCompleted) {
+      return;
+    }
+
+    void reattachAudioDownloads().catch((error) => {
+      console.error('Failed to reattach persisted audio downloads:', error);
+    });
+  }, [isReady, preferences.onboardingCompleted, reattachAudioDownloads]);
 
   useEffect(() => {
     if (preferences.language) {

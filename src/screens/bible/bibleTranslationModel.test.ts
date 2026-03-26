@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { getTranslationSelectionState, isAudioOnlyTranslation } from './bibleTranslationModel';
+import {
+  getTranslationSelectionState,
+  isAudioOnlyTranslation,
+  isTranslationReadableLocally,
+} from './bibleTranslationModel';
 
 test('downloaded translations are selectable', () => {
   const state = getTranslationSelectionState({
@@ -30,18 +34,38 @@ test('text translations remain selectable even when audio downloads are separate
   });
 });
 
-test('audio-only translations are selectable when audio can play', () => {
-  const state = getTranslationSelectionState({
-    isDownloaded: false,
-    hasText: false,
-    hasAudio: true,
-    canPlayAudio: true,
-  });
+test('runtime text translations require an installed local pack before they are treated as readable', () => {
+  assert.equal(
+    isTranslationReadableLocally({
+      isDownloaded: false,
+      hasText: true,
+      source: 'runtime',
+      textPackLocalPath: null,
+    }),
+    false
+  );
 
-  assert.deepEqual(state, {
-    isSelectable: true,
-    reason: null,
-  });
+  assert.equal(
+    isTranslationReadableLocally({
+      isDownloaded: false,
+      hasText: true,
+      source: 'runtime',
+      textPackLocalPath: 'file:///translations/niv.db',
+    }),
+    true
+  );
+});
+
+test('bundled text translations remain readable without a runtime pack path', () => {
+  assert.equal(
+    isTranslationReadableLocally({
+      isDownloaded: false,
+      hasText: true,
+      source: 'bundled',
+      textPackLocalPath: null,
+    }),
+    true
+  );
 });
 
 test('audio-only translations are blocked when no audio source is available', () => {
@@ -58,20 +82,35 @@ test('audio-only translations are blocked when no audio source is available', ()
   });
 });
 
-test('audio-only helper flags only translations with audio and no text', () => {
-  assert.equal(
-    isAudioOnlyTranslation({
-      hasText: false,
-      hasAudio: true,
-    }),
-    true
-  );
+test('runtime text translations without an installed local pack are not selectable yet', () => {
+  const state = getTranslationSelectionState({
+    isDownloaded: false,
+    hasText: true,
+    hasAudio: false,
+    canPlayAudio: false,
+    source: 'runtime',
+    textPackLocalPath: null,
+  });
 
-  assert.equal(
-    isAudioOnlyTranslation({
-      hasText: true,
-      hasAudio: true,
-    }),
-    false
-  );
+  assert.deepEqual(state, {
+    isSelectable: false,
+    reason: 'coming-soon',
+  });
 });
+
+test('runtime text translations become selectable once the local pack exists', () => {
+  const state = getTranslationSelectionState({
+    isDownloaded: false,
+    hasText: true,
+    hasAudio: false,
+    canPlayAudio: false,
+    source: 'runtime',
+    textPackLocalPath: 'file:///translations/niv.db',
+  });
+
+  assert.deepEqual(state, {
+    isSelectable: true,
+    reason: null,
+  });
+});
+

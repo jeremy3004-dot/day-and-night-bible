@@ -195,6 +195,8 @@ export function BibleBrowserScreen() {
       hasText: translation.hasText,
       hasAudio: translation.hasAudio,
       canPlayAudio: audioAvailability.canPlayAudio,
+      source: translation.source,
+      textPackLocalPath: translation.textPackLocalPath,
     });
 
     if (selectionState.isSelectable) {
@@ -554,6 +556,8 @@ export function BibleBrowserScreen() {
                     hasText: translation.hasText,
                     hasAudio: translation.hasAudio,
                     canPlayAudio: audioAvailability.canPlayAudio,
+                    source: translation.source,
+                    textPackLocalPath: translation.textPackLocalPath,
                   });
                   return (
                     <View
@@ -637,7 +641,10 @@ export function BibleBrowserScreen() {
                                     { color: colors.bibleSecondaryText },
                                   ]}
                                 >
-                                  {t('common.comingSoon')}
+                                  {translation.installState === 'remote-only' ||
+                                  translation.source === 'runtime'
+                                    ? t('translations.download')
+                                    : t('common.comingSoon')}
                                 </Text>
                               </View>
                             )}

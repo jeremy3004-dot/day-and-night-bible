@@ -151,6 +151,9 @@ export function BibleReaderScreen() {
   const followAlongScrollViewRef = useRef<ScrollView | null>(null);
   const verseOffsetsRef = useRef<Record<number, number>>({});
   const followAlongOffsetsRef = useRef<Record<number, number>>({});
+  // Monotonic follow-along: verse index only advances forward, never retreats.
+  // Prevents highlight flickering caused by interpolated position noise.
+  const lastFollowAlongVerseRef = useRef<number | null>(null);
   const scrollY = useSharedValue(0);
 
   const [verses, setVerses] = useState<Verse[]>([]);
@@ -257,13 +260,28 @@ export function BibleReaderScreen() {
   const stableSessionMode = isLoading ? lastStableSessionModeRef.current : chapterSessionMode;
   const showMinimalListenChrome =
     stableSessionMode === 'listen' || chapterPresentationMode === 'audio-first';
-  const activeFollowAlongVerse = getEstimatedFollowAlongVerse({
+  const rawFollowAlongVerse = getEstimatedFollowAlongVerse({
     verses,
     currentPosition,
     duration,
     fallbackVerse: focusVerse,
     timestamps: chapterTimestamps,
   });
+  // Clamp to monotonic advancement: never let the highlight go backward.
+  // This prevents flickering when interpolated position briefly overshoots
+  // a verse boundary and snaps back on the next real poll.
+  // Reset when the chapter changes (lastFollowAlongVerseRef is cleared in the
+  // chapter-change useEffect below via followAlongOffsetsRef reset).
+  const activeFollowAlongVerse = (() => {
+    if (rawFollowAlongVerse == null) {
+      lastFollowAlongVerseRef.current = null;
+      return null;
+    }
+    const last = lastFollowAlongVerseRef.current;
+    const next = last != null && rawFollowAlongVerse < last ? last : rawFollowAlongVerse;
+    lastFollowAlongVerseRef.current = next;
+    return next;
+  })();
   const isCurrentAudioChapter = isActiveAudioTrackMatch({
     translationId: currentTranslation,
     bookId,
@@ -393,6 +411,8 @@ export function BibleReaderScreen() {
   useEffect(() => {
     verseOffsetsRef.current = {};
     followAlongOffsetsRef.current = {};
+    // Reset monotonic follow-along state on chapter change
+    lastFollowAlongVerseRef.current = null;
     if (focusVerse == null) {
       scrollViewRef.current?.scrollTo({ y: 0, animated: false });
     }
@@ -672,6 +692,8 @@ export function BibleReaderScreen() {
       hasText: translation.hasText,
       hasAudio: translation.hasAudio,
       canPlayAudio: audioAvailability.canPlayAudio,
+      source: translation.source,
+      textPackLocalPath: translation.textPackLocalPath,
     });
 
     if (selectionState.isSelectable) {
@@ -847,6 +869,8 @@ export function BibleReaderScreen() {
       return;
     }
 
+    // Allow the verse highlight to jump backward after a user seek
+    lastFollowAlongVerseRef.current = null;
     void seekTo(Math.max(0, Math.min(duration, positionMs)));
   };
 
