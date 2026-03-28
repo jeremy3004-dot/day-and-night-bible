@@ -8,3 +8,4 @@ export * from './audioSource';
 export * from './audioRemote';
 export * from './backgroundMusicCatalog';
 export * from './backgroundMusicPlayer';
+export * from './journeyAudioService';

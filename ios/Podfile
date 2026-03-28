@@ -76,5 +76,15 @@ target 'DayAndNightBible' do
 
       File.write(resource_script, updated_contents)
     end
+
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'EXConstants'
+
+      target.build_phases.grep(Xcodeproj::Project::Object::PBXShellScriptBuildPhase).each do |phase|
+        next unless phase.name == '[CP-User] Generate app.config for prebuilt Constants.manifest'
+
+        phase.shell_script = 'bash -l -c "\"$PODS_TARGET_SRCROOT/../scripts/get-app-config-ios.sh\""'
+      end
+    end
   end
 end

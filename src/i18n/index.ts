@@ -3,12 +3,14 @@ import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import * as locales from './locales';
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, type LanguageCode } from '../constants/languages';
+import { selahShell } from './locales/selahShell';
+import { mergeTranslationTrees } from './mergeTranslationTree';
 
 const resources = Object.fromEntries(
   SUPPORTED_LANGUAGES.map((language) => [
     language.code,
     {
-      translation: locales[language.code],
+      translation: mergeTranslationTrees(locales[language.code], selahShell),
     },
   ])
 ) as Record<LanguageCode, { translation: (typeof locales)[LanguageCode] }>;

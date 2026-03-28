@@ -54,6 +54,31 @@ test('Root navigator keeps the mini-player off the startup import path', () => {
   );
 });
 
+test('navigation barrel does not re-export the legacy Learn stack', () => {
+  const navigationIndexSource = readRelativeSource('../../navigation/index.ts');
+
+  assert.equal(
+    navigationIndexSource.includes("export * from './LearnStack';"),
+    false,
+    'navigation/index.ts should keep the legacy Learn stack out of the public barrel'
+  );
+});
+
+test('linking config avoids manifest-dependent URL resolution on the startup path', () => {
+  const linkingConfigSource = readRelativeSource('../../navigation/linkingConfig.ts');
+
+  assert.doesNotMatch(
+    linkingConfigSource,
+    /Linking\.createURL\(/,
+    'linkingConfig should not call expo-linking createURL at module load because release builds can boot before the Expo manifest is available'
+  );
+  assert.match(
+    linkingConfigSource,
+    /APP_SCHEME_PREFIX\s*=\s*'com\.dayandnightbible\.app:\/\/'/,
+    'linkingConfig should rely on the app scheme directly for native boot-safe deep links'
+  );
+});
+
 test('navigation stacks lazy-load screens instead of importing them at module load', () => {
   const stackFiles = [
     '../../navigation/HomeStack.tsx',

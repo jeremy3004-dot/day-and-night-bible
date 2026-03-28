@@ -3,6 +3,10 @@ import assert from 'node:assert/strict';
 import { getBookById } from '../../constants/books';
 import { setRemoteAudioMetadataResolver } from './audioRemote';
 import {
+  clearSelectedAudioVoiceSelection,
+  syncSelectedAudioVoiceSelection,
+} from './audioVoiceSelection';
+import {
   createAudioDownloadJobId,
   createAudioDownloadJobStore,
   downloadAudioBook,
@@ -57,12 +61,22 @@ const createPersistentFileSystemDouble = () => {
 
 test.afterEach(() => {
   setRemoteAudioMetadataResolver(null);
+  clearSelectedAudioVoiceSelection();
 });
 
 test('createAudioDownloadJobId keeps book and translation download jobs distinct', () => {
   assert.equal(
     createAudioDownloadJobId({ translationId: 'bsb', scope: 'book', bookId: 'GEN' }),
     'audio-download:bsb:book:GEN'
+  );
+  assert.equal(
+    createAudioDownloadJobId({
+      translationId: 'bsb',
+      scope: 'book',
+      bookId: 'GEN',
+      voiceId: 'gilbert',
+    }),
+    'audio-download:bsb:book:GEN:voice:gilbert'
   );
   assert.equal(
     createAudioDownloadJobId({ translationId: 'bsb', scope: 'translation' }),
@@ -168,26 +182,20 @@ test('getDownloadedChapterAudioUri returns a local file when it has been downloa
 });
 
 test('getChapterAudioFileUri uses the configured remote audio file extension', () => {
-  setRemoteAudioMetadataResolver((translationId) => {
-    if (translationId !== 'bsb') {
-      return null;
-    }
+  assert.equal(
+    getChapterAudioFileUri('bsb', 'JHN', 3),
+    'file:///dayandnightbible-audio/bsb/souer/JHN/3.mp3'
+  );
+});
 
-    return {
-      id: 'bsb',
-      hasAudio: true,
-      fileExtension: 'm4a',
-      audio: {
-        strategy: 'stream-template',
-        baseUrl: 'https://media.dayandnightbible.app/audio/bsb',
-        chapterPathTemplate: '{bookId}/{chapter}.m4a',
-      },
-    };
+test('getChapterAudioFileUri respects the selected bsb voice when one is set', () => {
+  syncSelectedAudioVoiceSelection({
+    bsb: 'gilbert',
   });
 
   assert.equal(
     getChapterAudioFileUri('bsb', 'JHN', 3),
-    'file:///dayandnightbible-audio/bsb/JHN/3.m4a'
+    'file:///dayandnightbible-audio/bsb/gilbert/JHN/3.mp3'
   );
 });
 

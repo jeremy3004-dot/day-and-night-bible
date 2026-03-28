@@ -1,50 +1,50 @@
-// Global app palette aligned to the premium Bible reader theme
+// Static graphite palette used outside the React theme context.
 export const colors = {
   // Background colors
-  background: '#101113',
-  cardBackground: '#17191d',
-  cardBorder: '#262a31',
+  background: '#090A0D',
+  cardBackground: '#14161B',
+  cardBorder: 'rgba(255, 255, 255, 0.08)',
 
   // Text colors
-  primaryText: '#f5f2ea',
-  secondaryText: '#a09b93',
+  primaryText: '#E6E1DA',
+  secondaryText: '#AAA39A',
 
   // Accent colors
-  accent: '#C0392B',
-  accentGreen: '#C0392B', // Legacy name — actual brand color is Tibetan Maroon
-  accentPrimary: '#C0392B',
-  accentSecondary: '#d0c2af',
-  accentTertiary: '#868b95',
+  accent: '#B7A58A',
+  accentGreen: '#B7A58A', // Legacy alias kept for backward compatibility
+  accentPrimary: '#B7A58A',
+  accentSecondary: '#D6CEC3',
+  accentTertiary: '#7C766F',
 
   // Named aliases kept for backward compatibility
-  tibetanMaroon: '#C0392B',
-  tibetanMaroonLight: '#A03025',
-  saffronGold: '#d0c2af',
-  saffronGoldLight: '#8c7558',
-  skyBlue: '#868b95',
-  skyBlueLight: '#6e7f9e',
+  tibetanMaroon: '#B7A58A',
+  tibetanMaroonLight: '#C8B89B',
+  saffronGold: '#D6CEC3',
+  saffronGoldLight: '#A58D6B',
+  skyBlue: '#7C766F',
+  skyBlueLight: '#8C8F96',
 
   // Tab colors
-  tabActive: '#f5f2ea',
-  tabInactive: '#7e8188',
+  tabActive: '#F1ECE4',
+  tabInactive: '#7C766F',
 
   // Additional utility colors
-  error: '#ff7b72',
-  success: '#80c16f',
-  warning: '#d0a35a',
+  error: '#D17A6C',
+  success: '#7C9A72',
+  warning: '#B89857',
 
   // Overlay
-  overlay: 'rgba(0, 0, 0, 0.6)',
+  overlay: 'rgba(4, 5, 8, 0.58)',
 
   // Premium Bible experience palette
-  bibleBackground: '#101113',
-  bibleSurface: '#17191d',
-  bibleElevatedSurface: '#1d2026',
-  bibleDivider: '#2a2f37',
-  biblePrimaryText: '#f5f2ea',
-  bibleSecondaryText: '#a09b93',
-  bibleAccent: '#C0392B',
-  bibleControlBackground: '#f5f2ea',
+  bibleBackground: '#101114',
+  bibleSurface: '#15171B',
+  bibleElevatedSurface: '#1B1E24',
+  bibleDivider: 'rgba(255, 255, 255, 0.08)',
+  biblePrimaryText: '#E6E1DA',
+  bibleSecondaryText: '#AAA39A',
+  bibleAccent: '#B7A58A',
+  bibleControlBackground: '#F1ECE4',
 } as const;
 
 export type ColorKey = keyof typeof colors;

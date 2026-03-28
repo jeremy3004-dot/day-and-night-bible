@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
+import { spacing, typography } from '../../design/system';
 import type { BookCompanionCardModel, BookCompanionSectionModel } from '../../screens/bible/bookCompanionModel';
 import { CompanionCard } from './CompanionCard';
 
@@ -45,24 +46,24 @@ export function CompanionSection({ section, onPressItem }: CompanionSectionProps
 
 const styles = StyleSheet.create({
   section: {
-    gap: 12,
+    gap: spacing.sm,
   },
   header: {
-    gap: 6,
+    gap: 4,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '800',
+    ...typography.sectionTitle,
   },
   description: {
+    ...typography.body,
     fontSize: 14,
     lineHeight: 20,
   },
   stack: {
-    gap: 12,
+    gap: spacing.sm,
   },
   carousel: {
-    gap: 12,
+    gap: spacing.sm,
     paddingRight: 20,
   },
 });

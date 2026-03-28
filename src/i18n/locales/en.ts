@@ -1,3 +1,6 @@
+import { legacyLearn } from './legacyLearn';
+import { selahShell } from './selahShell';
+
 export const en = {
   common: {
     cancel: 'Cancel',
@@ -7,6 +10,7 @@ export const en = {
     retry: 'Retry',
     loading: 'Loading...',
     continue: 'Continue',
+    clear: 'Clear',
     save: 'Save',
     delete: 'Delete',
     edit: 'Edit',
@@ -26,11 +30,8 @@ export const en = {
     all: 'All',
   },
   tabs: {
-    home: 'Home',
-    bible: 'Bible',
-    harvest: 'Harvest',
-    gather: 'Gather',
-    more: 'More',
+    ...legacyLearn.tabs,
+    ...selahShell.tabs,
   },
   home: {
     goodMorning: 'Good Morning',
@@ -54,6 +55,8 @@ export const en = {
     defaultVerse: 'Start reading or listening to discover today’s Scripture.',
     defaultReference: 'Open the Bible',
   },
+  meditate: selahShell.meditate,
+  journey: selahShell.journey,
   onboarding: {
     title: 'Set Up Your Bible Experience',
     stepProgress: 'Step {{current}} of {{count}}',
@@ -665,6 +668,7 @@ export const en = {
     },
   },
   prayer: {
+    ...selahShell.prayer,
     title: 'Prayer Wall',
     submitRequest: 'Share Prayer Request',
     requestPlaceholder: 'What would you like prayer for?',
@@ -708,6 +712,7 @@ export const en = {
     downloading: 'Downloading...',
     downloadPrompt: 'Download {{name}} (~{{size}} MB) for offline reading?',
   },
+  // Legacy Gather/Learn copy is intentionally isolated from the Selah shell.
   gather: {
     title: 'Gather',
     foundations: 'Foundations',

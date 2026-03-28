@@ -1,5 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { getTranslationById } from '../../constants/translations';
+import {
+  clearSelectedAudioVoiceSelection,
+  syncSelectedAudioVoiceSelection,
+} from './audioVoiceSelection';
 import {
   clearRemoteAudioCache,
   fetchRemoteChapterAudio,
@@ -11,66 +16,64 @@ import {
 test.afterEach(() => {
   clearRemoteAudioCache();
   setRemoteAudioMetadataResolver(null);
+  clearSelectedAudioVoiceSelection();
 });
 
-test('berean standard bible audio returns null when Supabase base URL is not configured', async () => {
+test('berean standard bible audio resolves the default souer chapter URL', async () => {
   const audio = await fetchRemoteChapterAudio('bsb', 'GEN', 1);
 
-  assert.equal(audio, null);
-});
-
-test('berean standard bible audio returns null for numbered-book chapters when Supabase base URL is not configured', async () => {
-  const audio = await fetchRemoteChapterAudio('bsb', '1CO', 13);
-
-  assert.equal(audio, null);
-});
-
-test('berean standard bible audio returns null for psalms chapters when Supabase base URL is not configured', async () => {
-  const audio = await fetchRemoteChapterAudio('bsb', 'PSA', 150);
-
-  assert.equal(audio, null);
-});
-
-test('berean standard bible audio resolves a Supabase storage URL when a Supabase base URL is injected', async () => {
-  setRemoteAudioMetadataResolver((translationId) => {
-    if (translationId !== 'bsb') {
-      return null;
-    }
-
-    return {
-      id: 'bsb',
-      hasAudio: true,
-      audio: {
-        strategy: 'supabase-storage',
-        extension: 'm4a',
-      },
-    };
+  assert.deepEqual(audio, {
+    url: 'https://openbible.com/audio/souer/BSB_01_Gen_001.mp3',
+    duration: 0,
   });
+});
 
-  // Simulate the supabase-storage strategy with a known base URL via stream-template fallback
-  setRemoteAudioMetadataResolver((translationId) => {
-    if (translationId !== 'bsb') {
-      return null;
-    }
-
-    return {
-      id: 'bsb',
-      hasAudio: true,
-      audio: {
-        strategy: 'stream-template',
-        baseUrl: 'https://example.supabase.co/storage/v1/object/public/bible-audio/bsb',
-        chapterPathTemplate: '{bookId}/{chapter}.m4a',
-      },
-    };
+test('berean standard bible audio resolves the selected gilbert voice chapter URL', async () => {
+  syncSelectedAudioVoiceSelection({
+    bsb: 'gilbert',
   });
 
   const audio = await fetchRemoteChapterAudio('bsb', 'GEN', 1);
 
   assert.deepEqual(audio, {
-    url: 'https://example.supabase.co/storage/v1/object/public/bible-audio/bsb/GEN/1.m4a',
+    url: 'https://openbible.com/audio/gilbert/BSB_01_Gen_001_G.mp3',
     duration: 0,
   });
-  assert.equal(isRemoteAudioAvailable('bsb'), true);
+});
+
+test('bsb voice catalog exposes supported voices with country flag metadata', () => {
+  const bsb = getTranslationById('bsb');
+  const voices = bsb?.catalog?.audio?.voiceCatalog?.voices ?? [];
+
+  assert.equal(bsb?.catalog?.audio?.voiceCatalog?.defaultVoiceId, 'souer');
+  assert.deepEqual(
+    voices.map((voice) => ({
+      id: voice.id,
+      label: voice.label,
+      countryCode: voice.flag.countryCode,
+      flagEmoji: voice.flag.emoji,
+    })),
+    [
+      {
+        id: 'gilbert',
+        label: 'Jordan Scott Gilbert',
+        countryCode: 'US',
+        flagEmoji: '🇺🇸',
+      },
+      {
+        id: 'hays',
+        label: 'Barry Hays',
+        countryCode: 'US',
+        flagEmoji: '🇺🇸',
+      },
+      {
+        id: 'souer',
+        label: 'Bob Souer',
+        countryCode: 'US',
+        flagEmoji: '🇺🇸',
+      },
+    ]
+  );
 });
 
 test('world english bible audio resolves a direct public-domain chapter file without Bible.is credentials', async () => {
@@ -107,8 +110,8 @@ test('public-domain web audio remains remotely available without Bible.is creden
   assert.equal(isRemoteAudioAvailable('web'), true);
 });
 
-test('bsb audio is not remotely available when Supabase base URL is not configured', () => {
-  assert.equal(isRemoteAudioAvailable('bsb'), false);
+test('bsb audio remains remotely available through the openbible voice catalog', () => {
+  assert.equal(isRemoteAudioAvailable('bsb'), true);
 });
 
 test('translations without configured audio remain unavailable remotely', () => {

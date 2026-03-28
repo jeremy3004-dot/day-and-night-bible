@@ -24,6 +24,16 @@ import type {
 } from '../types';
 
 const supportedBibleTranslationIds = new Set(bibleTranslations.map((translation) => translation.id));
+const supportedAudioVoiceIdsByTranslationId = new Map(
+  bibleTranslations.flatMap((translation) => {
+    const voiceCatalog = translation.catalog?.audio?.voiceCatalog;
+    if (!voiceCatalog || voiceCatalog.voices.length === 0) {
+      return [];
+    }
+
+    return [[translation.id, new Set(voiceCatalog.voices.map((voice) => voice.id))] as const];
+  })
+);
 const supportedLanguageCodes = new Set(SUPPORTED_LANGUAGES.map((language) => language.code));
 const validFontSizes = new Set<UserPreferences['fontSize']>(['small', 'medium', 'large']);
 const validThemes = new Set<UserPreferences['theme']>(['dark', 'light', 'low-light']);
@@ -55,6 +65,7 @@ const validAudioStrategies = new Set<TranslationAudioCatalog['strategy']>([
   'provider',
   'stream-template',
   'audio-pack',
+  'voice-catalog',
 ]);
 const validDownloadJobKinds = new Set<TranslationDownloadJob['kind']>([
   'text-pack',
@@ -193,6 +204,65 @@ const sanitizeTranslationAudioCatalog = (value: unknown): TranslationAudioCatalo
     };
   }
 
+  if (strategy === 'voice-catalog') {
+    const baseUrl = sanitizeUrlString(value.baseUrl);
+    const voiceCatalog = isRecord(value.voiceCatalog)
+      ? (value.voiceCatalog as Record<string, unknown>)
+      : null;
+    const defaultVoiceId = sanitizeRequiredString(voiceCatalog?.defaultVoiceId)?.toLowerCase();
+    const rawVoices = Array.isArray(voiceCatalog?.voices)
+      ? (voiceCatalog.voices as unknown[])
+      : [];
+    const voices = rawVoices.flatMap((voice) => {
+      if (!isRecord(voice)) {
+        return [];
+      }
+
+      const flag = isRecord(voice.flag) ? (voice.flag as Record<string, unknown>) : null;
+      const id = sanitizeRequiredString(voice.id)?.toLowerCase();
+      const label = sanitizeRequiredString(voice.label);
+      const countryCode = sanitizeRequiredString(flag?.countryCode)?.toUpperCase();
+      const emoji = sanitizeRequiredString(flag?.emoji);
+      const chapterFilenameSuffix = sanitizeOptionalString(voice.chapterFilenameSuffix) ?? undefined;
+
+      if (!id || !label || !countryCode || !emoji) {
+        return [];
+      }
+
+      return [
+        {
+          id,
+          label,
+          flag: {
+            countryCode,
+            emoji,
+          },
+          chapterFilenameSuffix,
+        },
+      ];
+    });
+
+    if (!baseUrl || !defaultVoiceId || voices.length === 0) {
+      return null;
+    }
+
+    if (!voices.some((voice) => voice.id === defaultVoiceId)) {
+      return null;
+    }
+
+    return {
+      strategy,
+      baseUrl,
+      fileExtension: sanitizeOptionalString(value.fileExtension) ?? undefined,
+      mimeType: sanitizeOptionalString(value.mimeType) ?? undefined,
+      voiceCatalog: {
+        defaultVoiceId,
+        voices,
+      },
+      signature: sanitizeOptionalString(value.signature) ?? undefined,
+    };
+  }
+
   const downloadUrl = sanitizeUrlString(value.downloadUrl);
   const sha256 = sanitizeRequiredString(value.sha256);
   if (!downloadUrl || !sha256) {
@@ -263,6 +333,7 @@ const sanitizeTranslationDownloadJob = (value: unknown): TranslationDownloadJob 
     bytesDownloaded: sanitizeOptionalFiniteNumber(value.bytesDownloaded) ?? undefined,
     bytesTotal: sanitizeOptionalFiniteNumber(value.bytesTotal) ?? undefined,
     error: sanitizeOptionalString(value.error) ?? undefined,
+    voiceId: sanitizeOptionalString(value.voiceId)?.toLowerCase() ?? undefined,
   };
 };
 
@@ -658,6 +729,33 @@ export const sanitizePersistedAudioState = (value: unknown) => {
       })
     : [];
 
+  const selectedAudioVoiceByTranslationId = isRecord(persisted.selectedAudioVoiceByTranslationId)
+    ? Object.entries(persisted.selectedAudioVoiceByTranslationId).reduce<Record<string, string>>(
+        (acc, [translationId, voiceId]) => {
+          const normalizedTranslationId = sanitizeTranslationId(translationId);
+          const normalizedVoiceId =
+            typeof voiceId === 'string' && voiceId.trim().length > 0
+              ? voiceId.trim().toLowerCase()
+              : null;
+          const supportedVoiceIds = normalizedTranslationId
+            ? supportedAudioVoiceIdsByTranslationId.get(normalizedTranslationId)
+            : null;
+
+          if (
+            normalizedTranslationId &&
+            normalizedVoiceId &&
+            supportedVoiceIds &&
+            supportedVoiceIds.has(normalizedVoiceId)
+          ) {
+            acc[normalizedTranslationId] = normalizedVoiceId;
+          }
+
+          return acc;
+        },
+        {}
+      )
+    : {};
+
   return {
     playbackRate:
       typeof persisted.playbackRate === 'number' &&
@@ -699,6 +797,7 @@ export const sanitizePersistedAudioState = (value: unknown) => {
       persisted.lastPosition >= 0
         ? persisted.lastPosition
         : 0,
+    selectedAudioVoiceByTranslationId,
   };
 };
 

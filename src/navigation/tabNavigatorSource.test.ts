@@ -7,24 +7,36 @@ function readRelativeSource(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url).href), 'utf8');
 }
 
-test('TabNavigator keeps the bottom tab bar flat instead of rounding its top corners', () => {
+test('TabNavigator renders the bottom tab bar as a floating glass dock', () => {
   const source = readRelativeSource('./TabNavigator.tsx');
 
   assert.equal(
-    source.includes('borderTopLeftRadius'),
-    false,
-    'TabNavigator should not round the top-left corner of the shared bottom tab bar'
+    source.includes('BlurView'),
+    true,
+    'TabNavigator should blur the shared bottom tab bar background'
   );
 
   assert.equal(
-    source.includes('borderTopRightRadius'),
-    false,
-    'TabNavigator should not round the top-right corner of the shared bottom tab bar'
+    source.includes('LinearGradient'),
+    true,
+    'TabNavigator should layer a glass highlight over the shared bottom tab bar'
   );
 
   assert.equal(
-    source.includes('borderRadius'),
-    false,
-    'TabNavigator should not reintroduce a generic border radius on the shared bottom tab bar'
+    source.includes('shellChrome.dockRadius'),
+    true,
+    'TabNavigator should use the shared dock radius token'
+  );
+
+  assert.equal(
+    source.includes("position: 'absolute'"),
+    true,
+    'TabNavigator should float the shared bottom tab bar above the screen edge'
+  );
+
+  assert.equal(
+    source.includes("backgroundColor: colors.glassBackground"),
+    true,
+    'TabNavigator should use the shared glass background token for the dock fallback'
   );
 });

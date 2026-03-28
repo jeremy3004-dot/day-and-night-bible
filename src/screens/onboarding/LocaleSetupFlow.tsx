@@ -22,8 +22,13 @@ import { interfaceLanguageSearchEngine } from '../../services/onboarding/interfa
 import { syncPreferences } from '../../services/sync';
 import { localeSearchEngine, type LocaleLanguage } from '../../services/onboarding/localeSelection';
 import type { PrivacyAppIconMode } from '../../types';
-import { getLocaleSetupSteps, type SetupMode, type SetupStep } from './localeSetupModel';
-import { radius } from '../../design/system';
+import {
+  getInitialEnglishOnboardingPreferences,
+  getLocaleSetupSteps,
+  type SetupMode,
+  type SetupStep,
+} from './localeSetupModel';
+import { shellChrome, shadows } from '../../design/system';
 
 type InitialAccessMode = 'guest' | 'signIn' | 'signUp';
 
@@ -108,10 +113,6 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
   );
 
   const completeSetup = async () => {
-    if (!selectedCountry || !selectedLanguage) {
-      return;
-    }
-
     if (mode === 'initial') {
       if (selectedPrivacyMode === 'discreet') {
         const normalizedPin = normalizePrivacyPin(privacyPinInput);
@@ -136,17 +137,26 @@ export function LocaleSetupFlow({ mode = 'initial', onClose, onComplete }: Local
       }
     }
 
-    await changeLanguage(selectedInterfaceLanguageCode);
+    let nextPreferences = getInitialEnglishOnboardingPreferences();
 
-    setPreferences({
-      language: selectedInterfaceLanguageCode,
-      countryCode: selectedCountry.code,
-      countryName: selectedCountry.name,
-      contentLanguageCode: selectedLanguage.code,
-      contentLanguageName: selectedLanguage.name,
-      contentLanguageNativeName: selectedLanguage.nativeName,
-      onboardingCompleted: true,
-    });
+    if (mode === 'settings') {
+      if (!selectedCountry || !selectedLanguage) {
+        return;
+      }
+
+      nextPreferences = {
+        language: selectedInterfaceLanguageCode,
+        countryCode: selectedCountry.code,
+        countryName: selectedCountry.name,
+        contentLanguageCode: selectedLanguage.code,
+        contentLanguageName: selectedLanguage.name,
+        contentLanguageNativeName: selectedLanguage.nativeName,
+        onboardingCompleted: true,
+      };
+    }
+
+    await changeLanguage(nextPreferences.language);
+    setPreferences(nextPreferences);
 
     syncPreferences().catch(() => {});
     onComplete?.({
@@ -903,7 +913,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderWidth: 1,
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
@@ -920,23 +930,27 @@ const styles = StyleSheet.create({
   },
   optionCard: {
     borderWidth: 1,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     paddingHorizontal: 16,
     paddingVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 12,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   privacyOptionCard: {
     borderWidth: 1,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: 16,
     gap: 16,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   privacyPreviewShell: {
     height: 136,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -944,7 +958,7 @@ const styles = StyleSheet.create({
   standardPreview: {
     width: 96,
     height: 96,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
   },
   optionCopy: {
@@ -954,7 +968,7 @@ const styles = StyleSheet.create({
   accessOptionIconShell: {
     width: 44,
     height: 44,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -1013,9 +1027,11 @@ const styles = StyleSheet.create({
   emptyCard: {
     marginTop: 20,
     borderWidth: 1,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: 20,
     gap: 8,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   emptyTitle: {
     fontSize: 17,
@@ -1028,8 +1044,10 @@ const styles = StyleSheet.create({
   privacySetupCard: {
     marginTop: 20,
     borderWidth: 1,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: 20,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   privacyBodyText: {
     fontSize: 14,
@@ -1064,7 +1082,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
@@ -1075,10 +1093,11 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     flex: 1.35,
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
+    ...shadows.floating,
   },
   primaryButtonText: {
     fontSize: 15,

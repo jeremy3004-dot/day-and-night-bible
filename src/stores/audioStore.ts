@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { zustandStorage } from './mmkvStorage';
+import { syncSelectedAudioVoiceSelection } from '../services/audio/audioVoiceSelection';
 import type {
   AudioPlaybackSequenceEntry,
   AudioStatus,
@@ -48,6 +49,7 @@ interface AudioState {
   repeatMode: RepeatMode;
   sleepTimerMinutes: SleepTimerOption;
   backgroundMusicChoice: BackgroundMusicChoice;
+  selectedAudioVoiceByTranslationId: Record<string, string>;
 
   // Playback actions
   setStatus: (status: AudioStatus) => void;
@@ -79,6 +81,7 @@ interface AudioState {
   setSleepTimer: (minutes: SleepTimerOption) => void;
   clearSleepTimer: () => void;
   setBackgroundMusicChoice: (choice: BackgroundMusicChoice) => void;
+  setSelectedAudioVoice: (translationId: string, voiceId: string | null) => void;
 
   // Reset
   resetPlayback: () => void;
@@ -111,6 +114,7 @@ export const useAudioStore = create<AudioState>()(
       repeatMode: 'off',
       sleepTimerMinutes: null,
       backgroundMusicChoice: 'off',
+      selectedAudioVoiceByTranslationId: {},
 
       // Playback actions
       setStatus: (status) => set({ status, error: status === 'error' ? 'Playback error' : null }),
@@ -211,6 +215,27 @@ export const useAudioStore = create<AudioState>()(
 
       setBackgroundMusicChoice: (choice) => set({ backgroundMusicChoice: choice }),
 
+      setSelectedAudioVoice: (translationId, voiceId) =>
+        set((state) => {
+          const normalizedTranslationId = translationId.trim().toLowerCase();
+          if (!normalizedTranslationId) {
+            return state;
+          }
+
+          const nextSelectedAudioVoiceByTranslationId = { ...state.selectedAudioVoiceByTranslationId };
+
+          if (voiceId && voiceId.trim().length > 0) {
+            nextSelectedAudioVoiceByTranslationId[normalizedTranslationId] = voiceId
+              .trim()
+              .toLowerCase();
+          } else {
+            delete nextSelectedAudioVoiceByTranslationId[normalizedTranslationId];
+          }
+
+          syncSelectedAudioVoiceSelection(nextSelectedAudioVoiceByTranslationId);
+          return { selectedAudioVoiceByTranslationId: nextSelectedAudioVoiceByTranslationId };
+        }),
+
       // Reset playback state
       resetPlayback: () =>
         set({
@@ -233,6 +258,7 @@ export const useAudioStore = create<AudioState>()(
         repeatMode: state.repeatMode,
         sleepTimerMinutes: state.sleepTimerMinutes,
         backgroundMusicChoice: state.backgroundMusicChoice,
+        selectedAudioVoiceByTranslationId: state.selectedAudioVoiceByTranslationId,
         queue: state.queue,
         queueIndex: state.queueIndex,
         lastPlayedTranslationId: state.lastPlayedTranslationId,
@@ -240,10 +266,14 @@ export const useAudioStore = create<AudioState>()(
         lastPlayedChapter: state.lastPlayedChapter,
         lastPosition: state.lastPosition,
       }),
-      merge: (persistedState, currentState) => ({
-        ...currentState,
-        ...sanitizePersistedAudioState(persistedState),
-      }),
+      merge: (persistedState, currentState) => {
+        const sanitized = sanitizePersistedAudioState(persistedState);
+        syncSelectedAudioVoiceSelection(sanitized.selectedAudioVoiceByTranslationId);
+        return {
+          ...currentState,
+          ...sanitized,
+        };
+      },
     }
   )
 );

@@ -2,11 +2,12 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAudioPlayer } from '../../hooks';
 import { getBookById, getBookIcon } from '../../constants';
-import { useBibleStore } from '../../stores';
+import { useAudioStore, useBibleStore, useLibraryStore } from '../../stores';
 import { getAdjacentAudioPlaybackSequenceEntry } from '../../stores/audioPlaybackSequenceModel';
 import { AudioProgressScrubber } from './AudioProgressScrubber';
 import { PlaybackControls } from './PlaybackControls';
-import type { AudioPlaybackSequenceEntry } from '../../types';
+import type { AudioPlaybackSequenceEntry, TranslationAudioVoiceCatalog } from '../../types';
+import { shellChrome, shadows } from '../../design/system';
 
 interface AudioFirstChapterCardProps {
   bookId: string;
@@ -14,6 +15,9 @@ interface AudioFirstChapterCardProps {
   translationLabel: string;
   playbackSequenceEntries?: AudioPlaybackSequenceEntry[];
   onChapterChange?: (bookId: string, chapter: number) => void;
+  onShareChapter?: () => void;
+  onOpenChapterActions?: () => void;
+  onOpenFeedback?: () => void;
 }
 
 export function AudioFirstChapterCard({
@@ -22,9 +26,24 @@ export function AudioFirstChapterCard({
   translationLabel,
   playbackSequenceEntries = [],
   onChapterChange,
+  onShareChapter,
+  onOpenChapterActions,
+  onOpenFeedback,
 }: AudioFirstChapterCardProps) {
   const { colors } = useTheme();
   const currentTranslation = useBibleStore((state) => state.currentTranslation);
+  const translations = useBibleStore((state) => state.translations);
+  const selectedAudioVoiceByTranslationId = useAudioStore(
+    (state) => state.selectedAudioVoiceByTranslationId
+  );
+  const setSelectedAudioVoice = useAudioStore((state) => state.setSelectedAudioVoice);
+  const isFavorite = useLibraryStore((state) => state.isFavorite(bookId, chapter));
+  const toggleFavorite = useLibraryStore((state) => state.toggleFavorite);
+  const currentTranslationInfo = translations.find((translation) => translation.id === currentTranslation);
+  const voiceCatalog: TranslationAudioVoiceCatalog | null =
+    currentTranslationInfo?.catalog?.audio?.voiceCatalog ?? null;
+  const selectedVoiceId =
+    selectedAudioVoiceByTranslationId[currentTranslation] ?? voiceCatalog?.defaultVoiceId ?? null;
 
   const {
     status,
@@ -56,6 +75,15 @@ export function AudioFirstChapterCard({
     currentTranslationId === currentTranslation &&
     currentBookId === bookId &&
     currentChapter === chapter;
+  const handleSelectVoice = (voiceId: string) => {
+    setSelectedAudioVoice(currentTranslation, voiceId);
+
+    if (!isCurrentChapter || status !== 'playing') {
+      return;
+    }
+
+    void playChapter(bookId, chapter);
+  };
   const previousSequenceEntry = getAdjacentAudioPlaybackSequenceEntry(
     playbackSequenceEntries,
     bookId,
@@ -133,7 +161,15 @@ export function AudioFirstChapterCard({
   const remainingDuration = Math.max(displayDuration - displayPosition, 0);
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.glassBackground,
+          borderColor: colors.bibleDivider,
+        },
+      ]}
+    >
       <View
         style={[
           styles.artworkFrame,
@@ -180,7 +216,7 @@ export function AudioFirstChapterCard({
         </View>
 
         <PlaybackControls
-          variant="chapter-only"
+          variant="listen"
           status={isCurrentChapter ? status : 'idle'}
           playbackRate={playbackRate}
           repeatMode={repeatMode}
@@ -197,6 +233,15 @@ export function AudioFirstChapterCard({
           onCycleRepeatMode={cycleRepeatMode}
           onSetSleepTimer={startSleepTimer}
           onChangeBackgroundMusicChoice={changeBackgroundMusicChoice}
+          listenTranslationLabel={translationLabel}
+          voiceCatalog={voiceCatalog}
+          selectedVoiceId={selectedVoiceId}
+          onSelectVoice={handleSelectVoice}
+          isFavorite={isFavorite}
+          onToggleFavorite={() => toggleFavorite(bookId, chapter)}
+          onShare={onShareChapter}
+          onOpenChapterActions={onOpenChapterActions}
+          onOpenFeedback={onOpenFeedback}
         />
 
         {error ? (
@@ -212,15 +257,19 @@ export function AudioFirstChapterCard({
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    paddingBottom: 12,
+    padding: 16,
     gap: 24,
     justifyContent: 'space-between',
+    borderRadius: shellChrome.panelRadius,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   artworkFrame: {
     alignSelf: 'stretch',
     width: '100%',
     aspectRatio: 1,
-    borderRadius: 28,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
     overflow: 'hidden',
   },

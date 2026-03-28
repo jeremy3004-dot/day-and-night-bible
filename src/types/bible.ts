@@ -38,7 +38,11 @@ export type TranslationInstallState =
   | 'rollback-available'
   | 'update-available';
 export type TranslationTextFormat = 'sqlite';
-export type TranslationAudioStrategy = 'provider' | 'stream-template' | 'audio-pack';
+export type TranslationAudioStrategy =
+  | 'provider'
+  | 'stream-template'
+  | 'audio-pack'
+  | 'voice-catalog';
 export type TranslationDownloadJobKind =
   | 'text-pack'
   | 'audio-pack'
@@ -61,6 +65,23 @@ export interface TranslationTextCatalog {
   signature?: string;
 }
 
+export interface TranslationAudioVoiceFlag {
+  countryCode: string;
+  emoji: string;
+}
+
+export interface TranslationAudioVoice {
+  id: string;
+  label: string;
+  flag: TranslationAudioVoiceFlag;
+  chapterFilenameSuffix?: string;
+}
+
+export interface TranslationAudioVoiceCatalog {
+  defaultVoiceId: string;
+  voices: TranslationAudioVoice[];
+}
+
 export interface TranslationAudioCatalog {
   strategy: TranslationAudioStrategy;
   provider?: AudioProvider;
@@ -68,6 +89,7 @@ export interface TranslationAudioCatalog {
   chapterPathTemplate?: string;
   fileExtension?: string;
   mimeType?: string;
+  voiceCatalog?: TranslationAudioVoiceCatalog;
   downloadUrl?: string;
   sha256?: string;
   signature?: string;
@@ -91,6 +113,7 @@ export interface TranslationDownloadJob {
   bytesDownloaded?: number;
   bytesTotal?: number;
   error?: string;
+  voiceId?: string;
 }
 
 export interface TranslationCatalogManifestTranslation {
@@ -155,6 +178,7 @@ export interface BibleTranslation {
 export interface TranslationDownloadProgress {
   translationId: string;
   bookId?: string;
+  voiceId?: string;
   progress: number; // 0-100
   status: 'idle' | 'downloading' | 'verifying' | 'installing' | 'completed' | 'error';
   error?: string;

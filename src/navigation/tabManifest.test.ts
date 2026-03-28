@@ -2,16 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { rootTabManifest } from './tabManifest';
 
-test('root tab manifest exposes Learn through the live shell between Bible and More', () => {
+test('root tab manifest exposes Home, Bible, Meditate, Prayer, and More in order', () => {
   assert.deepEqual(
     rootTabManifest.map((tab) => tab.name),
-    ['Home', 'Bible', 'Learn', 'More']
+    ['Home', 'Bible', 'Meditate', 'Prayer', 'More']
   );
 });
 
-test('learn tab uses the gather localization key', () => {
-  const learnTab = rootTabManifest.find((tab) => tab.name === 'Learn');
+test('meditate and prayer tabs use their own localization keys', () => {
+  const meditateTab = rootTabManifest.find((tab) => tab.name === 'Meditate');
+  const prayerTab = rootTabManifest.find((tab) => tab.name === 'Prayer');
 
-  assert.ok(learnTab);
-  assert.equal(learnTab.labelKey, 'tabs.gather');
+  assert.ok(meditateTab);
+  assert.ok(prayerTab);
+  assert.equal(meditateTab.labelKey, 'tabs.meditate');
+  assert.equal(prayerTab.labelKey, 'tabs.prayer');
 });

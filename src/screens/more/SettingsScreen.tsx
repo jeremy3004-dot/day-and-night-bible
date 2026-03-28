@@ -10,7 +10,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import { radius } from '../../design/system';
+import { radius, shellChrome, shadows } from '../../design/system';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -812,9 +812,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   settingsGroup: {
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
     marginBottom: 24,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   settingItem: {
     flexDirection: 'row',
@@ -882,10 +884,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     padding: 24,
     width: '80%',
     maxWidth: 320,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   modalTitle: {
     fontSize: 18,
@@ -958,7 +963,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderRadius: radius.sm,
+    borderRadius: shellChrome.panelRadius,
     marginBottom: 4,
   },
   languageInfo: {
@@ -989,7 +994,7 @@ const styles = StyleSheet.create({
   themeSelectorButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: radius.sm,
+    borderRadius: shellChrome.panelRadius,
   },
   themeSelectorLabel: {
     fontSize: 13,

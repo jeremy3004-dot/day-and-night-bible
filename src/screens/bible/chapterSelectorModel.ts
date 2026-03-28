@@ -4,8 +4,9 @@ import { getBibleBookExperienceContent } from '../../data/bibleBookExperience';
 export const CHAPTER_GRID_COLUMNS = 5;
 export const CHAPTER_GRID_HORIZONTAL_PADDING = 72;
 export const CHAPTER_GRID_ROW_GAP = 8;
-const BOOK_HUB_ACCENT_COLOR = '#C0392B';
-const BOOK_HUB_ICON_TINT = '#f5f2ea';
+const BOOK_HUB_SURFACE_START = '#23252A';
+const BOOK_HUB_SURFACE_END = '#121317';
+const BOOK_HUB_ICON_TINT = '#E6E1DA';
 export type ChapterLaunchMode = 'listen' | 'read';
 
 export interface BookHubPresentation {
@@ -142,8 +143,8 @@ function getFallbackArtworkVariant(order: number) {
 
 function getBookHubPalette(_book: BibleBook) {
   return {
-    gradient: [BOOK_HUB_ACCENT_COLOR, BOOK_HUB_ACCENT_COLOR] as const,
-    accent: BOOK_HUB_ACCENT_COLOR,
+    gradient: [BOOK_HUB_SURFACE_START, BOOK_HUB_SURFACE_END] as const,
+    accent: BOOK_HUB_SURFACE_START,
     tint: BOOK_HUB_ICON_TINT,
   };
 }

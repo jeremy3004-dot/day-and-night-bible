@@ -1,5 +1,14 @@
 import { getTranslationById } from '../../constants/translations';
-import type { AudioProvider, BibleIsAudioResponse, BibleTranslation } from '../../types';
+import { getBsbAudioBookSlug } from '../../constants/bibleAudio';
+import { getBookById } from '../../constants/books';
+import { getSelectedAudioVoiceId } from './audioVoiceSelection';
+import type {
+  AudioProvider,
+  BibleIsAudioResponse,
+  BibleTranslation,
+  TranslationAudioVoice,
+  TranslationAudioVoiceCatalog,
+} from '../../types';
 import type { RemoteAudioAsset } from './audioDownloadService';
 
 const BIBLE_IS_API_BASE = 'https://4.dbt.io/api';
@@ -114,6 +123,12 @@ type RemoteAudioMetadata = {
         downloadUrl: string;
       }
     | {
+        strategy: 'voice-catalog';
+        baseUrl: string;
+        fileExtension?: string;
+        voiceCatalog: TranslationAudioVoiceCatalog;
+      }
+    | {
         // Self-hosted in Supabase Storage bucket "bible-audio"
         // Path: {translationId}/{bookId}/{chapter}.{extension}
         strategy: 'supabase-storage';
@@ -139,6 +154,67 @@ function inferFileExtensionFromPath(path: string | null | undefined): string | u
 
   const match = path.match(/\.([a-z0-9]+)(?:\?.*)?$/i);
   return normalizeFileExtension(match?.[1]);
+}
+
+function resolveVoiceCatalogEntry(
+  translationId: string,
+  voiceCatalog: TranslationAudioVoiceCatalog,
+  voiceIdOverride?: string
+): TranslationAudioVoice | null {
+  if (voiceCatalog.voices.length === 0) {
+    return null;
+  }
+
+  const selectedVoiceId = voiceIdOverride ?? getSelectedAudioVoiceId(translationId);
+  const selectedVoice = voiceCatalog.voices.find((voice) => voice.id === selectedVoiceId);
+  if (selectedVoice) {
+    return selectedVoice;
+  }
+
+  const defaultVoice = voiceCatalog.voices.find((voice) => voice.id === voiceCatalog.defaultVoiceId);
+  return defaultVoice ?? voiceCatalog.voices[0] ?? null;
+}
+
+function buildVoiceCatalogChapterAudioUrl({
+  baseUrl,
+  translationId,
+  bookId,
+  chapter,
+  fileExtension,
+  voiceCatalog,
+  voiceId,
+}: {
+  baseUrl: string;
+  translationId: string;
+  bookId: string;
+  chapter: number;
+  fileExtension?: string;
+  voiceCatalog: TranslationAudioVoiceCatalog;
+  voiceId?: string;
+}): string | null {
+  const voice = resolveVoiceCatalogEntry(translationId, voiceCatalog, voiceId);
+  if (!voice) {
+    return null;
+  }
+
+  const bookSlug = getBsbAudioBookSlug(bookId);
+  if (!bookSlug) {
+    return null;
+  }
+
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, '');
+
+  const chapterSegment = String(chapter).padStart(3, '0');
+  const extension = normalizeFileExtension(fileExtension) ?? 'mp3';
+  const bibleBook = getBookById(bookId);
+  if (!bibleBook) {
+    return null;
+  }
+
+  const bookOrderSegment = String(bibleBook.order).padStart(2, '0');
+  const voiceSuffix = voice.chapterFilenameSuffix ?? '';
+
+  return `${normalizedBaseUrl}/${voice.id}/BSB_${bookOrderSegment}_${bookSlug}_${chapterSegment}${voiceSuffix}.${extension}`;
 }
 
 function buildRemoteAudioMetadataFromTranslation(
@@ -209,6 +285,25 @@ function buildRemoteAudioMetadataFromTranslation(
         audio: {
           strategy: 'audio-pack',
           downloadUrl: catalogAudio.downloadUrl ?? '',
+        },
+      };
+    }
+
+    if (catalogAudio.strategy === 'voice-catalog') {
+      if (!catalogAudio.voiceCatalog || catalogAudio.voiceCatalog.voices.length === 0) {
+        return null;
+      }
+
+      return {
+        id: translation.id,
+        hasAudio: true,
+        audioGranularity: translation.audioGranularity,
+        fileExtension: normalizeFileExtension(catalogAudio.fileExtension) ?? 'mp3',
+        audio: {
+          strategy: 'voice-catalog',
+          baseUrl: catalogAudio.baseUrl ?? '',
+          fileExtension: normalizeFileExtension(catalogAudio.fileExtension) ?? 'mp3',
+          voiceCatalog: catalogAudio.voiceCatalog,
         },
       };
     }
@@ -283,9 +378,10 @@ function getCacheKey(
   translationId: string,
   bookId: string,
   chapter: number,
-  verse?: number
+  verse?: number,
+  voiceId?: string
 ): string {
-  return `${translationId}_${bookId}_${chapter}_${verse ?? 'chapter'}`;
+  return `${translationId}_${bookId}_${chapter}_${verse ?? 'chapter'}_${voiceId ?? 'default'}`;
 }
 
 function resolveRemoteAudioMetadata(translationId: string): RemoteAudioMetadata | null {
@@ -309,6 +405,16 @@ export function getConfiguredAudioGranularity(
 
 export function getRemoteAudioFileExtension(translationId: string): string {
   return resolveRemoteAudioMetadata(translationId)?.fileExtension ?? 'mp3';
+}
+
+export function resolveTranslationAudioVoiceId(translationId: string): string | null {
+  const translation = resolveRemoteAudioMetadata(translationId);
+  if (!translation?.audio || translation.audio.strategy !== 'voice-catalog') {
+    return null;
+  }
+
+  const selectedVoice = resolveVoiceCatalogEntry(translationId, translation.audio.voiceCatalog);
+  return selectedVoice?.id ?? null;
 }
 
 function buildStreamTemplateAudioUrl(
@@ -421,9 +527,24 @@ export async function fetchRemoteChapterAudio(
   translationId: string,
   bookId: string,
   chapter: number,
-  verse?: number
+  verseOrVoiceId?: number | string,
+  voiceIdOverride?: string
 ): Promise<RemoteAudioAsset | null> {
-  const cacheKey = getCacheKey(translationId, bookId, chapter, verse);
+  const translation = resolveRemoteAudioMetadata(translationId);
+  if (!translation?.hasAudio) {
+    return null;
+  }
+
+  const verse = typeof verseOrVoiceId === 'number' ? verseOrVoiceId : undefined;
+  const requestedVoiceId =
+    typeof verseOrVoiceId === 'string' ? verseOrVoiceId : voiceIdOverride ?? undefined;
+  const voiceId =
+    translation.audio && translation.audio.strategy === 'voice-catalog'
+      ? requestedVoiceId ??
+        resolveTranslationAudioVoiceId(translationId) ??
+        translation.audio.voiceCatalog.defaultVoiceId
+      : undefined;
+  const cacheKey = getCacheKey(translationId, bookId, chapter, verse, voiceId);
   const cached = audioUrlCache.get(cacheKey);
   if (cached) {
     return cached;
@@ -435,11 +556,6 @@ export async function fetchRemoteChapterAudio(
     if (firstKey !== undefined) {
       audioUrlCache.delete(firstKey);
     }
-  }
-
-  const translation = resolveRemoteAudioMetadata(translationId);
-  if (!translation?.hasAudio) {
-    return null;
   }
 
   const audio = translation.audio;
@@ -466,6 +582,25 @@ export async function fetchRemoteChapterAudio(
 
   if (audio.strategy === 'audio-pack') {
     const result = { url: audio.downloadUrl, duration: 0 };
+    audioUrlCache.set(cacheKey, result);
+    return result;
+  }
+
+  if (audio.strategy === 'voice-catalog') {
+    const url = buildVoiceCatalogChapterAudioUrl({
+      baseUrl: audio.baseUrl,
+      translationId,
+      bookId,
+      chapter,
+      fileExtension: audio.fileExtension,
+      voiceCatalog: audio.voiceCatalog,
+      voiceId,
+    });
+    if (!url) {
+      return null;
+    }
+
+    const result = { url, duration: 0 };
     audioUrlCache.set(cacheKey, result);
     return result;
   }
@@ -515,6 +650,10 @@ export function isRemoteAudioAvailable(translationId: string): boolean {
     return Boolean(audio.downloadUrl);
   }
 
+  if (audio.strategy === 'voice-catalog') {
+    return Boolean(audio.baseUrl && audio.voiceCatalog.voices.length > 0);
+  }
+
   if (audio.strategy === 'supabase-storage') {
     return Boolean(SUPABASE_AUDIO_BUCKET_BASE);
   }
@@ -537,12 +676,17 @@ export async function prefetchRemoteChapterAudio(
   count: number = 3
 ): Promise<void> {
   const prefetchPromises: Promise<unknown>[] = [];
+  const translation = resolveRemoteAudioMetadata(translationId);
+  const voiceId =
+    translation?.audio && translation.audio.strategy === 'voice-catalog'
+      ? resolveTranslationAudioVoiceId(translationId) ?? translation.audio.voiceCatalog.defaultVoiceId
+      : undefined;
 
   for (let i = 0; i < count; i++) {
     const chapter = startChapter + i;
-    const cacheKey = getCacheKey(translationId, bookId, chapter);
+    const cacheKey = getCacheKey(translationId, bookId, chapter, undefined, voiceId);
     if (!audioUrlCache.has(cacheKey)) {
-      prefetchPromises.push(fetchRemoteChapterAudio(translationId, bookId, chapter));
+      prefetchPromises.push(fetchRemoteChapterAudio(translationId, bookId, chapter, voiceId));
     }
   }
 

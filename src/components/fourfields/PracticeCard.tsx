@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import { radius } from '../../design/system';
+import { shellChrome, shadows, typography } from '../../design/system';
 
 interface PracticeCardProps {
   activity: string;
@@ -24,7 +24,12 @@ export function PracticeCard({
   const { t } = useTranslation();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.cardBackground }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
+      ]}
+    >
       <Text style={[styles.title, { color: colors.primaryText }]}>
         {t('harvest.weeklyPractice')}
       </Text>
@@ -35,10 +40,7 @@ export function PracticeCard({
         <TouchableOpacity
           style={[
             styles.actionButton,
-            {
-              backgroundColor: colors.background,
-              borderColor: colors.cardBorder,
-            },
+            { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
             practiceCompleted && {
               backgroundColor: colors.accentPrimary + '15',
               borderColor: colors.accentPrimary,
@@ -83,10 +85,7 @@ export function PracticeCard({
         <TouchableOpacity
           style={[
             styles.actionButton,
-            {
-              backgroundColor: colors.background,
-              borderColor: colors.cardBorder,
-            },
+            { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
             taughtCompleted && {
               backgroundColor: colors.accentSecondary + '15',
               borderColor: colors.accentSecondary,
@@ -143,19 +142,20 @@ export function PracticeCard({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: 20,
     marginTop: 8,
     marginBottom: 24,
+    borderWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   title: {
-    fontSize: 16,
-    fontWeight: '700',
+    ...typography.sectionTitle,
     marginBottom: 8,
   },
   activity: {
-    fontSize: 16,
-    lineHeight: 24,
+    ...typography.body,
     marginBottom: 20,
   },
   buttonsContainer: {
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: 16,
     borderWidth: 1,
     gap: 12,
@@ -186,24 +186,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+    ...typography.cardTitle,
     marginBottom: 2,
   },
   buttonSubtitle: {
-    fontSize: 13,
+    ...typography.micro,
   },
   encouragementContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
     padding: 12,
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     gap: 10,
+    borderWidth: 1,
   },
   encouragementText: {
     flex: 1,
-    fontSize: 14,
-    lineHeight: 20,
+    ...typography.body,
   },
 });

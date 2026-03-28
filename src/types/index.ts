@@ -3,3 +3,4 @@ export * from './user';
 export * from './course';
 export * from './audio';
 export * from './privacy';
+export * from './journey';

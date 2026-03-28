@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getBookIcon } from '../../constants';
 import { useTheme } from '../../contexts/ThemeContext';
+import { layout, typography } from '../../design/system';
 import type { BookCompanionCardModel } from '../../screens/bible/bookCompanionModel';
 
 interface CompanionCardProps {
@@ -61,14 +62,14 @@ export function CompanionCard({ item, onPress }: CompanionCardProps) {
 const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
-    borderRadius: 24,
-    padding: 16,
-    gap: 14,
+    borderRadius: 20,
+    padding: layout.denseCardPadding,
+    gap: 12,
     width: 220,
   },
   artwork: {
-    height: 112,
-    borderRadius: 20,
+    height: 108,
+    borderRadius: 18,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -81,17 +82,17 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   meta: {
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
+    ...typography.eyebrow,
+    fontSize: 11,
+    letterSpacing: 0.9,
   },
   title: {
+    ...typography.cardTitle,
     fontSize: 18,
-    fontWeight: '800',
-    lineHeight: 22,
+    lineHeight: 23,
   },
   summary: {
+    ...typography.body,
     fontSize: 14,
     lineHeight: 20,
   },
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   actionLabel: {
-    fontSize: 13,
-    fontWeight: '700',
+    ...typography.label,
+    fontSize: 12,
   },
 });

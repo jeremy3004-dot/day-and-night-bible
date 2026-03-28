@@ -4,7 +4,6 @@ import type { StyleProp, ViewStyle } from 'react-native';
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Modal,
   Platform,
   ScrollView,
@@ -34,7 +33,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { getBookById, getBookIcon, getTranslatedBookName } from '../../constants';
+import { getBookById, getTranslatedBookName } from '../../constants';
 import { config } from '../../constants/config';
 import { useTheme } from '../../contexts/ThemeContext';
 import { layout, radius, shadows, spacing, typography } from '../../design/system';
@@ -59,12 +58,7 @@ import {
 } from '../../stores';
 import { getAdjacentAudioPlaybackSequenceEntry } from '../../stores/audioPlaybackSequenceModel';
 import { useFontSize, useAudioPlayer } from '../../hooks';
-import {
-  VersesSkeleton,
-  AudioFirstChapterCard,
-  AudioProgressScrubber,
-  PlaybackControls,
-} from '../../components';
+import { VersesSkeleton, AudioFirstChapterCard } from '../../components';
 import { AnnotationActionSheet } from '../../components/annotations/AnnotationActionSheet';
 import type { BibleTranslation, Verse } from '../../types';
 import type { UserAnnotation } from '../../services/supabase/types';
@@ -220,29 +214,14 @@ export function BibleReaderScreen() {
     });
   const { fontSize, scaleValue, setSize } = useFontSize();
   const {
-    status,
     currentTranslationId: activeAudioTranslationId,
     currentBookId: activeAudioBookId,
     currentChapter: activeAudioChapter,
     currentPosition,
     duration,
-    playbackRate,
-    repeatMode,
-    sleepTimerRemaining,
-    backgroundMusicChoice,
     playChapter,
     playChapterForTranslation,
     addToQueue,
-    togglePlayPause,
-    previousChapter,
-    nextChapter,
-    seekTo,
-    skipBackward,
-    skipForward,
-    changePlaybackRate,
-    cycleRepeatMode,
-    startSleepTimer,
-    changeBackgroundMusicChoice,
   } = useAudioPlayer(currentTranslation);
 
   const book = getBookById(bookId);
@@ -673,12 +652,6 @@ export function BibleReaderScreen() {
   const dismissFontSizeSheetFromReader = () => {
     setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'readerContentTap'));
   };
-  const formatTime = (milliseconds: number) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
 
   const handleTranslationChipPress = () => {
     setShowFontSizeSheet((current) => getNextFontSizeSheetVisibility(current, 'readerContentTap'));
@@ -983,59 +956,6 @@ export function BibleReaderScreen() {
     setFeedbackSubmitError(result.error ?? t('common.unexpectedError'));
   };
 
-  const handlePlayDisplayedChapter = () => {
-    if (!isCurrentAudioChapter) {
-      void playChapter(bookId, chapter);
-      return;
-    }
-
-    void togglePlayPause();
-  };
-
-  const handleListenModeSeek = (positionMs: number) => {
-    if (duration <= 0 || !isCurrentAudioChapter) {
-      return;
-    }
-
-    // Allow the verse highlight to jump backward after a user seek
-    lastFollowAlongVerseRef.current = null;
-    void seekTo(Math.max(0, Math.min(duration, positionMs)));
-  };
-
-  const handlePreviousListenChapter = async () => {
-    if (isCurrentAudioChapter) {
-      const target = await previousChapter();
-      if (target) {
-        syncReaderReference(target.bookId, target.chapter);
-      }
-      return;
-    }
-
-    if (!previousNavigationTarget) {
-      return;
-    }
-
-    await playChapter(previousNavigationTarget.bookId, previousNavigationTarget.chapter);
-    syncReaderReference(previousNavigationTarget.bookId, previousNavigationTarget.chapter);
-  };
-
-  const handleNextListenChapter = async () => {
-    if (isCurrentAudioChapter) {
-      const target = await nextChapter();
-      if (target) {
-        syncReaderReference(target.bookId, target.chapter);
-      }
-      return;
-    }
-
-    if (!nextNavigationTarget) {
-      return;
-    }
-
-    await playChapter(nextNavigationTarget.bookId, nextNavigationTarget.chapter);
-    syncReaderReference(nextNavigationTarget.bookId, nextNavigationTarget.chapter);
-  };
-
   const handleReadChapterNavigation = async (
     target: { bookId: string; chapter: number } | null
   ) => {
@@ -1163,91 +1083,24 @@ export function BibleReaderScreen() {
   };
 
   const renderListenMode = () => {
-    const listenStatus = isCurrentAudioChapter ? status : 'idle';
-    const listenPosition = isCurrentAudioChapter ? currentPosition : 0;
-    const listenDuration = isCurrentAudioChapter ? duration : 0;
-    const highlightedVerse = activeFollowAlongVerse ?? focusVerse ?? verses[0]?.verse ?? null;
-    const remainingDuration = Math.max(listenDuration - listenPosition, 0);
-
     return (
       <View style={styles.listenColumn}>
-        <View
-          style={[
-            styles.listenArtworkFrame,
-            {
-              backgroundColor: colors.bibleElevatedSurface,
-              borderColor: colors.bibleDivider,
-            },
-          ]}
-        >
-          <Image source={getBookIcon(bookId)} style={styles.listenArtwork} resizeMode="cover" />
-        </View>
-
-        <View style={styles.listenMetaBlock}>
-          <Text style={[styles.listenChapterTitle, { color: colors.biblePrimaryText }]}>
-            {getTranslatedBookName(bookId, t)} {chapter}
-          </Text>
-          <Text style={[styles.listenChapterMeta, { color: colors.bibleSecondaryText }]}>
-            {t('bible.verseCount', { count: verses.length })}
-          </Text>
-        </View>
-
-        <View
-          style={[
-            styles.listenPlayerCard,
-            {
-              backgroundColor: 'transparent',
-              borderColor: 'transparent',
-            },
-          ]}
-        >
-          <AudioProgressScrubber
-            position={listenPosition}
-            duration={listenDuration}
-            onSeek={handleListenModeSeek}
-            trackColor={colors.bibleDivider}
-            fillColor={colors.bibleAccent}
-            containerStyle={styles.listenProgressTouch}
-            trackStyle={styles.listenProgressTrack}
-            fillStyle={styles.listenProgressFill}
-          />
-
-          <View style={styles.listenTimeRow}>
-            <Text style={[styles.listenTimeText, { color: colors.bibleSecondaryText }]}>
-              {formatTime(listenPosition)}
-            </Text>
-            <Text style={[styles.listenTimeCenterText, { color: colors.bibleSecondaryText }]}>
-              {highlightedVerse != null
-                ? `${getTranslatedBookName(bookId, t)} ${chapter}:${highlightedVerse}`
-                : `${getTranslatedBookName(bookId, t)} ${chapter}`}
-            </Text>
-            <Text style={[styles.listenTimeText, { color: colors.bibleSecondaryText }]}>
-              -{formatTime(remainingDuration)}
-            </Text>
-          </View>
-
-          <PlaybackControls
-            variant="chapter-only"
-            status={listenStatus}
-            playbackRate={playbackRate}
-            repeatMode={repeatMode}
-            sleepTimerRemaining={sleepTimerRemaining}
-            backgroundMusicChoice={backgroundMusicChoice}
-            hasPreviousChapter={hasPrevChapter}
-            hasNextChapter={hasNextChapter}
-            onPlayPause={handlePlayDisplayedChapter}
-            onPreviousChapter={() => void handlePreviousListenChapter()}
-            onNextChapter={() => void handleNextListenChapter()}
-            onSkipBackward={() => void skipBackward()}
-            onSkipForward={() => void skipForward()}
-            onChangePlaybackRate={changePlaybackRate}
-            onCycleRepeatMode={cycleRepeatMode}
-            onSetSleepTimer={startSleepTimer}
-            onChangeBackgroundMusicChoice={changeBackgroundMusicChoice}
-            onShowText={() => setShowFollowAlongText(true)}
-            showTextLabel={t('audio.showText')}
-          />
-        </View>
+        <AudioFirstChapterCard
+          bookId={bookId}
+          chapter={chapter}
+          translationLabel={translationLabel}
+          playbackSequenceEntries={playbackSequenceEntries}
+          onChapterChange={(nextBookId, newChapter) => {
+            syncReaderReference(nextBookId, newChapter);
+          }}
+          onShareChapter={handleShareChapter}
+          onOpenChapterActions={() => {
+            setShowFontSizeSheet(false);
+            setShowTranslationSheet(false);
+            setShowChapterActionsSheet(true);
+          }}
+          onOpenFeedback={handleOpenChapterFeedback}
+        />
       </View>
     );
   };
@@ -1564,21 +1417,27 @@ export function BibleReaderScreen() {
                 styles.premiumReaderTitle,
                 {
                   color: colors.biblePrimaryText,
-                  fontSize: scaleValue(typography.readingDisplay.fontSize),
-                  lineHeight: scaleValue(typography.readingDisplay.lineHeight),
+                  fontSize: scaleValue(32),
+                  lineHeight: scaleValue(38),
                 },
               ]}
             >
               {getTranslatedBookName(bookId, t)} {chapter}
             </Text>
+            <View
+              style={[
+                styles.premiumTitleDivider,
+                { backgroundColor: colors.bibleAccent + (showPremiumReadMode ? '55' : '30') },
+              ]}
+            />
             {primarySectionHeading ? (
               <Text
                 style={[
                   styles.premiumReaderSubtitle,
                   {
                     color: colors.bibleSecondaryText,
-                    fontSize: scaleValue(typography.readingHeading.fontSize),
-                    lineHeight: scaleValue(typography.readingHeading.lineHeight),
+                    fontSize: scaleValue(16),
+                    lineHeight: scaleValue(22),
                   },
                 ]}
               >
@@ -1604,8 +1463,8 @@ export function BibleReaderScreen() {
             contentContainerStyle={[
               styles.premiumReaderScrollContent,
               {
-                paddingTop: premiumTopInset + 208,
-                paddingBottom: premiumBottomInset + 108,
+                paddingTop: premiumTopInset + 224,
+                paddingBottom: premiumBottomInset + 116,
               },
             ]}
           >
@@ -2530,22 +2389,38 @@ const styles = StyleSheet.create({
     right: spacing.xl,
     zIndex: 20,
     alignItems: 'center',
-    gap: spacing.lg,
+    gap: spacing.md,
   },
   premiumReaderTitle: {
-    ...typography.readingDisplay,
+    fontFamily: typography.readingHeading.fontFamily,
+    fontSize: 36,
+    lineHeight: 42,
+    fontWeight: '600',
+    letterSpacing: -0.7,
+    fontStyle: 'normal',
     textAlign: 'center',
+  },
+  premiumTitleDivider: {
+    width: 56,
+    height: 5,
+    borderRadius: radius.pill,
+    opacity: 0.9,
   },
   premiumReaderSubtitle: {
-    ...typography.readingHeading,
+    fontFamily: typography.readingHeading.fontFamily,
+    fontSize: 17,
+    lineHeight: 24,
+    fontWeight: '600',
+    letterSpacing: -0.1,
     textAlign: 'center',
-    opacity: 0.84,
+    maxWidth: 420,
+    opacity: 0.78,
   },
   premiumReaderScrollContent: {
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.xxl,
   },
   premiumReaderContentShell: {
-    maxWidth: 640,
+    maxWidth: 520,
     width: '100%',
     alignSelf: 'center',
   },
@@ -2648,7 +2523,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   premiumReaderColumn: {
-    gap: 16,
+    gap: 24,
   },
   listenColumn: {
     flex: 1,
@@ -2718,7 +2593,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   premiumReaderBlock: {
-    gap: 6,
+    gap: 10,
     paddingHorizontal: 0,
   },
   sectionHeading: {
@@ -2731,8 +2606,8 @@ const styles = StyleSheet.create({
     ...typography.readingHeading,
     textTransform: 'none',
     letterSpacing: -0.1,
-    marginTop: 8,
-    marginBottom: 4,
+    marginTop: 18,
+    marginBottom: 6,
   },
   verseText: {
     fontWeight: '400',
@@ -2740,14 +2615,14 @@ const styles = StyleSheet.create({
   },
   premiumVerseText: {
     ...typography.readingBody,
-    letterSpacing: -0.1,
+    letterSpacing: 0,
   },
   inlineVerseNumber: {
     fontWeight: '700',
   },
   premiumVerseNumber: {
     ...typography.readingVerseNumber,
-    opacity: 0.92,
+    opacity: 0.76,
   },
   persistentReaderBottomBar: {
     position: 'absolute',

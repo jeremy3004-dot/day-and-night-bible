@@ -5,3 +5,4 @@ export * from './audio';
 export * from './bible';
 export * from './privacy';
 export * from './gather';
+export * from './journey';

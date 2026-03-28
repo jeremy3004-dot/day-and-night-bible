@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import { layout, radius, spacing, typography } from '../../design/system';
+import { layout, shellChrome, shadows, spacing, typography } from '../../design/system';
 import type { GatherLesson } from '../../types/gather';
 
 interface LessonBottomSheetProps {
@@ -89,7 +89,13 @@ export function LessonBottomSheet({
       >
         {/* Inner sheet — prevent backdrop close from bubbling through the sheet */}
         <TouchableOpacity
-          style={[styles.sheet, { backgroundColor: colors.cardBackground }]}
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: colors.glassBackground,
+              borderColor: colors.cardBorder,
+            },
+          ]}
           activeOpacity={1}
           onPress={() => {
             // Intentionally empty — absorb tap to avoid closing on sheet tap
@@ -192,11 +198,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: shellChrome.panelRadius,
+    borderTopRightRadius: shellChrome.panelRadius,
     paddingTop: spacing.lg,
     paddingBottom: spacing.xxxl,
     paddingHorizontal: layout.screenPadding,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   // Header
   headerRow: {
@@ -208,7 +219,7 @@ const styles = StyleSheet.create({
   headerIconContainer: {
     width: 40,
     height: 40,
-    borderRadius: radius.pill,
+    borderRadius: shellChrome.panelRadius,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -19,7 +19,13 @@ import {
   hasAudioPlaybackSequenceEntry,
 } from '../stores/audioPlaybackSequenceModel';
 
-export function useAudioPlayer(translationId: string = 'bsb') {
+interface UseAudioPlayerOptions {
+  autoAdvanceChapter?: boolean;
+  syncBackgroundMusic?: boolean;
+}
+
+export function useAudioPlayer(translationId: string = 'bsb', options: UseAudioPlayerOptions = {}) {
+  const { autoAdvanceChapter = true, syncBackgroundMusic = true } = options;
   const sleepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const playRequestIdRef = useRef(0);
   const isChapterTransitioningRef = useRef(false);
@@ -51,7 +57,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     lastPlayedChapter,
     lastPosition,
     playbackRate,
-    autoAdvanceChapter,
+    autoAdvanceChapter: storeAutoAdvanceChapter,
     repeatMode,
     sleepTimerMinutes,
     sleepTimerEndTime,
@@ -252,7 +258,6 @@ export function useAudioPlayer(translationId: string = 'bsb') {
   const handlePlaybackFinished = useCallback(async () => {
     const store = useAudioStore.getState();
     const {
-      autoAdvanceChapter: shouldAutoAdvance,
       repeatMode: activeRepeatMode,
       currentBookId: bookId,
       currentChapter: chapterNum,
@@ -275,6 +280,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
     }
 
     const currentBook = bookId ? getBookById(bookId) : null;
+    const shouldAutoAdvance = autoAdvanceChapter && storeAutoAdvanceChapter;
     const repeatTarget = resolveRepeatPlaybackTarget({
       repeatMode: activeRepeatMode,
       bookId,
@@ -338,7 +344,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       // End of book - stop playback
       setStatus('idle');
     }
-  }, [setStatus, translationId]);
+  }, [autoAdvanceChapter, setStatus, storeAutoAdvanceChapter, translationId]);
 
   // Set up audio player callbacks
   useEffect(() => {
@@ -358,6 +364,10 @@ export function useAudioPlayer(translationId: string = 'bsb') {
   }, [handleStatusUpdate, handlePlaybackFinished, setError]);
 
   useEffect(() => {
+    if (!syncBackgroundMusic) {
+      return;
+    }
+
     if (status === 'playing') {
       // Chapter finished transitioning
       isChapterTransitioningRef.current = false;
@@ -371,7 +381,7 @@ export function useAudioPlayer(translationId: string = 'bsb') {
       isChapterTransitioningRef.current;
 
     void backgroundMusicPlayer.sync(backgroundMusicChoice, shouldPlayBackgroundMusic);
-  }, [backgroundMusicChoice, status]);
+  }, [backgroundMusicChoice, status, syncBackgroundMusic]);
 
   // Sleep timer check and remaining time calculation
   useEffect(() => {

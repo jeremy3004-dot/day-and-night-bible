@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import { radius } from '../../design/system';
+import { shellChrome, shadows, typography } from '../../design/system';
 
 interface TakeawayCardProps {
   text: string;
@@ -29,10 +29,15 @@ export function TakeawayCard({ text, lessonTitle }: TakeawayCardProps) {
   };
 
   return (
-    <View style={[styles.container, {
-      backgroundColor: colors.accentSecondary + '10',
-      borderColor: colors.accentSecondary + '30',
-    }]}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.glassBackground,
+          borderColor: colors.accentSecondary + '30',
+        },
+      ]}
+    >
       <View style={styles.header}>
         <View style={[styles.iconContainer, { backgroundColor: colors.accentSecondary + '20' }]}>
           <Ionicons name="bulb-outline" size={20} color={colors.accentSecondary} />
@@ -56,10 +61,12 @@ export function TakeawayCard({ text, lessonTitle }: TakeawayCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: 20,
     marginVertical: 16,
     borderWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   header: {
     flexDirection: 'row',
@@ -70,20 +77,18 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: shellChrome.panelRadius,
     justifyContent: 'center',
     alignItems: 'center',
   },
   label: {
-    fontSize: 14,
-    fontWeight: '700',
+    ...typography.eyebrow,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   text: {
+    ...typography.readingDisplay,
     fontSize: 18,
-    lineHeight: 28,
-    fontWeight: '500',
   },
   shareButton: {
     flexDirection: 'row',
@@ -93,7 +98,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   shareText: {
-    fontSize: 14,
-    fontWeight: '500',
+    ...typography.button,
   },
 });

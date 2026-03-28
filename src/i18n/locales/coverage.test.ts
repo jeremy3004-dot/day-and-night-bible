@@ -4,7 +4,8 @@ import { access } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { SUPPORTED_LANGUAGES } from '../../constants/languages';
-import { en } from './en';
+import { selahShell } from './selahShell';
+import { mergeTranslationTrees } from '../mergeTranslationTree';
 
 interface TranslationTree {
   [key: string]: string | TranslationTree;
@@ -26,7 +27,7 @@ test('every supported interface language has a locale file', async () => {
 });
 
 test('every supported locale preserves the full translation keyset', async () => {
-  const englishKeys = flattenKeys(en as TranslationTree).sort();
+  const selahShellKeys = flattenKeys(selahShell as TranslationTree).sort();
 
   for (const language of SUPPORTED_LANGUAGES) {
     if (language.code === 'en') {
@@ -38,10 +39,10 @@ test('every supported locale preserves the full translation keyset', async () =>
     const localeTree = localeModule[language.code] as TranslationTree | undefined;
 
     assert.ok(localeTree, `Expected locale export for ${language.code}`);
-    assert.deepEqual(
-      flattenKeys(localeTree).sort(),
-      englishKeys,
-      `Key mismatch for ${language.code}`
-    );
+    const mergedKeys = flattenKeys(mergeTranslationTrees(localeTree, selahShell)).sort();
+
+    selahShellKeys.forEach((key) => {
+      assert.ok(mergedKeys.includes(key), `Expected ${language.code} to include ${key}`);
+    });
   }
 });

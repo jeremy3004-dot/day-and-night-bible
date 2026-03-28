@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../contexts/ThemeContext';
 import { getTopCrossReferences } from '../../services/bible/crossReferenceService';
 import { getBookById } from '../../constants/books';
+import { typography } from '../../design/system';
 
 interface CrossReferencePanelProps {
   /** Book ID of the currently selected verse (e.g. 'JHN'). */
@@ -84,10 +85,9 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   heading: {
+    ...typography.eyebrow,
     fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
@@ -96,11 +96,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 13,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   referenceLabel: {
+    ...typography.body,
     fontSize: 15,
-    fontWeight: '500',
+    lineHeight: 21,
   },
 });

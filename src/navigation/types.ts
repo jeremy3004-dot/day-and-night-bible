@@ -3,6 +3,10 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { AudioPlaybackSequenceEntry } from '../types';
 
+export type MeditationCollectionId = string;
+
+export type PrayerCollectionId = string;
+
 // Home Stack
 export type HomeStackParamList = {
   HomeScreen: undefined;
@@ -21,6 +25,35 @@ export type BibleStackParamList = {
   };
   ChapterSelector: {
     bookId: string;
+  };
+};
+
+// Meditate Stack
+export type MeditateStackParamList = {
+  MeditationJourney:
+    | {
+        journeyId?: string;
+        initialStepIndex?: number;
+      }
+    | undefined;
+  MeditateHome: undefined;
+  MeditationDetail: {
+    collectionId: MeditationCollectionId;
+  };
+};
+
+// Prayer Stack
+export type PrayerStackParamList = {
+  PrayerJourney:
+    | {
+        journeyId?: string;
+        initialStepIndex?: number;
+      }
+    | undefined;
+  PrayerHome: undefined;
+  FreePrayer: undefined;
+  PrayerCategory: {
+    collectionId: Exclude<PrayerCollectionId, 'free-prayer'>;
   };
 };
 
@@ -77,9 +110,12 @@ export type AuthStackParamList = {
 export type RootTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList>;
   Bible: NavigatorScreenParams<BibleStackParamList>;
-  Learn: NavigatorScreenParams<LearnStackParamList>;
+  Meditate: NavigatorScreenParams<MeditateStackParamList>;
+  Prayer: NavigatorScreenParams<PrayerStackParamList>;
   More: NavigatorScreenParams<MoreStackParamList>;
 };
+
+export type RootTabName = 'Home' | 'Bible' | 'Meditate' | 'Prayer' | 'More';
 
 // Screen props helpers
 export type HomeScreenProps = NativeStackScreenProps<HomeStackParamList, 'HomeScreen'>;
@@ -89,6 +125,27 @@ export type BibleReaderScreenProps = NativeStackScreenProps<BibleStackParamList,
 export type ChapterSelectorScreenProps = NativeStackScreenProps<
   BibleStackParamList,
   'ChapterSelector'
+>;
+
+export type MeditateHomeScreenProps = NativeStackScreenProps<MeditateStackParamList, 'MeditateHome'>;
+export type MeditationJourneyScreenProps = NativeStackScreenProps<
+  MeditateStackParamList,
+  'MeditationJourney'
+>;
+export type MeditationDetailScreenProps = NativeStackScreenProps<
+  MeditateStackParamList,
+  'MeditationDetail'
+>;
+
+export type PrayerHomeScreenProps = NativeStackScreenProps<PrayerStackParamList, 'PrayerHome'>;
+export type PrayerJourneyScreenProps = NativeStackScreenProps<
+  PrayerStackParamList,
+  'PrayerJourney'
+>;
+export type FreePrayerScreenProps = NativeStackScreenProps<PrayerStackParamList, 'FreePrayer'>;
+export type PrayerCategoryScreenProps = NativeStackScreenProps<
+  PrayerStackParamList,
+  'PrayerCategory'
 >;
 
 export type GatherHomeScreenProps = NativeStackScreenProps<LearnStackParamList, 'GatherHome'>;
@@ -122,7 +179,8 @@ export type AboutScreenProps = NativeStackScreenProps<MoreStackParamList, 'About
 // Tab screen props
 export type HomeTabProps = BottomTabScreenProps<RootTabParamList, 'Home'>;
 export type BibleTabProps = BottomTabScreenProps<RootTabParamList, 'Bible'>;
-export type LearnTabProps = BottomTabScreenProps<RootTabParamList, 'Learn'>;
+export type MeditateTabProps = BottomTabScreenProps<RootTabParamList, 'Meditate'>;
+export type PrayerTabProps = BottomTabScreenProps<RootTabParamList, 'Prayer'>;
 export type MoreTabProps = BottomTabScreenProps<RootTabParamList, 'More'>;
 
 // Global navigation type declaration

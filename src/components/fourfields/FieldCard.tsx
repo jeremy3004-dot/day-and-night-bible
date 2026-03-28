@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import { radius } from '../../design/system';
+import { shellChrome, shadows, spacing, typography } from '../../design/system';
 import { FieldInfo } from '../../types/course';
 
 interface FieldCardProps {
@@ -133,10 +133,10 @@ export function FieldCard({
           style={[
             styles.container,
             {
-              backgroundColor: colors.cardBackground,
-              borderColor: isCurrent ? field.color + '60' : colors.cardBorder + '40',
-            },
-          ]}
+          backgroundColor: colors.glassBackground,
+          borderColor: isCurrent ? field.color + '60' : colors.cardBorder + '40',
+        },
+      ]}
         >
           {/* Glassmorphism overlay */}
           <View style={styles.glassOverlay}>
@@ -225,7 +225,7 @@ export function FieldCard({
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <View style={[styles.iconInnerCircle, { backgroundColor: colors.cardBackground }]}>
+                <View style={[styles.iconInnerCircle, { backgroundColor: colors.glassBackground }]}>
                   <LinearGradient
                     colors={[gradientColors[0], gradientColors[1], gradientColors[2]]}
                     style={styles.iconGradient}
@@ -299,15 +299,16 @@ const styles = StyleSheet.create({
   container: {
     width: 140,
     height: 195,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
     overflow: 'hidden',
     position: 'relative',
+    ...shadows.floating,
   },
   glassOverlay: {
     ...StyleSheet.absoluteFillObject,
     overflow: 'hidden',
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
   },
   glassGradient: {
     flex: 1,
@@ -319,8 +320,8 @@ const styles = StyleSheet.create({
     right: 0,
     height: 80,
     overflow: 'hidden',
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
+    borderTopLeftRadius: shellChrome.panelRadius,
+    borderTopRightRadius: shellChrome.panelRadius,
   },
   accentGlow: {
     flex: 1,
@@ -389,17 +390,18 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.sm,
   },
   title: {
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+    ...typography.cardTitle,
+    fontSize: 15,
+    lineHeight: 18,
+    letterSpacing: 0.2,
     marginBottom: 2,
   },
   subtitle: {
+    ...typography.micro,
     fontSize: 11,
-    fontWeight: '500',
     letterSpacing: 0.2,
     opacity: 0.7,
   },
@@ -414,7 +416,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 5,
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
   },
   statusIcon: {

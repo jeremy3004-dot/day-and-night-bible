@@ -1,11 +1,11 @@
 import type { ComponentProps } from 'react';
 import type { Ionicons } from '@expo/vector-icons';
-import type { RootTabParamList } from './types';
+import type { RootTabName } from './types';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
 
 export interface RootTabManifestEntry {
-  name: keyof RootTabParamList;
+  name: RootTabName;
   labelKey: string;
   focusedIcon: IconName;
   unfocusedIcon: IconName;
@@ -25,10 +25,16 @@ export const rootTabManifest: RootTabManifestEntry[] = [
     unfocusedIcon: 'book-outline',
   },
   {
-    name: 'Learn',
-    labelKey: 'tabs.gather',
-    focusedIcon: 'people',
-    unfocusedIcon: 'people-outline',
+    name: 'Meditate',
+    labelKey: 'tabs.meditate',
+    focusedIcon: 'headset',
+    unfocusedIcon: 'headset-outline',
+  },
+  {
+    name: 'Prayer',
+    labelKey: 'tabs.prayer',
+    focusedIcon: 'heart',
+    unfocusedIcon: 'heart-outline',
   },
   {
     name: 'More',

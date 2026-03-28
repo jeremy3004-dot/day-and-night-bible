@@ -1,12 +1,10 @@
-import * as Linking from 'expo-linking';
 import type { LinkingOptions } from '@react-navigation/native';
 import { getStateFromPath as defaultGetStateFromPath } from '@react-navigation/native';
 import type { RootTabParamList } from './types';
 import { buildBibleNavState } from './buildBibleNavState';
 
 export { buildBibleNavState, resolveTextReferenceNavState } from './buildBibleNavState';
-
-const prefix = Linking.createURL('/');
+const APP_SCHEME_PREFIX = 'com.dayandnightbible.app://';
 
 /**
  * React Navigation linking config for deep links using the com.dayandnightbible.app:// scheme.
@@ -20,7 +18,7 @@ const prefix = Linking.createURL('/');
  * Navigation's default state builder.
  */
 export const linkingConfig: LinkingOptions<RootTabParamList> = {
-  prefixes: [prefix, 'com.dayandnightbible.app://'],
+  prefixes: [APP_SCHEME_PREFIX],
   config: {
     screens: {
       Bible: {
@@ -29,7 +27,7 @@ export const linkingConfig: LinkingOptions<RootTabParamList> = {
         },
       },
     },
-  },
+  } as LinkingOptions<RootTabParamList>['config'],
   getStateFromPath(path, options) {
     return buildBibleNavState(
       path,

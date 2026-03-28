@@ -5,4 +5,5 @@ export * from './audioStore';
 export * from './libraryStore';
 export * from './privacyStore';
 export * from './fourFieldsStore';
+export * from './journeyAudioStore';
 export { zustandStorage, mmkvInstance } from './mmkvStorage';

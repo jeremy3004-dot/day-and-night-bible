@@ -106,19 +106,19 @@ test('listen mode moves the show-text action into the inline utility row and anc
   );
 });
 
-test('listen mode delegates bundled background-music selection to PlaybackControls', () => {
+test('listen mode delegates the player surface to AudioFirstChapterCard', () => {
   const source = readRelativeSource('./BibleReaderScreen.tsx');
 
   assert.match(
     source,
-    /<PlaybackControls[\s\S]*backgroundMusicChoice=\{backgroundMusicChoice\}[\s\S]*onChangeBackgroundMusicChoice=\{changeBackgroundMusicChoice\}/,
-    'BibleReaderScreen listen mode should pass the bundled background-music props into PlaybackControls'
+    /<AudioFirstChapterCard[\s\S]*translationLabel=\{translationLabel\}[\s\S]*onShareChapter=\{handleShareChapter\}/s,
+    'BibleReaderScreen listen mode should hand the Dwell-style listen card to AudioFirstChapterCard'
   );
 
   assert.equal(
-    source.includes('showAudioOptionsSheet'),
+    source.includes('<PlaybackControls'),
     false,
-    'BibleReaderScreen should remove the old placeholder audio-options sheet once the inline music picker is live'
+    'BibleReaderScreen should not keep the old inline playback control stack in listen mode'
   );
 
   assert.equal(
@@ -131,10 +131,22 @@ test('listen mode delegates bundled background-music selection to PlaybackContro
 test('switching the chapter session into listen mode starts playback for the displayed chapter', () => {
   const source = readRelativeSource('./BibleReaderScreen.tsx');
 
-  assert.match(
-    source,
-    /const handleSessionModePress = \(requestedMode: 'listen' \| 'read'\) => \{[\s\S]*if \(nextMode === 'listen' && !isCurrentAudioChapter\) \{[\s\S]*void playChapter\(bookId, chapter\);[\s\S]*\}/,
-    'BibleReaderScreen should start chapter playback when the user switches from read into listen mode'
+  assert.equal(
+    source.includes("if (nextMode === 'listen' && !isCurrentAudioChapter)"),
+    true,
+    'BibleReaderScreen should branch into listen-mode playback when the user switches modes'
+  );
+
+  assert.equal(
+    source.includes('void playChapter('),
+    true,
+    'BibleReaderScreen should start chapter playback when listen mode is selected'
+  );
+
+  assert.equal(
+    source.includes("currentTranslationInfo?.audioGranularity === 'verse' ? focusVerse : undefined"),
+    true,
+    'BibleReaderScreen should preserve verse granularity when starting listen-mode playback'
   );
 });
 
@@ -303,6 +315,22 @@ test('premium read mode centers the chapter label inside the persistent bottom b
     source,
     /persistentReaderChapterLabel:\s*{[\s\S]*textAlign:\s*'center'/,
     'BibleReaderScreen should center the chapter label text inside the persistent bottom bar'
+  );
+});
+
+test('premium read mode renders an upright serif chapter title with a small divider', () => {
+  const source = readRelativeSource('./BibleReaderScreen.tsx');
+
+  assert.match(
+    source,
+    /premiumReaderTitle:[\s\S]*fontStyle:\s*'normal'/,
+    'BibleReaderScreen should keep the centered chapter title upright instead of italicizing it'
+  );
+
+  assert.equal(
+    source.includes('premiumTitleDivider'),
+    true,
+    'BibleReaderScreen should render the small divider under the centered chapter title'
   );
 });
 

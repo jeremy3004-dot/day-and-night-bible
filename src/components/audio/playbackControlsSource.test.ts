@@ -129,25 +129,31 @@ test('PlaybackControls gives the chapter-only transport a stronger Dwell-inspire
   );
 });
 
-test('Bible listen surfaces opt into the chapter-only transport variant', () => {
+test('Bible listen surfaces opt into the listen transport and voice picker', () => {
   const audioFirstSource = readRelativeSource('./AudioFirstChapterCard.tsx');
   const readerSource = readRelativeSource('../../screens/bible/BibleReaderScreen.tsx');
 
   assert.match(
     audioFirstSource,
-    /<PlaybackControls[\s\S]*variant="chapter-only"/,
-    'AudioFirstChapterCard should use the simplified chapter-only player transport'
+    /<PlaybackControls[\s\S]*variant="listen"/,
+    'AudioFirstChapterCard should use the Dwell-style listen transport'
   );
 
   assert.match(
     readerSource,
-    /<PlaybackControls[\s\S]*variant="chapter-only"/,
-    'BibleReaderScreen listen mode should use the simplified chapter-only player transport'
+    /<AudioFirstChapterCard[\s\S]*translationLabel=\{translationLabel\}[\s\S]*onShareChapter=\{handleShareChapter\}/s,
+    'BibleReaderScreen listen mode should hand the listen surface to AudioFirstChapterCard with chapter actions'
   );
 
   assert.match(
     readerSource,
-    /<PlaybackControls[\s\S]*onShowText=\{\(\) => setShowFollowAlongText\(true\)\}/,
-    'BibleReaderScreen listen mode should pass the inline show-text action into PlaybackControls'
+    /<AudioFirstChapterCard[\s\S]*onOpenChapterActions=\{\(\) => \{[\s\S]*setShowChapterActionsSheet\(true\)/s,
+    'BibleReaderScreen listen mode should expose the chapter actions sheet from the listen card'
+  );
+
+  assert.match(
+    audioFirstSource,
+    /voiceCatalog=\{voiceCatalog\}[\s\S]*selectedVoiceId=\{selectedVoiceId\}[\s\S]*onSelectVoice=\{handleSelectVoice\}/s,
+    'AudioFirstChapterCard should thread the BSB voice catalog into the listen transport'
   );
 });

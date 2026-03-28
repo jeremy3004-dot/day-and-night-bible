@@ -30,7 +30,7 @@ import {
 import { useAuthStore } from '../../stores/authStore';
 import { pullFromCloud } from '../../services/sync';
 import type { AuthStackParamList } from '../../navigation/types';
-import { radius, spacing, typography } from '../../design/system';
+import { shellChrome, shadows, spacing, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -335,10 +335,10 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.primaryText,
     },
     input: {
-      backgroundColor: colors.cardBackground,
+      backgroundColor: colors.glassBackground,
       borderWidth: 1,
       borderColor: colors.cardBorder,
-      borderRadius: radius.sm,
+      borderRadius: shellChrome.panelRadius,
       padding: spacing.lg,
       ...typography.body,
       color: colors.primaryText,
@@ -368,10 +368,11 @@ const createStyles = (colors: ThemeColors) =>
     },
     signInButton: {
       backgroundColor: colors.accentPrimary,
-      borderRadius: radius.sm,
+      borderRadius: shellChrome.panelRadius,
       padding: spacing.lg,
       alignItems: 'center',
       marginTop: spacing.sm,
+      ...shadows.floating,
     },
     buttonDisabled: {
       opacity: 0.7,
@@ -403,13 +404,14 @@ const createStyles = (colors: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: colors.cardBackground,
-      borderRadius: radius.sm,
+      backgroundColor: colors.glassBackground,
+      borderRadius: shellChrome.panelRadius,
       borderWidth: 1,
       borderColor: colors.cardBorder,
       padding: 14,
       marginTop: spacing.md,
       gap: 10,
+      ...shadows.floating,
     },
     googleButtonText: {
       ...typography.button,

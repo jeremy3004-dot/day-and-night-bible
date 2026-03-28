@@ -4,6 +4,7 @@ export * from './rootNavigation';
 export * from './TabNavigator';
 export * from './HomeStack';
 export * from './BibleStack';
-export * from './LearnStack';
+export * from './MeditateStack';
+export * from './PrayerStack';
 export * from './MoreStack';
 export * from './linkingConfig';

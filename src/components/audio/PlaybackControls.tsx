@@ -9,12 +9,13 @@ import type {
   PlaybackRate,
   RepeatMode,
   SleepTimerOption,
+  TranslationAudioVoiceCatalog,
 } from '../../types';
 import { PLAYBACK_RATES, SLEEP_TIMER_OPTIONS } from '../../types';
 import { BACKGROUND_MUSIC_OPTIONS } from '../../services/audio';
 
 interface PlaybackControlsProps {
-  variant?: 'default' | 'chapter-only';
+  variant?: 'default' | 'chapter-only' | 'listen';
   status: AudioStatus;
   playbackRate: PlaybackRate;
   repeatMode: RepeatMode;
@@ -33,6 +34,15 @@ interface PlaybackControlsProps {
   onChangeBackgroundMusicChoice: (choice: BackgroundMusicChoice) => void;
   onShowText?: () => void;
   showTextLabel?: string;
+  listenTranslationLabel?: string;
+  voiceCatalog?: TranslationAudioVoiceCatalog | null;
+  selectedVoiceId?: string | null;
+  onSelectVoice?: (voiceId: string) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
+  onShare?: () => void;
+  onOpenChapterActions?: () => void;
+  onOpenFeedback?: () => void;
 }
 
 export function PlaybackControls({
@@ -55,16 +65,27 @@ export function PlaybackControls({
   onChangeBackgroundMusicChoice,
   onShowText,
   showTextLabel,
+  listenTranslationLabel,
+  voiceCatalog,
+  selectedVoiceId,
+  onSelectVoice,
+  isFavorite,
+  onToggleFavorite,
+  onShare,
+  onOpenChapterActions,
+  onOpenFeedback,
 }: PlaybackControlsProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [showSpeedModal, setShowSpeedModal] = useState(false);
   const [showTimerModal, setShowTimerModal] = useState(false);
   const [showBackgroundMusicModal, setShowBackgroundMusicModal] = useState(false);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
 
   const isLoading = status === 'loading';
   const isPlaying = status === 'playing';
   const isChapterOnlyTransport = variant === 'chapter-only';
+  const isListenVariant = variant === 'listen';
   const showSkipControls = variant === 'default';
   const showTextUtility = typeof onShowText === 'function';
   const isRepeatActive = repeatMode !== 'off';
@@ -72,6 +93,16 @@ export function PlaybackControls({
   const selectedBackgroundMusic =
     BACKGROUND_MUSIC_OPTIONS.find((option) => option.id === backgroundMusicChoice) ??
     BACKGROUND_MUSIC_OPTIONS[0];
+  const selectedVoice =
+    voiceCatalog?.voices.find((voice) => voice.id === selectedVoiceId) ??
+    voiceCatalog?.voices.find((voice) => voice.id === voiceCatalog?.defaultVoiceId) ??
+    voiceCatalog?.voices[0] ??
+    null;
+  const listenVoiceLabel = selectedVoice
+    ? `${selectedVoice.label}${listenTranslationLabel ? ` • ${listenTranslationLabel}` : ''}`
+    : listenTranslationLabel ?? 'Voice';
+  const ambientChipLabel =
+    backgroundMusicChoice === 'off' ? 'Ambient' : selectedBackgroundMusic.label;
   const repeatIconColor = isRepeatActive ? colors.bibleAccent : colors.bibleSecondaryText;
   const backgroundMusicIconColor = isBackgroundMusicActive
     ? colors.bibleAccent
@@ -137,6 +168,342 @@ export function PlaybackControls({
       />
     </View>
   );
+
+  if (isListenVariant) {
+    const voiceOptions = voiceCatalog?.voices ?? [];
+
+    return (
+      <View style={styles.listenContainer}>
+        <View style={styles.listenTransportRow}>
+          <TouchableOpacity
+            style={[
+              styles.listenTransportButton,
+              !hasPreviousChapter && styles.disabledButton,
+            ]}
+            onPress={onPreviousChapter}
+            disabled={!hasPreviousChapter || isLoading}
+          >
+            <Ionicons
+              name="play-skip-back"
+              size={26}
+              color={hasPreviousChapter ? colors.biblePrimaryText : colors.bibleSecondaryText}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.listenPlayButton,
+              { backgroundColor: colors.bibleControlBackground },
+            ]}
+            onPress={onPlayPause}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Ionicons name="hourglass" size={30} color={colors.bibleBackground} />
+            ) : (
+              <Ionicons name={isPlaying ? 'pause' : 'play'} size={34} color={colors.bibleBackground} />
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.listenTransportButton,
+              !hasNextChapter && styles.disabledButton,
+            ]}
+            onPress={onNextChapter}
+            disabled={!hasNextChapter || isLoading}
+          >
+            <Ionicons
+              name="play-skip-forward"
+              size={26}
+              color={hasNextChapter ? colors.biblePrimaryText : colors.bibleSecondaryText}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.listenChipRow}>
+          {voiceOptions.length > 0 ? (
+            <TouchableOpacity
+              style={[
+                styles.listenChip,
+                {
+                  backgroundColor: colors.bibleSurface,
+                  borderColor: showVoiceModal ? colors.bibleAccent : colors.bibleDivider,
+                },
+              ]}
+              onPress={() => setShowVoiceModal(true)}
+              disabled={!onSelectVoice}
+              accessibilityRole="button"
+              accessibilityLabel={listenVoiceLabel}
+            >
+              <View
+                style={[
+                  styles.listenChipFlag,
+                  {
+                    backgroundColor: colors.bibleElevatedSurface,
+                    borderColor: colors.bibleDivider,
+                  },
+                ]}
+              >
+                <Text style={[styles.listenChipFlagText, { color: colors.biblePrimaryText }]}>
+                  {selectedVoice?.flag.emoji ?? '🎙'}
+                </Text>
+              </View>
+              <Text
+                style={[
+                  styles.listenChipText,
+                  {
+                    color: colors.biblePrimaryText,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {listenVoiceLabel}
+              </Text>
+              <Ionicons
+                name="chevron-down"
+                size={12}
+                color={colors.bibleSecondaryText}
+              />
+            </TouchableOpacity>
+          ) : null}
+
+          <TouchableOpacity
+            style={[
+              styles.listenChip,
+              {
+                backgroundColor:
+                  backgroundMusicChoice === 'off'
+                    ? colors.bibleSurface
+                    : colors.bibleElevatedSurface,
+                borderColor:
+                  backgroundMusicChoice === 'off' ? colors.bibleDivider : colors.bibleAccent,
+              },
+            ]}
+            onPress={() => setShowBackgroundMusicModal(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`Background music: ${selectedBackgroundMusic.label}`}
+            accessibilityHint="Opens the bundled background music picker"
+          >
+            <Ionicons
+              name={backgroundMusicChoice === 'off' ? 'musical-notes-outline' : 'musical-notes'}
+              size={16}
+              color={
+                backgroundMusicChoice === 'off' ? colors.biblePrimaryText : colors.bibleAccent
+              }
+            />
+            <Text
+              style={[
+                styles.listenChipText,
+                {
+                  color:
+                    backgroundMusicChoice === 'off'
+                      ? colors.biblePrimaryText
+                      : colors.bibleAccent,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {ambientChipLabel}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.listenActionRow}>
+          <TouchableOpacity
+            style={styles.listenActionButton}
+            onPress={onShare}
+            disabled={!onShare}
+            accessibilityRole="button"
+            accessibilityLabel="Share chapter"
+          >
+            <Ionicons name="share-outline" size={22} color={colors.bibleSecondaryText} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.listenActionButton}
+            onPress={onToggleFavorite}
+            disabled={!onToggleFavorite}
+            accessibilityRole="button"
+            accessibilityLabel={isFavorite ? 'Remove favorite' : 'Save favorite'}
+          >
+            <Ionicons
+              name={isFavorite ? 'heart' : 'heart-outline'}
+              size={22}
+              color={isFavorite ? colors.bibleAccent : colors.bibleSecondaryText}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.listenActionButton}
+            onPress={onOpenChapterActions}
+            disabled={!onOpenChapterActions}
+            accessibilityRole="button"
+            accessibilityLabel="More chapter options"
+          >
+            <Ionicons name="options-outline" size={22} color={colors.bibleSecondaryText} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.listenActionButton}
+            onPress={onOpenFeedback}
+            disabled={!onOpenFeedback}
+            accessibilityRole="button"
+            accessibilityLabel="Chapter feedback"
+          >
+            <Ionicons name="chatbubble-outline" size={22} color={colors.bibleSecondaryText} />
+          </TouchableOpacity>
+        </View>
+
+        <Modal
+          visible={showVoiceModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowVoiceModal(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setShowVoiceModal(false)}>
+            <View
+              style={[
+                styles.modalContent,
+                styles.voiceModalContent,
+                { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+              ]}
+            >
+              <Text style={[styles.modalTitle, { color: colors.biblePrimaryText }]}>
+                Choose voice
+              </Text>
+              <Text style={[styles.modalSubtitle, { color: colors.bibleSecondaryText }]}>
+                Select a narration voice for this Bible.
+              </Text>
+              {voiceOptions.map((voice) => {
+                const isSelected = voice.id === selectedVoice?.id;
+
+                return (
+                  <TouchableOpacity
+                    key={voice.id}
+                    style={[
+                      styles.voiceOption,
+                      {
+                        backgroundColor: isSelected
+                          ? colors.bibleElevatedSurface
+                          : colors.bibleBackground,
+                        borderColor: isSelected ? colors.bibleAccent : colors.bibleDivider,
+                      },
+                    ]}
+                    onPress={() => {
+                      onSelectVoice?.(voice.id);
+                      setShowVoiceModal(false);
+                    }}
+                    disabled={!onSelectVoice}
+                  >
+                    <View style={styles.voiceOptionCopy}>
+                      <View
+                        style={[
+                          styles.voiceOptionFlag,
+                          { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+                        ]}
+                      >
+                        <Text style={styles.voiceOptionFlagText}>{voice.flag.emoji}</Text>
+                      </View>
+                      <View style={styles.voiceOptionTextBlock}>
+                        <Text
+                          style={[
+                            styles.voiceOptionLabel,
+                            { color: isSelected ? colors.bibleAccent : colors.biblePrimaryText },
+                          ]}
+                        >
+                          {voice.label}
+                        </Text>
+                        <Text
+                          style={[styles.voiceOptionMeta, { color: colors.bibleSecondaryText }]}
+                        >
+                          {voice.flag.countryCode}
+                          {listenTranslationLabel ? ` • ${listenTranslationLabel}` : ''}
+                        </Text>
+                      </View>
+                    </View>
+                    {isSelected ? (
+                      <Ionicons name="checkmark" size={18} color={colors.bibleAccent} />
+                    ) : null}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Modal>
+
+        <Modal
+          visible={showBackgroundMusicModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowBackgroundMusicModal(false)}
+        >
+          <Pressable style={styles.modalOverlay} onPress={() => setShowBackgroundMusicModal(false)}>
+            <View
+              style={[
+                styles.modalContent,
+                styles.listenAmbientModal,
+                { backgroundColor: colors.bibleSurface, borderColor: colors.bibleDivider },
+              ]}
+            >
+              <Text style={[styles.modalTitle, { color: colors.biblePrimaryText }]}>
+                Music and sounds
+              </Text>
+              <Text style={[styles.modalSubtitle, { color: colors.bibleSecondaryText }]}>
+                Choose a bundled background layer for offline scripture listening.
+              </Text>
+              {BACKGROUND_MUSIC_OPTIONS.map((option) => {
+                const isSelected = option.id === backgroundMusicChoice;
+
+                return (
+                  <TouchableOpacity
+                    key={option.id}
+                    style={[
+                      styles.backgroundMusicOption,
+                      {
+                        backgroundColor: isSelected
+                          ? colors.bibleElevatedSurface
+                          : colors.bibleBackground,
+                        borderColor: colors.bibleDivider,
+                      },
+                    ]}
+                    onPress={() => {
+                      onChangeBackgroundMusicChoice(option.id);
+                      setShowBackgroundMusicModal(false);
+                    }}
+                  >
+                    <View style={styles.backgroundMusicCopy}>
+                      <Text
+                        style={[
+                          styles.backgroundMusicLabel,
+                          {
+                            color: isSelected ? colors.bibleAccent : colors.biblePrimaryText,
+                          },
+                        ]}
+                      >
+                        {option.label}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.backgroundMusicDescription,
+                          { color: colors.bibleSecondaryText },
+                        ]}
+                      >
+                        {option.description}
+                      </Text>
+                    </View>
+                    {isSelected ? (
+                      <Ionicons name="checkmark" size={20} color={colors.bibleAccent} />
+                    ) : null}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Modal>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -632,6 +999,75 @@ const styles = StyleSheet.create({
     borderRadius: 36,
     marginHorizontal: 10,
   },
+  listenContainer: {
+    gap: 18,
+  },
+  listenTransportRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
+  },
+  listenTransportButton: {
+    width: 52,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 999,
+  },
+  listenPlayButton: {
+    width: 74,
+    height: 74,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listenChipRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  listenChip: {
+    minHeight: 36,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  listenChipFlag: {
+    width: 22,
+    height: 22,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  listenChipFlagText: {
+    fontSize: 13,
+  },
+  listenChipText: {
+    fontSize: 13,
+    fontWeight: '700',
+    maxWidth: 168,
+  },
+  listenActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingTop: 2,
+  },
+  listenActionButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 999,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
@@ -657,6 +1093,13 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     marginBottom: 14,
     textAlign: 'center',
+  },
+  voiceModalContent: {
+    gap: 10,
+    maxWidth: 360,
+  },
+  listenAmbientModal: {
+    gap: 10,
   },
   modalOption: {
     minHeight: 46,
@@ -693,5 +1136,44 @@ const styles = StyleSheet.create({
   backgroundMusicDescription: {
     fontSize: 12,
     lineHeight: 17,
+  },
+  voiceOption: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  voiceOptionCopy: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  voiceOptionFlag: {
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+  },
+  voiceOptionFlagText: {
+    fontSize: 18,
+  },
+  voiceOptionTextBlock: {
+    flex: 1,
+    gap: 2,
+  },
+  voiceOptionLabel: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  voiceOptionMeta: {
+    fontSize: 12,
+    lineHeight: 16,
   },
 });

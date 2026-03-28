@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     minHeight: 216,
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   heroIconWrap: {
     width: 78,
@@ -247,9 +248,12 @@ const styles = StyleSheet.create({
     height: 44,
   },
   title: {
-    ...typography.screenTitle,
-    fontSize: 36,
-    lineHeight: 40,
+    fontFamily: typography.readingHeading.fontFamily,
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+    textAlign: 'center',
     marginTop: spacing.sm,
   },
   sectionHeader: {

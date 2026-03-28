@@ -116,6 +116,7 @@ function mapAudioDownloadJob(job: AudioDownloadJobRecord): TranslationDownloadJo
     startedAt: job.createdAt,
     updatedAt: job.updatedAt,
     error: job.error,
+    voiceId: job.voiceId,
   };
 }
 
@@ -123,6 +124,7 @@ function mapAudioDownloadProgress(job: AudioDownloadJobRecord): TranslationDownl
   return {
     translationId: job.translationId,
     bookId: job.bookId,
+    voiceId: job.voiceId,
     progress: job.status === 'completed' ? 100 : 0,
     status:
       job.status === 'completed'
@@ -624,7 +626,9 @@ export const useBibleStore = create<BibleState>()(
           createBackgroundAudioDownloadTransport()
             .then((transport) => {
               if (transport.cancelJob && progress.translationId) {
-                const jobId = `${progress.translationId}:${progress.bookId ?? 'all'}`;
+                const jobId = `audio-download:${progress.translationId}:${
+                  progress.bookId ? 'book' : 'translation'
+                }:${progress.bookId ?? 'all'}${progress.voiceId ? `:voice:${progress.voiceId}` : ''}`;
                 transport.cancelJob(jobId).catch(() => {});
               }
             })

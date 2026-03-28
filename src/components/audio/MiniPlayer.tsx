@@ -2,19 +2,22 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../contexts/ThemeContext';
 import { getBookById, getTranslatedBookName } from '../../constants';
 import { useAudioPlayer } from '../../hooks';
 import { useAudioStore, useBibleStore } from '../../stores';
 import { rootNavigationRef } from '../../navigation/rootNavigation';
-import { layout, radius, spacing, shadows, typography } from '../../design/system';
+import { shouldHideTabBarOnNestedRoute } from '../../navigation/tabBarVisibility';
+import { layout, radius, shadows, shellChrome, spacing, typography } from '../../design/system';
 
 interface MiniPlayerProps {
   currentRouteName: string | null;
 }
 
 export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const tabBarHeight = layout.tabBarBaseHeight + insets.bottom;
@@ -45,18 +48,20 @@ export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
   const progress =
     duration > 0 ? currentPosition / duration : status === 'idle' ? 0 : 0.05;
 
-  if (!book || !displayChapter || currentRouteName === 'BibleReader') {
+  if (!book || !displayChapter || shouldHideTabBarOnNestedRoute(currentRouteName ?? undefined)) {
     return null;
   }
 
   return (
-    <View pointerEvents="box-none" style={[styles.shell, { bottom: tabBarHeight + spacing.sm }]}>
+    <View
+      pointerEvents="box-none"
+      style={[styles.shell, { bottom: tabBarHeight + shellChrome.floatingGap }]}
+    >
       <TouchableOpacity
         style={[
           styles.container,
           {
-            backgroundColor: colors.cardBackground,
-            borderColor: colors.cardBorder,
+            backgroundColor: colors.glassBackground,
           },
         ]}
         activeOpacity={0.92}
@@ -81,6 +86,33 @@ export function MiniPlayer({ currentRouteName }: MiniPlayerProps) {
           });
         }}
       >
+        <View pointerEvents="none" style={styles.glassBackground}>
+          <BlurView
+            tint={isDark ? 'dark' : 'light'}
+            intensity={shellChrome.glassBlurIntensity}
+            style={StyleSheet.absoluteFillObject}
+          />
+          <LinearGradient
+            pointerEvents="none"
+            colors={
+              isDark
+                ? ['rgba(255, 255, 255, 0.16)', 'rgba(255, 255, 255, 0.05)']
+                : ['rgba(255, 255, 255, 0.88)', 'rgba(255, 255, 255, 0.36)']
+            }
+            start={{ x: 0.12, y: 0 }}
+            end={{ x: 0.88, y: 1 }}
+            style={StyleSheet.absoluteFillObject}
+          />
+          <View
+            pointerEvents="none"
+            style={[
+              styles.stroke,
+              {
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(17, 19, 24, 0.10)',
+              },
+            ]}
+          />
+        </View>
         <View style={styles.copy}>
           <Text style={[styles.title, { color: colors.primaryText }]} numberOfLines={1}>
             {getTranslatedBookName(displayBookId ?? book.id, t)} {displayChapter}
@@ -136,12 +168,21 @@ const styles = StyleSheet.create({
   },
   container: {
     ...shadows.floating,
-    borderWidth: 1,
-    borderRadius: radius.lg,
+    borderWidth: 0,
+    borderRadius: shellChrome.panelRadius,
     paddingHorizontal: layout.denseCardPadding,
-    paddingTop: 14,
-    paddingBottom: spacing.md,
+    paddingTop: 15,
+    paddingBottom: 13,
     overflow: 'hidden',
+  },
+  glassBackground: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'transparent',
+  },
+  stroke: {
+    ...StyleSheet.absoluteFillObject,
+    borderWidth: shellChrome.glassStrokeWidth,
+    borderRadius: shellChrome.panelRadius,
   },
   copy: {
     marginRight: 92,
@@ -155,15 +196,15 @@ const styles = StyleSheet.create({
   },
   controls: {
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 12,
+    right: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
   },
   iconButton: {
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },

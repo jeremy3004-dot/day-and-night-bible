@@ -13,9 +13,9 @@ export const spacing = {
 
 export const radius = {
   xs: 2,
-  sm: 4,
-  md: 8,
-  lg: 12,
+  sm: 6,
+  md: 10,
+  lg: 16,
   pill: 999,
 } as const;
 
@@ -26,44 +26,44 @@ const uiFontFamily = Platform.select({
 });
 
 const readingFontFamily = Platform.select({
-  ios: 'Georgia',
-  android: 'serif',
-  default: 'Georgia',
+  ios: 'Lora-Regular',
+  android: 'Lora-Regular',
+  default: 'Lora-Regular',
 });
 const readingFontFamilyItalic = Platform.select({
-  ios: 'Georgia-Italic',
-  android: 'serif',
-  default: 'Georgia-Italic',
+  ios: 'Lora-Italic',
+  android: 'Lora-Italic',
+  default: 'Lora-Italic',
 });
 
 export const typography = {
   screenTitle: {
     fontFamily: uiFontFamily,
-    fontSize: 32,
-    lineHeight: 38,
+    fontSize: 30,
+    lineHeight: 34,
     fontWeight: '700',
-    letterSpacing: -0.8,
+    letterSpacing: -0.6,
   } satisfies TextStyle,
   pageTitle: {
     fontFamily: uiFontFamily,
-    fontSize: 28,
-    lineHeight: 34,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-  } satisfies TextStyle,
-  sectionTitle: {
-    fontFamily: uiFontFamily,
-    fontSize: 24,
-    lineHeight: 30,
+    fontSize: 26,
+    lineHeight: 32,
     fontWeight: '700',
     letterSpacing: -0.4,
   } satisfies TextStyle,
+  sectionTitle: {
+    fontFamily: uiFontFamily,
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  } satisfies TextStyle,
   cardTitle: {
     fontFamily: uiFontFamily,
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '700',
-    letterSpacing: -0.2,
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: '600',
+    letterSpacing: -0.1,
   } satisfies TextStyle,
   body: {
     fontFamily: uiFontFamily,
@@ -116,22 +116,21 @@ export const typography = {
   readingDisplay: {
     fontFamily: readingFontFamilyItalic,
     fontSize: 28,
-    lineHeight: 38,
+    lineHeight: 34,
     fontStyle: 'italic',
     fontWeight: '400',
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   } satisfies TextStyle,
   readingHeading: {
     fontFamily: readingFontFamily,
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: '400',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
+    fontSize: 19,
+    lineHeight: 26,
+    fontWeight: '600',
+    letterSpacing: 0,
   } satisfies TextStyle,
   readingBody: {
     fontFamily: readingFontFamily,
-    fontSize: 18,
+    fontSize: 20,
     lineHeight: 38,
     fontWeight: '400',
     letterSpacing: 0.1,
@@ -140,8 +139,8 @@ export const typography = {
     fontFamily: readingFontFamily,
     fontSize: 11,
     lineHeight: 18,
-    fontWeight: '400',
-    letterSpacing: 0.5,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   } satisfies TextStyle,
 } as const;
 
@@ -156,17 +155,26 @@ export const layout = {
   tabBarBaseHeight: 56,
 } as const;
 
+export const shellChrome = {
+  floatingInset: spacing.lg,
+  floatingGap: spacing.sm,
+  dockRadius: 28,
+  panelRadius: 22,
+  glassBlurIntensity: 32,
+  glassStrokeWidth: 1,
+} as const;
+
 export const shadows = {
   card: {} as ViewStyle, // Flat -- hierarchy via borders and spacing now
   floating: Platform.select<ViewStyle>({
     ios: {
       shadowColor: '#000000',
-      shadowOpacity: 0.12,
-      shadowRadius: 16,
+      shadowOpacity: 0.1,
+      shadowRadius: 15,
       shadowOffset: { width: 0, height: 8 },
     },
     android: {
-      elevation: 4,
+      elevation: 3,
     },
     default: {},
   }) as ViewStyle,

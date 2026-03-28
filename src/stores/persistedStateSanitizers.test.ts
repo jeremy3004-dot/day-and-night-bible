@@ -383,6 +383,21 @@ test('sanitizePersistedAudioState preserves supported repeat modes', () => {
   assert.equal(sanitized.repeatMode, 'book');
 });
 
+test('sanitizePersistedAudioState keeps only supported voice selections', () => {
+  const sanitized = sanitizePersistedAudioState({
+    selectedAudioVoiceByTranslationId: {
+      bsb: 'gilbert',
+      web: 'gilbert',
+      kjv: 'invalid',
+      missing: 'souer',
+    },
+  });
+
+  assert.deepEqual(sanitized.selectedAudioVoiceByTranslationId, {
+    bsb: 'gilbert',
+  });
+});
+
 test('sanitizePersistedAudioState falls back to off for unsupported background music choices', () => {
   const sanitized = sanitizePersistedAudioState({
     backgroundMusicChoice: 'forest-birds',

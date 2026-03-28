@@ -26,7 +26,7 @@ import { useTheme, type ThemeColors } from '../../contexts/ThemeContext';
 import { useAuthStore } from '../../stores/authStore';
 import { useProgressStore } from '../../stores/progressStore';
 import type { MoreStackParamList } from '../../navigation/types';
-import { layout, radius, spacing, typography } from '../../design/system';
+import { layout, shellChrome, shadows, spacing, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<MoreStackParamList>;
 
@@ -308,8 +308,8 @@ const createStyles = (colors: ThemeColors) =>
     avatar: {
       width: 100,
       height: 100,
-      borderRadius: radius.pill,
-      backgroundColor: colors.cardBackground,
+      borderRadius: shellChrome.panelRadius,
+      backgroundColor: colors.glassBackground,
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 2,
@@ -319,7 +319,7 @@ const createStyles = (colors: ThemeColors) =>
     avatarImage: {
       width: 100,
       height: 100,
-      borderRadius: radius.pill,
+      borderRadius: shellChrome.panelRadius,
     },
     avatarOverlay: {
       ...StyleSheet.absoluteFillObject,
@@ -333,7 +333,7 @@ const createStyles = (colors: ThemeColors) =>
       right: 2,
       width: 22,
       height: 22,
-      borderRadius: radius.pill,
+      borderRadius: shellChrome.panelRadius,
       backgroundColor: colors.accentPrimary,
       justifyContent: 'center',
       alignItems: 'center',
@@ -354,19 +354,23 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.secondaryText,
     },
     statsCard: {
-      backgroundColor: colors.cardBackground,
-      borderRadius: radius.lg,
+      backgroundColor: colors.glassBackground,
+      borderRadius: shellChrome.panelRadius,
       padding: layout.cardPadding,
       borderWidth: 1,
       borderColor: colors.cardBorder,
+      overflow: 'hidden',
+      ...shadows.floating,
     },
     engagementCard: {
-      backgroundColor: colors.cardBackground,
-      borderRadius: radius.lg,
+      backgroundColor: colors.glassBackground,
+      borderRadius: shellChrome.panelRadius,
       padding: layout.cardPadding,
       borderWidth: 1,
       borderColor: colors.cardBorder,
       gap: spacing.lg,
+      overflow: 'hidden',
+      ...shadows.floating,
     },
     engagementHeader: {
       flexDirection: 'row',
@@ -379,7 +383,7 @@ const createStyles = (colors: ThemeColors) =>
     },
     scorePill: {
       backgroundColor: colors.accentPrimary + '1F',
-      borderRadius: radius.pill,
+      borderRadius: shellChrome.panelRadius,
       paddingHorizontal: spacing.md,
       paddingVertical: spacing.xs,
     },
@@ -417,16 +421,18 @@ const createStyles = (colors: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: spacing.lg,
-      backgroundColor: colors.cardBackground,
-      borderRadius: radius.lg,
+      backgroundColor: colors.glassBackground,
+      borderRadius: shellChrome.panelRadius,
       padding: layout.denseCardPadding,
       borderWidth: 1,
       borderColor: colors.cardBorder,
+      overflow: 'hidden',
+      ...shadows.floating,
     },
     activityIcon: {
       width: 44,
       height: 44,
-      borderRadius: radius.md,
+      borderRadius: shellChrome.panelRadius,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: colors.accentPrimary + '14',
@@ -445,12 +451,14 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.secondaryText,
     },
     signInCard: {
-      backgroundColor: colors.cardBackground,
-      borderRadius: radius.lg,
+      backgroundColor: colors.glassBackground,
+      borderRadius: shellChrome.panelRadius,
       padding: layout.cardPadding,
       alignItems: 'center',
       borderWidth: 1,
       borderColor: colors.cardBorder,
+      overflow: 'hidden',
+      ...shadows.floating,
     },
     signInTitle: {
       ...typography.cardTitle,
@@ -468,7 +476,7 @@ const createStyles = (colors: ThemeColors) =>
       backgroundColor: colors.accentPrimary,
       paddingHorizontal: 32,
       paddingVertical: 14,
-      borderRadius: radius.md,
+      borderRadius: shellChrome.panelRadius,
     },
     signInButtonText: {
       ...typography.button,

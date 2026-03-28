@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import { layout, radius, spacing, typography } from '../../design/system';
+import { layout, shellChrome, shadows, spacing, typography } from '../../design/system';
 
 const HIGHLIGHT_COLORS = [
   { id: 'yellow', hex: '#FFD700' },
@@ -77,7 +77,7 @@ export function AnnotationActionSheet({
         <View
           style={[
             styles.sheet,
-            { backgroundColor: colors.cardBackground },
+            { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
           ]}
           onStartShouldSetResponder={() => true}
         >
@@ -92,8 +92,14 @@ export function AnnotationActionSheet({
           {mode === 'actions' ? (
             <View style={styles.actionsContainer}>
               {/* Bookmark button */}
-              <TouchableOpacity
-                style={[styles.actionButton, { borderColor: colors.cardBorder }]}
+                <TouchableOpacity
+                style={[
+                  styles.actionButton,
+                  {
+                    borderColor: colors.cardBorder,
+                    backgroundColor: colors.glassBackground,
+                  },
+                ]}
                 onPress={() => { onBookmark(); handleClose(); }}
               >
                 <Ionicons
@@ -124,7 +130,13 @@ export function AnnotationActionSheet({
 
               {/* Note button */}
               <TouchableOpacity
-                style={[styles.actionButton, { borderColor: colors.cardBorder }]}
+                style={[
+                  styles.actionButton,
+                  {
+                    borderColor: colors.cardBorder,
+                    backgroundColor: colors.glassBackground,
+                  },
+                ]}
                 onPress={() => setMode('note')}
               >
                 <Ionicons name="create-outline" size={22} color={colors.primaryText} />
@@ -141,7 +153,7 @@ export function AnnotationActionSheet({
                   {
                     color: colors.primaryText,
                     borderColor: colors.cardBorder,
-                    backgroundColor: colors.background,
+                    backgroundColor: colors.glassBackground,
                   },
                 ]}
                 placeholder={t('annotations.noteHint')}
@@ -179,10 +191,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sheet: {
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
+    borderTopLeftRadius: shellChrome.panelRadius,
+    borderTopRightRadius: shellChrome.panelRadius,
     paddingBottom: spacing.xxxl,
     paddingHorizontal: layout.screenPadding,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   handle: {
     alignItems: 'center',
@@ -191,7 +208,7 @@ const styles = StyleSheet.create({
   handleBar: {
     width: 36,
     height: 4,
-    borderRadius: radius.pill,
+    borderRadius: shellChrome.panelRadius,
   },
   title: {
     ...typography.cardTitle,
@@ -206,7 +223,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
   },
   actionLabel: {
@@ -234,7 +251,7 @@ const styles = StyleSheet.create({
   noteInput: {
     ...typography.body,
     borderWidth: 1,
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     padding: spacing.lg,
     minHeight: 120,
     textAlignVertical: 'top',

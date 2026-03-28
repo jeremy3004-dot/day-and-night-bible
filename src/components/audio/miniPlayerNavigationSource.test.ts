@@ -32,3 +32,31 @@ test('root navigator owns the current route name for the global mini player', ()
     'RootNavigator should pass the current route name into the mini player host'
   );
 });
+
+test('mini player uses the shared glass shell treatment', () => {
+  const miniPlayerSource = readRelativeSource('./MiniPlayer.tsx');
+
+  assert.equal(
+    miniPlayerSource.includes('BlurView'),
+    true,
+    'MiniPlayer should blur the floating shell background'
+  );
+
+  assert.equal(
+    miniPlayerSource.includes('LinearGradient'),
+    true,
+    'MiniPlayer should layer a glass highlight over the shell'
+  );
+
+  assert.equal(
+    miniPlayerSource.includes('shellChrome.panelRadius'),
+    true,
+    'MiniPlayer should use the shared floating panel radius'
+  );
+
+  assert.equal(
+    miniPlayerSource.includes("backgroundColor: colors.glassBackground"),
+    true,
+    'MiniPlayer should use the shared glass fallback background color'
+  );
+});

@@ -18,6 +18,16 @@ test('the app defines a shared professional design system module', () => {
   assert.equal(source.includes('export const radius'), true, 'design system should export radius');
   assert.equal(source.includes('export const typography'), true, 'design system should export typography');
   assert.equal(source.includes('export const shadows'), true, 'design system should export shadows');
+  assert.equal(
+    source.includes('export const shellChrome'),
+    true,
+    'design system should export shared shell chrome constants'
+  );
+  assert.equal(
+    source.includes('Lora-Regular'),
+    true,
+    'design system should use the bundled serif font family'
+  );
 });
 
 test('high-traffic app surfaces consume the shared design system', () => {
@@ -25,10 +35,17 @@ test('high-traffic app surfaces consume the shared design system', () => {
     '../screens/home/HomeScreen.tsx',
     '../screens/bible/BibleBrowserScreen.tsx',
     '../screens/bible/ChapterSelectorScreen.tsx',
+    '../screens/bible/BibleReaderScreen.tsx',
     '../screens/learn/CourseListScreen.tsx',
     '../screens/more/MoreScreen.tsx',
     '../screens/more/ProfileScreen.tsx',
     '../screens/more/ReadingActivityScreen.tsx',
+    '../screens/more/SettingsScreen.tsx',
+    '../screens/meditate/MeditateHomeScreen.tsx',
+    '../screens/prayer/PrayerHomeScreen.tsx',
+    '../screens/prayer/FreePrayerScreen.tsx',
+    '../screens/prayer/PrayerCategoryScreen.tsx',
+    '../components/audio/MiniPlayer.tsx',
     '../navigation/TabNavigator.tsx',
     '../navigation/RootNavigator.tsx',
   ];

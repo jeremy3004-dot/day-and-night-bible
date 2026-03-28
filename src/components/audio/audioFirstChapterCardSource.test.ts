@@ -40,3 +40,25 @@ test('AudioFirstChapterCard removes redundant watermark art and explanatory audi
     'AudioFirstChapterCard should remove the explanatory body copy for audio-only chapters'
   );
 });
+
+test('AudioFirstChapterCard threads the voice catalog and chapter actions into the listen transport', () => {
+  const source = readRelativeSource('./AudioFirstChapterCard.tsx');
+
+  assert.match(
+    source,
+    /<PlaybackControls[\s\S]*variant="listen"/s,
+    'AudioFirstChapterCard should use the listen variant for the Dwell-style player surface'
+  );
+
+  assert.match(
+    source,
+    /listenTranslationLabel=\{translationLabel\}[\s\S]*voiceCatalog=\{voiceCatalog\}[\s\S]*selectedVoiceId=\{selectedVoiceId\}[\s\S]*onSelectVoice=\{handleSelectVoice\}/s,
+    'AudioFirstChapterCard should thread voice selection metadata into the listen transport'
+  );
+
+  assert.match(
+    source,
+    /onShare=\{onShareChapter\}[\s\S]*onOpenChapterActions=\{onOpenChapterActions\}[\s\S]*onOpenFeedback=\{onOpenFeedback\}/s,
+    'AudioFirstChapterCard should surface chapter actions and feedback from the listen controls'
+  );
+});

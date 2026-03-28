@@ -9,7 +9,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { config } from '../../constants/config';
 import { useAuthStore } from '../../stores/authStore';
 import type { MoreStackParamList } from '../../navigation/types';
-import { layout, radius, spacing, typography } from '../../design/system';
+import { layout, radius, shellChrome, shadows, spacing, typography } from '../../design/system';
 
 type NavigationProp = NativeStackNavigationProp<MoreStackParamList>;
 
@@ -94,7 +94,10 @@ export function MoreScreen() {
 
         {/* User Profile Card */}
         <TouchableOpacity
-          style={[styles.profileCard, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]}
+          style={[
+            styles.profileCard,
+            { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
+          ]}
           onPress={() => navigation.navigate('Profile')}
         >
           <View style={[styles.avatar, { backgroundColor: colors.cardBorder }]}>
@@ -117,12 +120,20 @@ export function MoreScreen() {
 
         {/* Auth Buttons */}
         {!isAuthenticated ? (
-          <TouchableOpacity style={[styles.signInButton, { backgroundColor: colors.accentGreen }]} onPress={handleSignIn}>
-            <Text style={[styles.signInText, { color: colors.primaryText }]}>{t('more.signInOrCreate')}</Text>
+          <TouchableOpacity
+            style={[styles.signInButton, { backgroundColor: colors.accentPrimary }]}
+            onPress={handleSignIn}
+          >
+            <Text style={[styles.signInText, { color: colors.cardBackground }]}>
+              {t('more.signInOrCreate')}
+            </Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            style={[styles.signOutButton, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]}
+            style={[
+              styles.signOutButton,
+              { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
+            ]}
             onPress={handleSignOut}
           >
             <Ionicons name="log-out-outline" size={20} color={colors.error} />
@@ -131,7 +142,12 @@ export function MoreScreen() {
         )}
 
         {/* Menu Items */}
-        <View style={[styles.menuSection, { backgroundColor: colors.cardBackground, borderColor: colors.cardBorder }]}>
+        <View
+          style={[
+            styles.menuSection,
+            { backgroundColor: colors.glassBackground, borderColor: colors.cardBorder },
+          ]}
+        >
           {menuItems.map((item, index) => (
             <TouchableOpacity
               key={item.id}
@@ -177,10 +193,12 @@ const styles = StyleSheet.create({
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     padding: layout.cardPadding,
     marginBottom: spacing.lg,
     borderWidth: 1,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   avatar: {
     width: 64,
@@ -207,10 +225,11 @@ const styles = StyleSheet.create({
     ...typography.micro,
   },
   signInButton: {
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     padding: spacing.lg,
     alignItems: 'center',
     marginBottom: layout.sectionGap,
+    ...shadows.floating,
   },
   signInText: {
     ...typography.button,
@@ -219,19 +238,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.md,
+    borderRadius: shellChrome.panelRadius,
     padding: spacing.lg,
     marginBottom: layout.sectionGap,
     borderWidth: 1,
     gap: spacing.sm,
+    ...shadows.floating,
   },
   signOutText: {
     ...typography.button,
   },
   menuSection: {
-    borderRadius: radius.lg,
+    borderRadius: shellChrome.panelRadius,
     borderWidth: 1,
     marginBottom: layout.sectionGap,
+    overflow: 'hidden',
+    ...shadows.floating,
   },
   menuItem: {
     flexDirection: 'row',
