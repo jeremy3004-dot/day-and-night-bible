@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This policy defines how EveryBible publishes, stores, delivers, updates, and rolls back Bible text and audio assets.
+This policy defines how Day and Night Bible publishes, stores, delivers, updates, and rolls back Bible text and audio assets.
 
 It applies to:
 
@@ -121,7 +121,7 @@ Minimum fields:
   "audio_version": "v2026-03-26-1",
   "delivery_mode": "chapter",
   "storage_provider": "supabase-public",
-  "base_url": "https://media.everybible.app/audio/bsb/v2026-03-26-1",
+  "base_url": "https://media.dayandnightbible.app/audio/bsb/v2026-03-26-1",
   "file_ext": "m4a",
   "mime_type": "audio/mp4",
   "cache_control": "public, max-age=31536000, immutable",

@@ -1,6 +1,6 @@
 # Tibetan Illustrations Project Summary
 
-**Project:** EveryBible App - Culturally Appropriate Tibetan Illustration Assets
+**Project:** Day and Night Bible App - Culturally Appropriate Tibetan Illustration Assets
 **Date:** 2026-02-05
 **Status:** Ready for External Generation
 
@@ -8,7 +8,7 @@
 
 ## Project Overview
 
-This project prepares all necessary documentation, tooling, and workflows to generate 7 culturally appropriate Tibetan-style illustrations for the EveryBible mobile app's field tracking journey feature.
+This project prepares all necessary documentation, tooling, and workflows to generate 7 culturally appropriate Tibetan-style illustrations for the Day and Night Bible mobile app's field tracking journey feature.
 
 ### Why This Approach?
 
@@ -57,7 +57,7 @@ Includes:
 ### 4. Directory Structure
 
 ```
-/Users/dev/Projects/EveryBible/assets/tibetan/
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/
 ├── README.md                           ✅ Overview and workflow
 ├── IMAGE_GENERATION_PROMPTS.md         ✅ AI prompts
 ├── EXTERNAL_GENERATION_GUIDE.md        ✅ Generation instructions
@@ -388,13 +388,13 @@ This project is considered successful when:
 
 ## Project Files Location
 
-**Absolute path:** `/Users/dev/Projects/EveryBible/assets/tibetan/`
+**Absolute path:** `/Users/dev/Projects/Day and Night Bible/assets/tibetan/`
 
 **Generated files will be:**
 ```
-/Users/dev/Projects/EveryBible/assets/tibetan/home-hero.png
-/Users/dev/Projects/EveryBible/assets/tibetan/home-hero@2x.png
-/Users/dev/Projects/EveryBible/assets/tibetan/home-hero@3x.png
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/home-hero.png
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/home-hero@2x.png
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/home-hero@3x.png
 ... (and 6 more image sets)
 ```
 

@@ -1,7 +1,7 @@
-# Every Bible - App Store Listing
+# Day and Night Bible - App Store Listing
 
 ## App Name (30 characters max)
-Every Bible
+Day and Night Bible
 
 ## Subtitle (30 characters max)
 Read, Listen & Grow Daily
@@ -15,7 +15,7 @@ Reference (Secondary)
 
 ## Description (4000 characters max)
 
-Every Bible is your complete companion for Scripture reading, audio listening, and spiritual growth. Whether you're new to the Bible or a seasoned reader, Every Bible provides everything you need to engage with God's Word daily.
+Day and Night Bible is your complete companion for Scripture reading, audio listening, and spiritual growth. Whether you're new to the Bible or a seasoned reader, Day and Night Bible provides everything you need to engage with God's Word daily.
 
 **COMPLETE BIBLE TEXT**
 Read the entire Bible in the clear, modern Berean Standard Bible (BSB) translation. All 66 books, 1,189 chapters, and 31,086 verses are included - completely free with no in-app purchases required.
@@ -52,14 +52,14 @@ Perfect for personal growth or small group study with built-in group features.
 **YOUR DATA, YOUR CONTROL**
 Sign in to sync your progress across devices, or use the app completely offline. Your reading history and preferences are securely stored and never shared.
 
-Download Every Bible today and begin your journey through Scripture.
+Download Day and Night Bible today and begin your journey through Scripture.
 
 ---
 
 ## What's New (Release Notes)
 
 **Version 1.0.0**
-Welcome to Every Bible! This initial release includes:
+Welcome to Day and Night Bible! This initial release includes:
 - Complete Berean Standard Bible text
 - Audio Bible player with playback controls
 - Verse of the Day feature
@@ -70,10 +70,10 @@ Welcome to Every Bible! This initial release includes:
 - Multi-language support
 
 ## Support URL
-https://everybible-legal.github.io/
+https://dayandnightbible-legal.github.io/
 
 ## Privacy Policy URL
-https://everybible-legal.github.io/privacy.html
+https://dayandnightbible-legal.github.io/privacy.html
 
 ## App Store Review Notes
 - No login required to use the app
@@ -86,4 +86,4 @@ https://everybible-legal.github.io/privacy.html
 4+ (No objectionable content)
 
 ## Copyright
-2024 Every Bible
+2024 Day and Night Bible

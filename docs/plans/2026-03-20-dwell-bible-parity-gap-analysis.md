@@ -6,12 +6,12 @@
 ## Assumptions
 
 - The goal is to copy the Dwell interaction model and product completeness, not Dwell's exact branded art, copy, or licensing-sensitive content.
-- The current EveryBible Bible browser, chapter data, audio stack, download path, translation picker, playback rate, and sleep timer remain the implementation base.
+- The current Day and Night Bible Bible browser, chapter data, audio stack, download path, translation picker, playback rate, and sleep timer remain the implementation base.
 - Because this is a React Native app and the evidence came from screenshots, native simulator/device QA remains the source of truth; gstack is best used later for supplemental screenshot evidence and any Expo web checks, not as a replacement for native audio verification.
 
 ## Gap Map
 
-### Already present in EveryBible
+### Already present in Day and Night Bible
 
 - Bible book browser with local search and typed passage parsing
 - Chapter selection and chapter navigation
@@ -21,7 +21,7 @@
 
 ### Partial parity
 
-- EveryBible can both read and listen, but not as one premium chapter session with a visible `Listen / Read` toggle
+- Day and Night Bible can both read and listen, but not as one premium chapter session with a visible `Listen / Read` toggle
 - The app has a chapter selector, but not the richer Dwell-style book hub between the book list and a chapter
 - Audio controls exist, but the mini-player/player chrome is screen-local and does not yet behave like a media product across flows
 

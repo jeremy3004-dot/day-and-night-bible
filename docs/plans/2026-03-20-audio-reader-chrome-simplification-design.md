@@ -2,7 +2,7 @@
 
 ## Goal
 
-Turn the audio-first Bible chapter screen into a cleaner, more Dwell-like listening surface while keeping EveryBible's existing palette and player behavior. The user wants a near-pixel match for layout hierarchy, not a color clone.
+Turn the audio-first Bible chapter screen into a cleaner, more Dwell-like listening surface while keeping Day and Night Bible's existing palette and player behavior. The user wants a near-pixel match for layout hierarchy, not a color clone.
 
 ## Approaches Considered
 
@@ -58,7 +58,7 @@ This keeps the scope aligned to the user feedback: the audio-first Bible screen 
 - Keep the existing voice/translation and ambient pills, because the reference still has bottom utility pills.
 - Remove the background watermark icon and the nested hero framing so the main cover-art box stands on its own.
 - Remove the audio-only explanation copy such as “WEB is currently available as audio...”.
-- Keep the current palette and general spacing language from EveryBible.
+- Keep the current palette and general spacing language from Day and Night Bible.
 
 ## Architecture And Component Plan
 

@@ -1,4 +1,4 @@
-# EveryBible Tibetan Redesign - Implementation Progress
+# Day and Night Bible Tibetan Redesign - Implementation Progress
 
 **Date:** 2026-02-05
 **Status:** Phase 1-3 Complete, Testing In Progress
@@ -229,28 +229,28 @@ Add visual icons beside Bible book names for accessibility (especially for Tibet
 
 ## Files Created (5)
 
-1. `/Users/dev/Projects/EveryBible/src/data/oneFieldOneGoalCourses.ts`
-2. `/Users/dev/Projects/EveryBible/src/constants/bookIcons.ts`
-3. `/Users/dev/Projects/EveryBible/docs/one-field-one-goal-content.md`
-4. `/Users/dev/Projects/EveryBible/docs/1-field-1-goal-implementation-phase1.md`
-5. `/Users/dev/Projects/EveryBible/docs/four-fields-tibetan-migration.md`
+1. `/Users/dev/Projects/Day and Night Bible/src/data/oneFieldOneGoalCourses.ts`
+2. `/Users/dev/Projects/Day and Night Bible/src/constants/bookIcons.ts`
+3. `/Users/dev/Projects/Day and Night Bible/docs/one-field-one-goal-content.md`
+4. `/Users/dev/Projects/Day and Night Bible/docs/1-field-1-goal-implementation-phase1.md`
+5. `/Users/dev/Projects/Day and Night Bible/docs/four-fields-tibetan-migration.md`
 
 ## Files Modified (14)
 
-1. `/Users/dev/Projects/EveryBible/src/i18n/locales/en.ts`
-2. `/Users/dev/Projects/EveryBible/src/screens/learn/CourseListScreen.tsx`
-3. `/Users/dev/Projects/EveryBible/src/screens/learn/FourFieldsJourneyScreen.tsx`
-4. `/Users/dev/Projects/EveryBible/src/stores/fourFieldsStore.ts`
-5. `/Users/dev/Projects/EveryBible/src/screens/home/HomeScreen.tsx`
-6. `/Users/dev/Projects/EveryBible/src/constants/index.ts`
-7. `/Users/dev/Projects/EveryBible/src/screens/bible/BibleBrowserScreen.tsx`
-8. `/Users/dev/Projects/EveryBible/src/screens/bible/ChapterSelectorScreen.tsx`
-9. `/Users/dev/Projects/EveryBible/src/screens/bible/BibleReaderScreen.tsx`
-10. `/Users/dev/Projects/EveryBible/src/components/fourfields/FieldCard.tsx`
-11. `/Users/dev/Projects/EveryBible/src/components/fourfields/JourneyPath.tsx`
-12. `/Users/dev/Projects/EveryBible/src/components/fourfields/LessonSectionRenderer.tsx`
-13. `/Users/dev/Projects/EveryBible/src/components/fourfields/PracticeCard.tsx`
-14. `/Users/dev/Projects/EveryBible/src/components/fourfields/TakeawayCard.tsx`
+1. `/Users/dev/Projects/Day and Night Bible/src/i18n/locales/en.ts`
+2. `/Users/dev/Projects/Day and Night Bible/src/screens/learn/CourseListScreen.tsx`
+3. `/Users/dev/Projects/Day and Night Bible/src/screens/learn/FourFieldsJourneyScreen.tsx`
+4. `/Users/dev/Projects/Day and Night Bible/src/stores/fourFieldsStore.ts`
+5. `/Users/dev/Projects/Day and Night Bible/src/screens/home/HomeScreen.tsx`
+6. `/Users/dev/Projects/Day and Night Bible/src/constants/index.ts`
+7. `/Users/dev/Projects/Day and Night Bible/src/screens/bible/BibleBrowserScreen.tsx`
+8. `/Users/dev/Projects/Day and Night Bible/src/screens/bible/ChapterSelectorScreen.tsx`
+9. `/Users/dev/Projects/Day and Night Bible/src/screens/bible/BibleReaderScreen.tsx`
+10. `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/FieldCard.tsx`
+11. `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/JourneyPath.tsx`
+12. `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/LessonSectionRenderer.tsx`
+13. `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/PracticeCard.tsx`
+14. `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/TakeawayCard.tsx`
 
 ---
 

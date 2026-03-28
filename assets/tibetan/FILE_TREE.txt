@@ -1,7 +1,7 @@
 Tibetan Illustrations Project Structure
 ========================================
 
-/Users/dev/Projects/EveryBible/assets/tibetan/
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/
 │
 ├── 📖 Documentation (7 files)
 │   ├── README.md ................................ Complete project overview & workflow

@@ -6,7 +6,7 @@
 
 ## Summary
 
-Successfully migrated the entire EveryBible app from the previous steel blue color scheme to a Tibetan-inspired color palette featuring maroon, saffron gold, and sky blue. All colors maintain proper contrast ratios and work seamlessly in both dark and light modes.
+Successfully migrated the entire Day and Night Bible app from the previous steel blue color scheme to a Tibetan-inspired color palette featuring maroon, saffron gold, and sky blue. All colors maintain proper contrast ratios and work seamlessly in both dark and light modes.
 
 ---
 
@@ -38,7 +38,7 @@ The new palette draws from traditional Tibetan monasteries, thangka paintings, a
 ## Files Updated
 
 ### 1. ThemeContext.tsx
-**Location:** `/Users/dev/Projects/EveryBible/src/contexts/ThemeContext.tsx`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/contexts/ThemeContext.tsx`
 
 **Changes:**
 - Added three new color properties to `ThemeColors` interface:
@@ -56,7 +56,7 @@ The new palette draws from traditional Tibetan monasteries, thangka paintings, a
 - Existing components using `colors.accentGreen` will continue working without changes
 
 ### 2. colors.ts
-**Location:** `/Users/dev/Projects/EveryBible/src/constants/colors.ts`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/constants/colors.ts`
 
 **Changes:**
 - Updated `accent` from `#3a7ca5` to `#8B2635`
@@ -79,7 +79,7 @@ const gold = colors.saffronGold;
 ```
 
 ### 3. fourFieldsCourses.ts
-**Location:** `/Users/dev/Projects/EveryBible/src/data/fourFieldsCourses.ts`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/data/fourFieldsCourses.ts`
 
 **Changes Updated in `fieldInfo` object:**
 
@@ -97,7 +97,7 @@ const gold = colors.saffronGold;
 - Sky blue provides contrast for the entry field
 
 ### 4. app.json
-**Location:** `/Users/dev/Projects/EveryBible/app.json`
+**Location:** `/Users/dev/Projects/Day and Night Bible/app.json`
 
 **Changes:**
 - Updated notification color from `#c17f59` to `#8B2635`
@@ -223,7 +223,7 @@ multiplication: { color: '#8e6ac8' },
 
 1. **Cultural Depth**: Tibetan Buddhist aesthetics carry deep spiritual meaning aligned with discipleship themes
 2. **Visual Impact**: Rich, bold colors create stronger visual hierarchy than previous steel blue
-3. **Differentiation**: Distinct color scheme helps EveryBible stand out from other Bible apps
+3. **Differentiation**: Distinct color scheme helps Day and Night Bible stand out from other Bible apps
 4. **Symbolism**:
    - Maroon → Discipline and commitment
    - Gold → Sacred wisdom and teaching
@@ -268,7 +268,7 @@ All color combinations meet or exceed WCAG AA contrast requirements:
 ### Technical Resources
 - [WCAG Contrast Guidelines](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
 - [React Native Color Documentation](https://reactnative.dev/docs/colors)
-- EveryBible project CLAUDE.md
+- Day and Night Bible project CLAUDE.md
 
 ---
 

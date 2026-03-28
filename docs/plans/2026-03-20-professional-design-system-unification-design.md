@@ -1,8 +1,8 @@
-# EveryBible Professional Design System Unification
+# Day and Night Bible Professional Design System Unification
 
 ## Direction
 
-The app should feel calm, premium, and trustworthy within the first few seconds. The right model is not "more styled"; it is more disciplined. EveryBible keeps its dark Bible-reader identity and warm red accent, but the rest of the system needs to become cleaner, more structured, and less decorative.
+The app should feel calm, premium, and trustworthy within the first few seconds. The right model is not "more styled"; it is more disciplined. Day and Night Bible keeps its dark Bible-reader identity and warm red accent, but the rest of the system needs to become cleaner, more structured, and less decorative.
 
 ## Core Decisions
 

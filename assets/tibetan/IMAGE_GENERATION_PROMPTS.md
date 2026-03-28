@@ -1,6 +1,6 @@
 # Tibetan Illustration Generation Prompts
 
-**Project:** EveryBible App - Tibetan Field Asset Pack
+**Project:** Day and Night Bible App - Tibetan Field Asset Pack
 **Style:** Procreate digital illustration, warm paper texture
 **Aspect Ratio:** 16:9 (1920x1080 minimum)
 **Cultural Constraints:** NO Buddhist idols, NO Tibetan independence flags, monasteries/stupas as background only

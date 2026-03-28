@@ -29,7 +29,7 @@
   - Warm golden hour lighting
   - Forgiveness/peace theme
 
-**Location:** `/Users/dev/Projects/EveryBible/assets/tibetan/`
+**Location:** `/Users/dev/Projects/Day and Night Bible/assets/tibetan/`
 
 ### 2. Fixed Icon Colors
 - **File:** `src/screens/bible/BibleBrowserScreen.tsx`
@@ -157,7 +157,7 @@ person_generation: "allow_adult"
 aspect_ratio: "1:1"  # Square is lower resolution, faster
 
 # 2. Save to correct location
-/Users/dev/Projects/EveryBible/assets/tibetan/[name].png
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/[name].png
 
 # 3. DO NOT create @2x/@3x variants
 # Let React Native handle scaling
@@ -170,7 +170,7 @@ npx expo run:ios --device "iPhone 17 Pro"
 1. Check file sizes (1MB+ is correct, <50KB is wrong)
 2. Verify timestamps (should be from latest generation)
 3. Delete all @2x and @3x variants
-4. `rm -rf .expo ios/build node_modules/.cache ~/Library/Developer/Xcode/DerivedData/EveryBible-*`
+4. `rm -rf .expo ios/build node_modules/.cache ~/Library/Developer/Xcode/DerivedData/DayAndNightBible-*`
 5. Rebuild: `npx expo run:ios --device "iPhone 17 Pro"`
 
 ---

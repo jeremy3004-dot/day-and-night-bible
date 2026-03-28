@@ -22,7 +22,7 @@
 
 ## Progress Log
 
-- 2026-03-09: Created isolated worktree at `~/.config/superpowers/worktrees/EveryBible/codex-stabilization-pass-20260309`
+- 2026-03-09: Created isolated worktree at `~/.config/superpowers/worktrees/Day-and-Night-Bible/codex-stabilization-pass-20260309`
 - 2026-03-09: Baseline checks passed before implementation
 - 2026-03-09: Extracted sync merge logic into `syncMerge.ts`, added store-owned sync apply actions, and removed direct `setState` writes from `syncService.ts`
 - 2026-03-09: Added stable auth error codes plus pure auth error mapping tests, so screens now branch on codes instead of literal provider strings

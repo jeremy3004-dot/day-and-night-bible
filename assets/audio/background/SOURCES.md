@@ -1,6 +1,6 @@
 # Bundled Background Music Sources
 
-These files are bundled into EveryBible for offline listen-mode background audio.
+These files are bundled into Day and Night Bible for offline listen-mode background audio.
 
 ## Ambient
 

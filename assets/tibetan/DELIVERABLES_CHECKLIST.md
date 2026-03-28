@@ -23,7 +23,7 @@
 - [x] .gitignore - Git ignore rules for generated files
 
 ### Directory Structure
-- [x] /Users/dev/Projects/EveryBible/assets/tibetan/ created
+- [x] /Users/dev/Projects/Day and Night Bible/assets/tibetan/ created
 - [x] All documentation files in place
 - [x] Processing script tested and executable
 
@@ -277,14 +277,14 @@ Project is considered COMPLETE when:
 
 3. **Create originals directory:**
    ```bash
-   mkdir -p /Users/dev/Projects/EveryBible/assets/tibetan/originals
+   mkdir -p /Users/dev/Projects/Day and Night Bible/assets/tibetan/originals
    ```
 
 4. **Save generated images** to originals/ with exact names
 
 5. **Run processing script** once all 7 images ready:
    ```bash
-   cd /Users/dev/Projects/EveryBible/assets/tibetan
+   cd /Users/dev/Projects/Day and Night Bible/assets/tibetan
    ./process-images.sh
    ```
 

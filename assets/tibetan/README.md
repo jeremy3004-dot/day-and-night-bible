@@ -1,4 +1,4 @@
-# Tibetan Illustrations for EveryBible App
+# Tibetan Illustrations for Day and Night Bible App
 
 This directory contains culturally appropriate Tibetan-style illustrations for the field tracking journey feature.
 
@@ -96,7 +96,7 @@ Use one of these services with the prompts in `IMAGE_GENERATION_PROMPTS.md`:
 
 1. Create `originals/` directory:
    ```bash
-   mkdir -p /Users/dev/Projects/EveryBible/assets/tibetan/originals
+   mkdir -p /Users/dev/Projects/Day and Night Bible/assets/tibetan/originals
    ```
 
 2. Save all 7 generated images to `originals/` with exact names:
@@ -121,7 +121,7 @@ Use one of these services with the prompts in `IMAGE_GENERATION_PROMPTS.md`:
 Run the processing script to generate @1x, @2x, @3x variants:
 
 ```bash
-cd /Users/dev/Projects/EveryBible/assets/tibetan
+cd /Users/dev/Projects/Day and Night Bible/assets/tibetan
 ./process-images.sh
 ```
 

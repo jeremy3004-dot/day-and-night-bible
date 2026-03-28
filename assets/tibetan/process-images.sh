@@ -5,7 +5,7 @@
 
 set -e
 
-ASSET_DIR="/Users/dev/Projects/EveryBible/assets/tibetan"
+ASSET_DIR="/Users/dev/Projects/Day and Night Bible/assets/tibetan"
 SOURCE_DIR="${ASSET_DIR}/originals"
 OUTPUT_DIR="${ASSET_DIR}"
 

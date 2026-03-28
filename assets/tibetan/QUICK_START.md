@@ -1,6 +1,6 @@
 # Quick Start Guide - Tibetan Illustrations
 
-**Goal:** Generate 7 culturally appropriate Tibetan illustrations for EveryBible app
+**Goal:** Generate 7 culturally appropriate Tibetan illustrations for Day and Night Bible app
 
 ---
 
@@ -73,7 +73,7 @@ Before saving ANY image, verify:
 
 ### 1. Save Files
 ```bash
-cd /Users/dev/Projects/EveryBible/assets/tibetan
+cd /Users/dev/Projects/Day and Night Bible/assets/tibetan
 mkdir -p originals
 # Move downloaded images to originals/ with exact names:
 # - home-hero.png

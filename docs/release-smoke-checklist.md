@@ -1,6 +1,6 @@
 # Release Smoke Checklist
 
-Use this checklist before calling an EveryBible build release-ready.
+Use this checklist before calling a Day and Night Bible build release-ready.
 
 ## Automated Regression Gate
 

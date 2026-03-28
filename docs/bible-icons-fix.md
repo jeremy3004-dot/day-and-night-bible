@@ -20,9 +20,9 @@ Converted all 198 WebP book icons to PNG format using the sharp library (already
 Updated `/src/constants/bookIcons.ts` to require PNG files instead of WebP.
 
 ## Files Modified
-1. `/Users/dev/Projects/EveryBible/metro.config.js` - Created with WebP support (already default in Expo)
-2. `/Users/dev/Projects/EveryBible/src/constants/bookIcons.ts` - Changed all require() statements from .webp to .png
-3. `/Users/dev/Projects/EveryBible/assets/book-icons/` - Added 198 PNG files converted from WebP
+1. `/Users/dev/Projects/Day and Night Bible/metro.config.js` - Created with WebP support (already default in Expo)
+2. `/Users/dev/Projects/Day and Night Bible/src/constants/bookIcons.ts` - Changed all require() statements from .webp to .png
+3. `/Users/dev/Projects/Day and Night Bible/assets/book-icons/` - Added 198 PNG files converted from WebP
 
 ## Commands Used
 ```bash

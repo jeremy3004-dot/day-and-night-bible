@@ -35,7 +35,7 @@ All components now dynamically use theme colors:
 ## Files Updated
 
 ### 1. FieldCard.tsx
-**Location:** `/Users/dev/Projects/EveryBible/src/components/fourfields/FieldCard.tsx`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/FieldCard.tsx`
 
 **Changes:**
 - Updated `fieldGradients` object to use Tibetan color gradients
@@ -67,7 +67,7 @@ const fieldGradients: Record<string, [string, string, string]> = {
 ---
 
 ### 2. JourneyPath.tsx
-**Location:** `/Users/dev/Projects/EveryBible/src/components/fourfields/JourneyPath.tsx`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/JourneyPath.tsx`
 
 **Changes:**
 - Updated header title from "Five Fields" to "Three Fields"
@@ -88,7 +88,7 @@ colors={[colors.accentPrimary + '15', colors.accentSecondary + '05', 'transparen
 ---
 
 ### 3. LessonSectionRenderer.tsx
-**Location:** `/Users/dev/Projects/EveryBible/src/components/fourfields/LessonSectionRenderer.tsx`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/LessonSectionRenderer.tsx`
 
 **Changes:**
 - Added `useTheme()` hook import and usage
@@ -116,7 +116,7 @@ colors={[colors.accentPrimary + '15', colors.accentSecondary + '05', 'transparen
 ---
 
 ### 4. PracticeCard.tsx
-**Location:** `/Users/dev/Projects/EveryBible/src/components/fourfields/PracticeCard.tsx`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/PracticeCard.tsx`
 
 **Changes:**
 - Replaced `colors` import from constants with `useTheme()` hook
@@ -145,7 +145,7 @@ borderColor: colors.accentSecondary,
 ---
 
 ### 5. TakeawayCard.tsx
-**Location:** `/Users/dev/Projects/EveryBible/src/components/fourfields/TakeawayCard.tsx`
+**Location:** `/Users/dev/Projects/Day and Night Bible/src/components/fourfields/TakeawayCard.tsx`
 
 **Changes:**
 - Replaced `colors` import with `useTheme()` hook
@@ -324,7 +324,7 @@ All color combinations meet WCAG AA contrast requirements:
 ### Related Documentation
 - Theme system: `/docs/theme-migration-complete.md`
 - Field data: `/src/data/fourFieldsCourses.ts`
-- Project guide: `/Users/dev/Projects/EveryBible/CLAUDE.md`
+- Project guide: `/Users/dev/Projects/Day and Night Bible/CLAUDE.md`
 
 ---
 

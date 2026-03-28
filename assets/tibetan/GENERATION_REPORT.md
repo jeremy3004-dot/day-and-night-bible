@@ -9,28 +9,28 @@
 
 ## Summary
 
-Successfully generated 3 culturally appropriate images for EveryBible Tibetan localization using sequential API calls. The batch generation approach failed, so a reliable fallback strategy was implemented.
+Successfully generated 3 culturally appropriate images for Day and Night Bible Tibetan localization using sequential API calls. The batch generation approach failed, so a reliable fallback strategy was implemented.
 
 ---
 
 ## Generated Images
 
 ### 1. home-hero.png
-- **File:** `/Users/dev/Projects/EveryBible/assets/tibetan/home-hero.png`
+- **File:** `/Users/dev/Projects/Day and Night Bible/assets/tibetan/home-hero.png`
 - **Size:** 1.6 MB
 - **Resolution:** 1408 x 768 (16:9 aspect ratio)
 - **Theme:** Welcoming family environment
 - **Description:** Warm mountain home interior with traditional Tibetan decorations, maroon and gold chuba robes hanging on wall, cozy firelight creating welcoming atmosphere, low wooden table with tea cups, Himalayan mountain village visible through window at golden sunset, sense of home and belonging, Procreate digital painting style, rich warm color palette
 
 ### 2. field-gospel.png
-- **File:** `/Users/dev/Projects/EveryBible/assets/tibetan/field-gospel.png`
+- **File:** `/Users/dev/Projects/Day and Night Bible/assets/tibetan/field-gospel.png`
 - **Size:** 1.7 MB
 - **Resolution:** 1408 x 768 (16:9 aspect ratio)
 - **Theme:** Prayer and contemplation
 - **Description:** Simple Tibetan mountain home interior with prayer space, open scripture book on meditation cushion, soft morning light streaming through window, prayer beads and incense, serene Himalayan landscape visible outside, sense of spiritual contemplation and peace, Procreate digital painting style, maroon and saffron color palette, warm and inviting atmosphere
 
 ### 3. field-discipleship.png
-- **File:** `/Users/dev/Projects/EveryBible/assets/tibetan/field-discipleship.png`
+- **File:** `/Users/dev/Projects/Day and Night Bible/assets/tibetan/field-discipleship.png`
 - **Size:** 1.5 MB
 - **Resolution:** 1408 x 768 (16:9 aspect ratio)
 - **Theme:** Peace and reconciliation
@@ -84,7 +84,7 @@ This maintains cultural authenticity while complying with API policies:
 ## Files Generated
 
 ```
-/Users/dev/Projects/EveryBible/assets/tibetan/
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/
 ├── home-hero.png (1.6 MB, 1408x768)
 ├── field-gospel.png (1.7 MB, 1408x768)
 └── field-discipleship.png (1.5 MB, 1408x768)
@@ -94,15 +94,15 @@ This maintains cultural authenticity while complying with API policies:
 
 ```bash
 # List files
-ls -lh /Users/dev/Projects/EveryBible/assets/tibetan/*.png
+ls -lh /Users/dev/Projects/Day and Night Bible/assets/tibetan/*.png
 
 # Check image properties
-file /Users/dev/Projects/EveryBible/assets/tibetan/*.png
+file /Users/dev/Projects/Day and Night Bible/assets/tibetan/*.png
 
 # View in Preview (macOS)
-open /Users/dev/Projects/EveryBible/assets/tibetan/home-hero.png
-open /Users/dev/Projects/EveryBible/assets/tibetan/field-gospel.png
-open /Users/dev/Projects/EveryBible/assets/tibetan/field-discipleship.png
+open /Users/dev/Projects/Day and Night Bible/assets/tibetan/home-hero.png
+open /Users/dev/Projects/Day and Night Bible/assets/tibetan/field-gospel.png
+open /Users/dev/Projects/Day and Night Bible/assets/tibetan/field-discipleship.png
 ```
 
 ---
@@ -110,7 +110,7 @@ open /Users/dev/Projects/EveryBible/assets/tibetan/field-discipleship.png
 ## Script Implementation
 
 Created TypeScript generation script at:
-`/Users/dev/Projects/EveryBible/scripts/generate-tibetan-images.ts`
+`/Users/dev/Projects/Day and Night Bible/scripts/generate-tibetan-images.ts`
 
 **Features:**
 - Sequential generation with error handling

@@ -292,11 +292,11 @@ These features are placeholders in current code:
 All file paths used in this implementation:
 
 ```
-/Users/dev/Projects/EveryBible/src/data/oneFieldOneGoalCourses.ts
-/Users/dev/Projects/EveryBible/src/i18n/locales/en.ts
-/Users/dev/Projects/EveryBible/src/screens/learn/CourseListScreen.tsx
-/Users/dev/Projects/EveryBible/src/screens/learn/FourFieldsJourneyScreen.tsx
-/Users/dev/Projects/EveryBible/src/stores/fourFieldsStore.ts
+/Users/dev/Projects/Day and Night Bible/src/data/oneFieldOneGoalCourses.ts
+/Users/dev/Projects/Day and Night Bible/src/i18n/locales/en.ts
+/Users/dev/Projects/Day and Night Bible/src/screens/learn/CourseListScreen.tsx
+/Users/dev/Projects/Day and Night Bible/src/screens/learn/FourFieldsJourneyScreen.tsx
+/Users/dev/Projects/Day and Night Bible/src/stores/fourFieldsStore.ts
 ```
 
 ---

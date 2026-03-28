@@ -231,7 +231,7 @@ Since AI image generation is not available in this development environment, foll
 ### 1. Organize Files
 
 ```bash
-cd /Users/dev/Projects/EveryBible/assets/tibetan
+cd /Users/dev/Projects/Day and Night Bible/assets/tibetan
 mkdir -p originals
 # Move all downloaded images to originals/
 mv ~/Downloads/home-hero.png originals/
@@ -400,7 +400,7 @@ If you encounter issues:
 
 **Final deliverables location:**
 ```
-/Users/dev/Projects/EveryBible/assets/tibetan/
+/Users/dev/Projects/Day and Night Bible/assets/tibetan/
 ├── home-hero.png, @2x.png, @3x.png
 ├── field-entry.png, @2x.png, @3x.png
 ├── field-gospel.png, @2x.png, @3x.png

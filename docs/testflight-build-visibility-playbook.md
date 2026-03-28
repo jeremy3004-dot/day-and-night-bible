@@ -5,7 +5,7 @@ Use this when a build has uploaded, but testers still cannot see it in TestFligh
 ## 1. Confirm the build is actually in App Store Connect
 
 ```bash
-asc builds list --app 6758254335 --sort -uploadedDate --limit 10 --output json
+asc builds list --app <new-app-store-id> --sort -uploadedDate --limit 10 --output json
 ```
 
 Check:
@@ -18,7 +18,7 @@ If the build is not present, this is an upload/build issue, not a TestFlight dis
 ## 2. Confirm export compliance is not the blocker
 
 This app already declares non-exempt encryption as false in:
-- `/Users/dev/Projects/EveryBible/app.json`
+- `/Users/dev/Projects/Day and Night Bible/app.json`
 
 Relevant setting:
 
@@ -51,7 +51,7 @@ Interpretation:
 List groups:
 
 ```bash
-asc testflight beta-groups list --app 6758254335 --output json
+asc testflight beta-groups list --app <new-app-store-id> --output json
 ```
 
 Check group build relationships:
@@ -85,7 +85,7 @@ If internal visibility is urgent or group state is ambiguous, attach the build d
 List testers:
 
 ```bash
-asc testflight beta-testers list --app 6758254335 --output json
+asc testflight beta-testers list --app <new-app-store-id> --output json
 ```
 
 Attach build directly:

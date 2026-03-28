@@ -1,6 +1,6 @@
 # Cultural Review Checklist - Tibetan Illustrations
 
-**Purpose:** Ensure all generated illustrations are culturally appropriate and respectful for use in EveryBible app targeting Tibetan communities.
+**Purpose:** Ensure all generated illustrations are culturally appropriate and respectful for use in Day and Night Bible app targeting Tibetan communities.
 
 ---
 

@@ -1,4 +1,4 @@
-# "1 Field 1 Goal" Content Structure for EveryBible
+# "1 Field 1 Goal" Content Structure for Day and Night Bible
 
 ## Overview
 
@@ -110,7 +110,7 @@ Based on research, "One Field One Goal" is the foundational approach for Harvest
 
 ---
 
-## Implementation in EveryBible App
+## Implementation in Day and Night Bible App
 
 ### Data Model
 

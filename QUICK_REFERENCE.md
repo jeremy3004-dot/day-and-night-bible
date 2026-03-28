@@ -35,21 +35,21 @@ const prompt = `
 
 1. **Check file sizes:**
    ```bash
-   ls -lh /Users/dev/Projects/EveryBible/assets/tibetan/*.png
+   ls -lh /Users/dev/Projects/Day and Night Bible/assets/tibetan/*.png
    # Should be: 1.2M - 1.6M
    # NOT: 10K (that's the old placeholder)
    ```
 
 2. **Delete old variants:**
    ```bash
-   rm /Users/dev/Projects/EveryBible/assets/tibetan/*@2x.png
-   rm /Users/dev/Projects/EveryBible/assets/tibetan/*@3x.png
+   rm /Users/dev/Projects/Day and Night Bible/assets/tibetan/*@2x.png
+   rm /Users/dev/Projects/Day and Night Bible/assets/tibetan/*@3x.png
    ```
 
 3. **Nuclear cache clear:**
    ```bash
    rm -rf .expo ios/build node_modules/.cache
-   rm -rf ~/Library/Developer/Xcode/DerivedData/EveryBible-*
+   rm -rf ~/Library/Developer/Xcode/DerivedData/DayAndNightBible-*
    ```
 
 4. **Rebuild:**
@@ -58,7 +58,7 @@ const prompt = `
    ```
 
 ## Image Locations
-- Base: `/Users/dev/Projects/EveryBible/assets/tibetan/`
+- Base: `/Users/dev/Projects/Day and Night Bible/assets/tibetan/`
 - Files: `home-hero.png`, `field-gospel.png`, `field-discipleship.png`
 - NO @2x or @3x variants (let React Native handle scaling)
 
