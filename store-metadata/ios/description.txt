@@ -1,4 +1,4 @@
-Selah: Bible Meditate and Prayer - Read the Bible daily with beautiful design, prayer studies, and progress tracking.
+Day and Night Bible - Read the Bible daily with beautiful design, prayer studies, and progress tracking.
 
 FEATURES:
 
@@ -34,4 +34,4 @@ Prayer Studies
 - Learn from apostolic prayers
 - Meditate with biblical figures at prayer
 
-Start your Bible reading journey today with Selah.
+Start your Bible reading journey today with Day and Night Bible.

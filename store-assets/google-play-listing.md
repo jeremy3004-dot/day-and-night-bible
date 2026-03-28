@@ -1,14 +1,14 @@
-# Selah - Google Play Store Listing
+# Day and Night Bible - Google Play Store Listing
 
 ## App Name (50 characters max)
-Selah: Bible Meditate and Prayer
+Day and Night Bible
 
 ## Short Description (80 characters max)
 Read Scripture, meditate, and pray with guided biblical prayer studies.
 
 ## Full Description (4000 characters max)
 
-Selah: Bible Meditate and Prayer is your companion for Scripture reading, audio listening, meditation, and prayer. Whether you're new to the Bible or a seasoned reader, Selah helps you engage with God's Word every day.
+Day and Night Bible is your companion for Scripture reading, audio listening, meditation, and prayer. Whether you're new to the Bible or a seasoned reader, Day and Night Bible helps you engage with God's Word every day.
 
 COMPLETE BIBLE TEXT
 Read the entire Bible in the clear, modern Berean Standard Bible (BSB) translation. All 66 books, 1,189 chapters, and 31,086 verses are included - completely free with no in-app purchases required.
@@ -53,7 +53,7 @@ CUSTOMIZABLE EXPERIENCE
 YOUR DATA, YOUR CONTROL
 Sign in to sync your progress across devices, or use the app completely offline. Your reading history and preferences are securely stored and never shared.
 
-Download Selah today and begin a more prayerful journey through Scripture.
+Download Day and Night Bible today and begin a more prayerful journey through Scripture.
 
 ---
 
@@ -73,7 +73,7 @@ curryj@protonmail.com
 https://dayandnightbible-legal.github.io/privacy.html
 
 ## Feature Graphic Text (for 1024x500 image)
-"Selah - Read. Meditate. Pray."
+"Day and Night Bible - Read. Meditate. Pray."
 
 ## Promo Video
 (Not required for initial release)
@@ -81,7 +81,7 @@ https://dayandnightbible-legal.github.io/privacy.html
 ## Release Notes
 
 **Version 1.0.0**
-Welcome to Selah! This initial release includes:
+Welcome to Day and Night Bible! This initial release includes:
 * Complete Berean Standard Bible text
 * Audio Bible player with playback controls
 * Prayer studies from Jesus, the apostles, and biblical figures

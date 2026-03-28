@@ -1,5 +1,5 @@
 export const config = {
-  appName: 'Selah',
+  appName: 'Day and Night Bible',
   version: '1.0.0',
 
   // Bible defaults

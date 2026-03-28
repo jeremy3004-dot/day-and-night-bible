@@ -259,7 +259,7 @@ export function HomeScreen() {
             />
             <View style={styles.heroTopRow}>
               <View style={styles.heroBrandLockup}>
-                <Text style={[styles.heroBrand, { color: colors.accentPrimary }]}>Selah</Text>
+                <Text style={[styles.heroBrand, { color: colors.accentPrimary }]}>Day and Night Bible</Text>
                 <Text style={[styles.heroGreeting, { color: colors.primaryText }]}>
                   {getGreeting()}
                 </Text>

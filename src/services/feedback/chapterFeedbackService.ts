@@ -220,7 +220,7 @@ export async function submitChapterFeedback(
       success: false,
       saved: false,
       exported: false,
-      error: 'Selah backend is not configured for this build yet.',
+      error: 'Day and Night Bible backend is not configured for this build yet.',
     };
   }
 

@@ -22,7 +22,7 @@ export const es = {
     unexpectedError: 'Lo sentimos, pero ocurrió algo inesperado. Por favor intenta de nuevo.',
     somethingWentWrong: 'Algo salió mal',
     tryAgain: 'Intentar de nuevo',
-    shareMessage: '¡Descubre Selah!',
+    shareMessage: '¡Descubre Day and Night Bible!',
     all: 'Todos',
   },
   tabs: {
@@ -36,7 +36,7 @@ export const es = {
     goodMorning: 'Buen día',
     goodAfternoon: 'Buenas tardes',
     goodEvening: 'Buenas noches',
-    welcome: 'Bienvenido a Selah',
+    welcome: 'Bienvenido a Day and Night Bible',
     verseOfTheDay: 'Verso del dia',
     sectionOfTheDay: 'Sección del día',
     sectionOfTheDayBody:
@@ -84,7 +84,7 @@ export const es = {
     privacyBody:
       'Elija el estilo de icono para este dispositivo. El modo discreto también agrega un bloqueo de código local cada vez que sales de la aplicación.',
     standardIconTitle: 'Icono estándar',
-    standardIconBody: 'Utilice el icono normal Selah y abra la aplicación directamente.',
+    standardIconBody: 'Utilice el icono normal Day and Night Bible y abra la aplicación directamente.',
     discreetIconTitle: 'Icono discreto',
     discreetIconBody:
       'Utilice un icono de perfil bajo en este dispositivo y proteja el acceso con un código estilo calculadora.',
@@ -115,7 +115,7 @@ export const es = {
     searchUnavailable: 'Full-text search is not available for this translation yet.',
     noVersesAvailable: '{{book}} {{chapter}} aún no tiene texto escrito.',
     fullBibleComingSoon:
-      'Este capítulo no está disponible en texto en este momento. Si hay audio disponible, Selah abrirá la experiencia auditiva.',
+      'Este capítulo no está disponible en texto en este momento. Si hay audio disponible, Day and Night Bible abrirá la experiencia auditiva.',
     audioOnlyTitle: 'Audio-primer capítulo',
     audioOnlyBody:
       '{{translation}} está actualmente disponible como audio para este capítulo mientras aún se prepara el texto escrito.',
@@ -222,7 +222,7 @@ export const es = {
   },
   privacy: {
     lockTitle: 'Introduce tu código seguro',
-    lockBody: 'Este dispositivo está en modo discreto. Desbloquee Selah para continuar.',
+    lockBody: 'Este dispositivo está en modo discreto. Desbloquee Day and Night Bible para continuar.',
     pinPlaceholder: 'Toca tu código',
     pinLengthHint: 'Utilice su código de 4 a 6 caracteres.',
     unlock: 'Desbloquear la Biblia',
@@ -515,7 +515,7 @@ export const es = {
     title: 'Acerca de',
     version: 'Versión {{version}}',
     description:
-      'Selah es una forma sencilla y hermosa de leer y estudiar la Palabra de Dios.',
+      'Day and Night Bible es una forma sencilla y hermosa de leer y estudiar la Palabra de Dios.',
     bibleTranslation: 'Traducción de la Biblia',
     bereanBible: 'Biblia estándar de Berea',
     privacyPolicy: 'política de privacidad',

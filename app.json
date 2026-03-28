@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Selah: Bible Meditate and Prayer",
+    "name": "Day and Night Bible",
     "slug": "day-and-night-bible",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -72,11 +72,11 @@
       "./plugins/withBrandedSplashAsset",
       "@react-native-google-signin/google-signin"
     ],
+    "owner": "jeremy1001",
     "extra": {
       "eas": {
-        "projectId": "cfbf2bac-d680-448f-b2aa-33c4c01ad15b"
+        "projectId": "18d362a1-3c47-45b7-8425-7396fc1c2052"
       }
-    },
-    "owner": "jeremy1001"
+    }
   }
 }
