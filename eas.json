@@ -37,6 +37,7 @@
   "submit": {
     "production": {
       "ios": {
+        "ascAppId": "6761294625",
         "appleId": "curryj@protonmail.com",
         "appleTeamId": "NVC9N47PRH"
       },
