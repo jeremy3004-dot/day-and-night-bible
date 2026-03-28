@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Selah: Bible Meditate and Prayer",
-    "slug": "EveryBible",
+    "slug": "day-and-night-bible",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.dayandnightbible.app",
-      "buildNumber": "190",
+      "buildNumber": "1",
       "usesAppleSignIn": true,
       "infoPlist": {
         "UILaunchStoryboardName": "DayAndNightBibleLaunchScreen",
