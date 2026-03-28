@@ -1,8 +1,8 @@
-# EveryBible
+# Day and Night Bible
 
 ## What This Is
 
-EveryBible is a mobile-first Scripture and discipleship product for people who need a dependable way to read, listen, reflect, and grow with others. It already has a credible v1 foundation: offline Bible access, audio, multilingual onboarding, discreet privacy controls, and early group-learning flows on Expo / React Native with Supabase-backed sync.
+Day and Night Bible is a mobile-first Scripture and discipleship product for people who need a dependable way to read, listen, reflect, and grow with others. It already has a credible v1 foundation: offline Bible access, audio, multilingual onboarding, discreet privacy controls, and early group-learning flows on Expo / React Native with Supabase-backed sync.
 
 ## Core Value
 
@@ -35,6 +35,7 @@ When someone opens the app, they should immediately know what to do next with Go
 
 - [ ] Make the home experience a daily spiritual rhythm hub instead of a static utility screen.
 - [ ] Elevate the Bible reader into a premium read/listen/study surface with stronger personalization and lower-friction controls.
+- [ ] Add a lightweight chapter-quality feedback loop so real readers can flag what is working, what is broken, and what should be improved.
 - [ ] Turn discipleship content into a guided journey with visible momentum, next steps, and group participation hooks.
 - [ ] Strengthen backend-driven engagement loops such as push reminders, synced plans, shared study progress, and content lifecycle tooling.
 - [ ] Add performance, accessibility, analytics, and operational guardrails so product growth does not degrade trust.
@@ -48,7 +49,7 @@ When someone opens the app, they should immediately know what to do next with Go
 
 ## Product Strategy
 
-EveryBible should win on a combination that most Scripture apps split apart:
+Day and Night Bible should win on a combination that most Scripture apps split apart:
 
 - Offline-first reliability for reading and listening.
 - A calm, premium daily-use interface that feels intentional instead of generic.
@@ -96,4 +97,4 @@ The first Milestone 2 phase needs to balance product taste with platform leverag
 | Sequence backend/platform upgrades after the home, reader, and lesson surfaces begin demanding them | This keeps the roadmap product-led while still acknowledging the platform work required for scale | ✓ Good |
 
 ---
-*Last updated: 2026-03-11 for Milestone 2 kickoff*
+*Last updated: 2026-03-27 after adding chapter feedback planning scope*

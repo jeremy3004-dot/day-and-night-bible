@@ -36,7 +36,7 @@ export function assertSyncedGroupServiceReady({
   });
 
   if (availability === 'backend-unavailable') {
-    throw new Error('EveryBible backend is not configured for this build yet.');
+    throw new Error('Day and Night Bible backend is not configured for this build yet.');
   }
 
   if (availability === 'signin-required') {

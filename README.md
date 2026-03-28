@@ -1,10 +1,10 @@
-# EveryBible
+# Day and Night Bible
 
 A mobile Bible study app with offline access, audio playback, discipleship training, and group study features.
 
 ## Overview
 
-EveryBible is a comprehensive Bible study application built with React Native and Expo. It provides:
+Day and Night Bible is a comprehensive Bible study application built with React Native and Expo. It provides:
 
 - **Offline Bible Reading:** Complete Berean Standard Bible (BSB) stored locally in SQLite
 - **Audio Bible:** Stream and download public-domain BSB and WEB chapter audio without extra credentials
@@ -42,7 +42,7 @@ EveryBible is a comprehensive Bible study application built with React Native an
 
 ```bash
 git clone <repository-url>
-cd EveryBible
+cd day-and-night-bible
 npm install
 ```
 
@@ -107,6 +107,8 @@ cd ..
 npm run ios
 ```
 
+`npm run ios` launches the Xcode Debug app. That build expects Metro to be running; if you reopen it later without Metro, iOS will fail with `No script URL provided`.
+
 If you encounter CocoaPods issues, see the global CLAUDE.md for troubleshooting.
 
 ## Development Commands
@@ -126,15 +128,15 @@ npm run format:check      # Check code formatting
 ### Building
 
 ```bash
-# Development builds (with dev client)
+# Development builds (with dev client, requires Metro when you launch the app)
 eas build --profile development --platform ios
 eas build --profile development --platform android
 
-# Preview builds (internal distribution installs)
+# Preview builds (internal distribution installs) with embedded JS bundle
 eas build --profile preview --platform ios
 eas build --profile preview --platform android
 
-# Production builds (store / TestFlight submission candidates)
+# Production builds (store / TestFlight submission candidates with embedded JS bundle)
 eas build --profile production --platform ios
 eas build --profile production --platform android
 ```

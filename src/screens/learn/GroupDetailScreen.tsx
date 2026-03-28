@@ -118,6 +118,7 @@ export function GroupDetailScreen() {
     isSignedIn,
     remoteRequestKey,
     syncFeatureEnabled,
+    t,
     userId,
   ]);
 
@@ -199,7 +200,7 @@ export function GroupDetailScreen() {
   const handleShareCode = async () => {
     try {
       await Share.share({
-        message: `Join my discipleship group "${group.name}" in EveryBible!\n\nJoin code: ${group.joinCode}`,
+        message: `Join my discipleship group "${group.name}" in Day and Night Bible!\n\nJoin code: ${group.joinCode}`,
       });
     } catch {
       // User cancelled

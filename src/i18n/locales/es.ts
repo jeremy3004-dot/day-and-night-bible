@@ -22,7 +22,7 @@ export const es = {
     unexpectedError: 'Lo sentimos, pero ocurrió algo inesperado. Por favor intenta de nuevo.',
     somethingWentWrong: 'Algo salió mal',
     tryAgain: 'Intentar de nuevo',
-    shareMessage: '¡Descubre EveryBible!',
+    shareMessage: '¡Descubre Day and Night Bible!',
     all: 'Todos',
   },
   tabs: {
@@ -36,7 +36,7 @@ export const es = {
     goodMorning: 'Buen día',
     goodAfternoon: 'Buenas tardes',
     goodEvening: 'Buenas noches',
-    welcome: 'Bienvenido a Every Bible',
+    welcome: 'Bienvenido a Day and Night Bible',
     verseOfTheDay: 'Verso del dia',
     sectionOfTheDay: 'Sección del día',
     sectionOfTheDayBody:
@@ -84,7 +84,7 @@ export const es = {
     privacyBody:
       'Elija el estilo de icono para este dispositivo. El modo discreto también agrega un bloqueo de código local cada vez que sales de la aplicación.',
     standardIconTitle: 'Icono estándar',
-    standardIconBody: 'Utilice el icono normal Every Bible y abra la aplicación directamente.',
+    standardIconBody: 'Utilice el icono normal Day and Night Bible y abra la aplicación directamente.',
     discreetIconTitle: 'Icono discreto',
     discreetIconBody:
       'Utilice un icono de perfil bajo en este dispositivo y proteja el acceso con un código estilo calculadora.',
@@ -112,9 +112,10 @@ export const es = {
     available: 'Disponible',
     translationComingSoon: '{{name}} estará disponible para descargar en una actualización futura.',
     failedToLoad: 'No pudimos cargar este capítulo en este momento.',
+    searchUnavailable: 'Full-text search is not available for this translation yet.',
     noVersesAvailable: '{{book}} {{chapter}} aún no tiene texto escrito.',
     fullBibleComingSoon:
-      'Este capítulo no está disponible en texto en este momento. Si hay audio disponible, Every Bible abrirá la experiencia auditiva.',
+      'Este capítulo no está disponible en texto en este momento. Si hay audio disponible, Day and Night Bible abrirá la experiencia auditiva.',
     audioOnlyTitle: 'Audio-primer capítulo',
     audioOnlyBody:
       '{{translation}} está actualmente disponible como audio para este capítulo mientras aún se prepara el texto escrito.',
@@ -128,6 +129,18 @@ export const es = {
     addToQueue: 'Agregar a la cola',
     downloadBookAudio: 'Descargar audio del libro',
     shareChapterReference: 'Compartir referencia del capítulo',
+    chapterFeedback: 'Comentarios del capítulo',
+    chapterFeedbackTitle: 'Comparte comentarios sobre este capítulo',
+    chapterFeedbackBody:
+      'Cuéntanos si este capítulo fue útil o qué podría mejorar. Los comentarios son opcionales.',
+    chapterFeedbackThumbsUp: 'Útil',
+    chapterFeedbackThumbsDown: 'Necesita mejoras',
+    chapterFeedbackPlaceholder: 'Comentario opcional sobre este capítulo',
+    chapterFeedbackSubmit: 'Enviar comentario',
+    chapterFeedbackSuccess: 'Gracias. Tus comentarios se enviaron.',
+    chapterFeedbackSavedFallback:
+      'Gracias. Tus comentarios se guardaron y se exportarán para revisión pronto.',
+    chapterFeedbackSignInRequired: 'Inicia sesión antes de enviar comentarios sobre el capítulo.',
     books: {
       GEN: 'Génesis',
       EXO: 'Éxodo',
@@ -209,7 +222,7 @@ export const es = {
   },
   privacy: {
     lockTitle: 'Introduce tu código seguro',
-    lockBody: 'Este dispositivo está en modo discreto. Desbloquee Every Bible para continuar.',
+    lockBody: 'Este dispositivo está en modo discreto. Desbloquee Day and Night Bible para continuar.',
     pinPlaceholder: 'Toca tu código',
     pinLengthHint: 'Utilice su código de 4 a 6 caracteres.',
     unlock: 'Desbloquear la Biblia',
@@ -238,6 +251,9 @@ export const es = {
     notifications: 'Notificaciones',
     dailyReminder: 'Recordatorio diario',
     reminderTime: 'Hora del recordatorio',
+    chapterFeedback: 'Comentarios del capítulo',
+    chapterFeedbackSummaryOn: 'Los comentarios opcionales del capítulo están activados',
+    chapterFeedbackSummaryOff: 'Los comentarios opcionales del capítulo están desactivados',
     notSet: 'No establecido',
     data: 'Datos',
     downloadOffline: 'Descargar sin conexión',
@@ -499,7 +515,7 @@ export const es = {
     title: 'Acerca de',
     version: 'Versión {{version}}',
     description:
-      'Every Bible es una forma sencilla y hermosa de leer y estudiar la Palabra de Dios.',
+      'Day and Night Bible es una forma sencilla y hermosa de leer y estudiar la Palabra de Dios.',
     bibleTranslation: 'Traducción de la Biblia',
     bereanBible: 'Biblia estándar de Berea',
     privacyPolicy: 'política de privacidad',

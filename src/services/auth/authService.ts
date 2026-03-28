@@ -247,7 +247,7 @@ export const resetPassword = async (
   email: string
 ): Promise<{ success: boolean; error?: string }> => {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'EveryBible backend is not configured for this build yet.' };
+    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
   }
 
   try {

@@ -22,7 +22,7 @@ export const hi = {
     unexpectedError: 'हमें खेद है, लेकिन कुछ अप्रत्याशित हुआ। कृपया पुनः प्रयास करें।',
     somethingWentWrong: 'कुछ गलत हो गया',
     tryAgain: 'पुनः प्रयास करें',
-    shareMessage: 'EveryBible देखें!',
+    shareMessage: 'Day and Night Bible देखें!',
     all: 'सभी',
   },
   tabs: {
@@ -36,7 +36,7 @@ export const hi = {
     goodMorning: 'शुभ प्रभात',
     goodAfternoon: 'शुभ दोपहर',
     goodEvening: 'शुभ संध्या',
-    welcome: 'Every Bible में आपका स्वागत है',
+    welcome: 'Day and Night Bible में आपका स्वागत है',
     verseOfTheDay: 'आज का श्लोक',
     sectionOfTheDay: 'दिन का भाग',
     sectionOfTheDayBody:
@@ -84,7 +84,7 @@ export const hi = {
     privacyBody:
       'इस डिवाइस के लिए आइकन शैली चुनें. जब भी आप ऐप छोड़ते हैं तो डिस्क्रीट मोड एक स्थानीय कोड लॉक भी जोड़ता है।',
     standardIconTitle: 'मानक चिह्न',
-    standardIconBody: 'सामान्य Every Bible आइकन का उपयोग करें और सीधे ऐप खोलें।',
+    standardIconBody: 'सामान्य Day and Night Bible आइकन का उपयोग करें और सीधे ऐप खोलें।',
     discreetIconTitle: 'विवेकशील चिह्न',
     discreetIconBody:
       'इस डिवाइस पर लो-प्रोफ़ाइल आइकन का उपयोग करें और कैलकुलेटर-शैली कोड के साथ पहुंच को सुरक्षित रखें।',
@@ -112,9 +112,10 @@ export const hi = {
     available: 'उपलब्ध',
     translationComingSoon: '{{name}} भविष्य के अपडेट में डाउनलोड के लिए उपलब्ध होगा।',
     failedToLoad: 'हम अभी इस अध्याय को लोड नहीं कर सके.',
+    searchUnavailable: 'Full-text search is not available for this translation yet.',
     noVersesAvailable: '{{book}} {{chapter}} में अभी तक लिखित पाठ नहीं है।',
     fullBibleComingSoon:
-      'यह अध्याय अभी पाठ में उपलब्ध नहीं है. यदि ऑडियो उपलब्ध है, तो Every Bible इसके बजाय सुनने का अनुभव खोलेगा।',
+      'यह अध्याय अभी पाठ में उपलब्ध नहीं है. यदि ऑडियो उपलब्ध है, तो Day and Night Bible इसके बजाय सुनने का अनुभव खोलेगा।',
     audioOnlyTitle: 'ऑडियो-प्रथम अध्याय',
     audioOnlyBody:
       '{{translation}} वर्तमान में इस अध्याय के लिए ऑडियो के रूप में उपलब्ध है जबकि लिखित पाठ अभी भी तैयार किया जा रहा है।',
@@ -128,6 +129,18 @@ export const hi = {
     addToQueue: 'कतार में जोड़ें',
     downloadBookAudio: 'पुस्तक ऑडियो डाउनलोड करें',
     shareChapterReference: 'अध्याय संदर्भ साझा करें',
+    chapterFeedback: 'अध्याय प्रतिक्रिया',
+    chapterFeedbackTitle: 'इस अध्याय पर अपनी प्रतिक्रिया साझा करें',
+    chapterFeedbackBody:
+      'हमें बताएं कि यह अध्याय उपयोगी था या इसे कैसे बेहतर बनाया जा सकता है। टिप्पणी वैकल्पिक है।',
+    chapterFeedbackThumbsUp: 'उपयोगी',
+    chapterFeedbackThumbsDown: 'सुधार चाहिए',
+    chapterFeedbackPlaceholder: 'इस अध्याय पर वैकल्पिक टिप्पणी',
+    chapterFeedbackSubmit: 'प्रतिक्रिया भेजें',
+    chapterFeedbackSuccess: 'धन्यवाद। आपकी प्रतिक्रिया भेज दी गई है।',
+    chapterFeedbackSavedFallback:
+      'धन्यवाद। आपकी प्रतिक्रिया सुरक्षित हो गई है और जल्द समीक्षा के लिए निर्यात की जाएगी।',
+    chapterFeedbackSignInRequired: 'अध्याय प्रतिक्रिया भेजने से पहले कृपया साइन इन करें।',
     books: {
       GEN: 'उत्पत्ति',
       EXO: 'निर्गमन',
@@ -209,7 +222,7 @@ export const hi = {
   },
   privacy: {
     lockTitle: 'अपना सुरक्षित कोड दर्ज करें',
-    lockBody: 'यह डिवाइस डिस्क्रीट मोड में है. जारी रखने के लिए Every Bible को अनलॉक करें।',
+    lockBody: 'यह डिवाइस डिस्क्रीट मोड में है. जारी रखने के लिए Day and Night Bible को अनलॉक करें।',
     pinPlaceholder: 'अपना कोड टैप करें',
     pinLengthHint: 'अपने 4 से 6 अक्षर वाले कोड का उपयोग करें।',
     unlock: 'बाइबिल अनलॉक करें',
@@ -238,6 +251,9 @@ export const hi = {
     notifications: 'सूचनाएं',
     dailyReminder: 'दैनिक अनुस्मारक',
     reminderTime: 'अनुस्मारक समय',
+    chapterFeedback: 'अध्याय प्रतिक्रिया',
+    chapterFeedbackSummaryOn: 'वैकल्पिक अध्याय प्रतिक्रिया चालू है',
+    chapterFeedbackSummaryOff: 'वैकल्पिक अध्याय प्रतिक्रिया बंद है',
     notSet: 'सेट नहीं',
     data: 'डेटा',
     downloadOffline: 'ऑफ़लाइन के लिए डाउनलोड करें',
@@ -493,7 +509,7 @@ export const hi = {
   about: {
     title: 'के बारे में',
     version: 'संस्करण {{version}}',
-    description: 'Every Bible परमेश्वर के वचन को पढ़ने और अध्ययन करने का एक सरल, सुंदर तरीका है।',
+    description: 'Day and Night Bible परमेश्वर के वचन को पढ़ने और अध्ययन करने का एक सरल, सुंदर तरीका है।',
     bibleTranslation: 'बाइबिल अनुवाद',
     bereanBible: 'बेरेन मानक बाइबिल',
     privacyPolicy: 'गोपनीयता नीति',

@@ -22,7 +22,7 @@ export const en = {
     unexpectedError: "We're sorry, but something unexpected happened. Please try again.",
     somethingWentWrong: 'Something went wrong',
     tryAgain: 'Try Again',
-    shareMessage: 'Check out EveryBible!',
+    shareMessage: 'Check out Day and Night Bible!',
     all: 'All',
   },
   tabs: {
@@ -36,7 +36,7 @@ export const en = {
     goodMorning: 'Good Morning',
     goodAfternoon: 'Good Afternoon',
     goodEvening: 'Good Evening',
-    welcome: 'Welcome to Every Bible',
+    welcome: 'Welcome to Day and Night Bible',
     verseOfTheDay: 'Verse of the Day',
     sectionOfTheDay: 'Section of the Day',
     sectionOfTheDayBody:
@@ -84,7 +84,7 @@ export const en = {
     privacyBody:
       'Pick the icon style for this device. Discreet mode also adds a local code lock whenever you leave the app.',
     standardIconTitle: 'Standard icon',
-    standardIconBody: 'Use the normal Every Bible icon and open the app directly.',
+    standardIconBody: 'Use the normal Day and Night Bible icon and open the app directly.',
     discreetIconTitle: 'Discreet icon',
     discreetIconBody:
       'Use a low-profile icon on this device and protect access with a calculator-style code.',
@@ -112,9 +112,10 @@ export const en = {
     available: 'Available',
     translationComingSoon: '{{name}} will be available for download in a future update.',
     failedToLoad: 'We could not load this chapter right now.',
+    searchUnavailable: 'Full-text search is not available for this translation yet.',
     noVersesAvailable: '{{book}} {{chapter}} does not have written text yet.',
     fullBibleComingSoon:
-      'This chapter is not available in text right now. If audio is available, Every Bible will open the listening experience instead.',
+      'This chapter is not available in text right now. If audio is available, Day and Night Bible will open the listening experience instead.',
     audioOnlyTitle: 'Audio-first chapter',
     audioOnlyBody:
       '{{translation}} is currently available as audio for this chapter while written text is still being prepared.',
@@ -128,6 +129,18 @@ export const en = {
     addToQueue: 'Add to queue',
     downloadBookAudio: 'Download book audio',
     shareChapterReference: 'Share chapter reference',
+    chapterFeedback: 'Chapter feedback',
+    chapterFeedbackTitle: 'Share feedback about this chapter',
+    chapterFeedbackBody:
+      'Tell us if this chapter was helpful or what could be improved. Comments are optional.',
+    chapterFeedbackThumbsUp: 'Helpful',
+    chapterFeedbackThumbsDown: 'Needs work',
+    chapterFeedbackPlaceholder: 'Optional comment about this chapter',
+    chapterFeedbackSubmit: 'Send feedback',
+    chapterFeedbackSuccess: 'Thanks. Your feedback was sent.',
+    chapterFeedbackSavedFallback:
+      'Thanks. Your feedback was saved and will be exported for review shortly.',
+    chapterFeedbackSignInRequired: 'Please sign in before sending chapter feedback.',
     books: {
       GEN: 'Genesis',
       EXO: 'Exodus',
@@ -209,7 +222,7 @@ export const en = {
   },
   privacy: {
     lockTitle: 'Enter your secure code',
-    lockBody: 'This device is in discreet mode. Unlock Every Bible to continue.',
+    lockBody: 'This device is in discreet mode. Unlock Day and Night Bible to continue.',
     pinPlaceholder: 'Tap your code',
     pinLengthHint: 'Use your 4 to 6 character code.',
     unlock: 'Unlock Bible',
@@ -238,6 +251,9 @@ export const en = {
     notifications: 'Notifications',
     dailyReminder: 'Daily Reminder',
     reminderTime: 'Reminder Time',
+    chapterFeedback: 'Chapter feedback',
+    chapterFeedbackSummaryOn: 'Optional chapter feedback is on',
+    chapterFeedbackSummaryOff: 'Optional chapter feedback is off',
     notSet: 'Not set',
     data: 'Data',
     downloadOffline: 'Download for Offline',
@@ -493,7 +509,7 @@ export const en = {
   about: {
     title: 'About',
     version: 'Version {{version}}',
-    description: "Every Bible is a simple, beautiful way to read and study God's Word.",
+    description: "Day and Night Bible is a simple, beautiful way to read and study God's Word.",
     bibleTranslation: 'Bible Translation',
     bereanBible: 'Berean Standard Bible',
     privacyPolicy: 'Privacy Policy',
