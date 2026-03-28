@@ -110,8 +110,16 @@ test('keeps an explicit chapter ordering for every study group', () => {
       id: 'prayer',
       groups: [
         {
-          title: 'Prayer',
-          references: ['MAT 6', 'LUK 11', 'JHN 17', 'PSA 51'],
+          title: 'The Prayers of Jesus',
+          references: ['MAT 6', 'LUK 11', 'JHN 17'],
+        },
+        {
+          title: 'Apostolic Prayers',
+          references: ['ACT 4', 'EPH 1', 'EPH 3', 'COL 1'],
+        },
+        {
+          title: 'Biblical Figures at Prayer',
+          references: ['1SA 2', '1KI 8', 'NEH 1', 'DAN 9', 'PSA 51'],
         },
       ],
     },

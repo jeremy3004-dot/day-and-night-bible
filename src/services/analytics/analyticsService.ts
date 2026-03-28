@@ -165,7 +165,7 @@ export async function getEngagementSummary(): Promise<
   AnalyticsServiceResult<UserEngagementSummary>
 > {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {
@@ -209,7 +209,7 @@ export async function getEngagementSummary(): Promise<
 // user_engagement_summary row from raw event data server-side.
 export async function refreshEngagement(): Promise<AnalyticsServiceResult> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {

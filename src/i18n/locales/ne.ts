@@ -22,7 +22,7 @@ export const ne = {
     unexpectedError: 'माफ गर्नुहोस्, तर केही अनपेक्षित भयो। कृपया पुन: प्रयास गर्नुहोस्।',
     somethingWentWrong: 'केही गलत भयो',
     tryAgain: 'फेरि प्रयास गर्नुहोस्',
-    shareMessage: 'Day and Night Bible हेर्नुहोस्!',
+    shareMessage: 'Selah हेर्नुहोस्!',
     all: 'सबै',
   },
   tabs: {
@@ -36,7 +36,7 @@ export const ne = {
     goodMorning: 'शुभ प्रभात',
     goodAfternoon: 'शुभ दिउँसो',
     goodEvening: 'शुभ साँझ',
-    welcome: 'Day and Night Bible मा स्वागत छ',
+    welcome: 'Selah मा स्वागत छ',
     verseOfTheDay: 'दिन को पद',
     sectionOfTheDay: 'दिन को खण्ड',
     sectionOfTheDayBody:
@@ -84,7 +84,7 @@ export const ne = {
     privacyBody:
       'यस यन्त्रको लागि आइकन शैली छान्नुहोस्। तपाईंले एप छोड्दा विवेकशील मोडले स्थानीय कोड लक पनि थप्छ।',
     standardIconTitle: 'मानक आइकन',
-    standardIconBody: 'सामान्य Day and Night Bible आइकन प्रयोग गर्नुहोस् र सीधै एप खोल्नुहोस्।',
+    standardIconBody: 'सामान्य Selah आइकन प्रयोग गर्नुहोस् र सीधै एप खोल्नुहोस्।',
     discreetIconTitle: 'विवेकी आइकन',
     discreetIconBody:
       'यस यन्त्रमा कम-प्रोफाइल आइकन प्रयोग गर्नुहोस् र क्याल्कुलेटर-शैली कोडको साथ पहुँच सुरक्षित गर्नुहोस्।',
@@ -115,7 +115,7 @@ export const ne = {
     searchUnavailable: 'Full-text search is not available for this translation yet.',
     noVersesAvailable: '{{book}} {{chapter}} सँग अझै लेखिएको पाठ छैन।',
     fullBibleComingSoon:
-      'यो अध्याय अहिले पाठमा उपलब्ध छैन। यदि अडियो उपलब्ध छ भने, Day and Night Bible ले सुन्ने अनुभव खोल्नेछ।',
+      'यो अध्याय अहिले पाठमा उपलब्ध छैन। यदि अडियो उपलब्ध छ भने, Selah ले सुन्ने अनुभव खोल्नेछ।',
     audioOnlyTitle: 'अडियो-पहिलो अध्याय',
     audioOnlyBody:
       '{{translation}} हाल यस अध्यायको लागि अडियोको रूपमा उपलब्ध छ जबकि लिखित पाठ अझै तयार भइरहेको छ।',
@@ -222,7 +222,7 @@ export const ne = {
   },
   privacy: {
     lockTitle: 'आफ्नो सुरक्षित कोड प्रविष्ट गर्नुहोस्',
-    lockBody: 'यो यन्त्र विवेकी मोडमा छ। जारी राख्न Day and Night Bible अनलक गर्नुहोस्।',
+    lockBody: 'यो यन्त्र विवेकी मोडमा छ। जारी राख्न Selah अनलक गर्नुहोस्।',
     pinPlaceholder: 'आफ्नो कोड ट्याप गर्नुहोस्',
     pinLengthHint: 'आफ्नो 4 देखि 6 वर्ण कोड प्रयोग गर्नुहोस्।',
     unlock: 'बाइबल अनलक गर्नुहोस्',
@@ -511,7 +511,7 @@ export const ne = {
   about: {
     title: 'बारे',
     version: 'संस्करण {{version}}',
-    description: 'Day and Night Bible परमेश्वरको वचन पढ्न र अध्ययन गर्ने सरल, सुन्दर तरिका हो।',
+    description: 'Selah परमेश्वरको वचन पढ्न र अध्ययन गर्ने सरल, सुन्दर तरिका हो।',
     bibleTranslation: 'बाइबल अनुवाद',
     bereanBible: 'Berean मानक बाइबल',
     privacyPolicy: 'गोपनीयता नीति',

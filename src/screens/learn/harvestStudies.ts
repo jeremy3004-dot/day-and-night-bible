@@ -107,15 +107,35 @@ export const harvestStudySections: HarvestStudySection[] = [
   {
     id: 'prayer',
     title: 'Prayer',
-    description: 'Models and teachings that strengthen daily prayer life.',
+    description: 'Prayer studies from Jesus, the apostles, and biblical figures that strengthen daily prayer life.',
     groups: [
       {
-        id: 'prayer-core',
-        title: 'Prayer',
+        id: 'prayers-of-jesus',
+        title: 'The Prayers of Jesus',
         entries: [
           { bookId: 'MAT', chapter: 6 },
           { bookId: 'LUK', chapter: 11 },
           { bookId: 'JHN', chapter: 17 },
+        ],
+      },
+      {
+        id: 'apostolic-prayers',
+        title: 'Apostolic Prayers',
+        entries: [
+          { bookId: 'ACT', chapter: 4 },
+          { bookId: 'EPH', chapter: 1 },
+          { bookId: 'EPH', chapter: 3 },
+          { bookId: 'COL', chapter: 1 },
+        ],
+      },
+      {
+        id: 'biblical-figures-at-prayer',
+        title: 'Biblical Figures at Prayer',
+        entries: [
+          { bookId: '1SA', chapter: 2 },
+          { bookId: '1KI', chapter: 8 },
+          { bookId: 'NEH', chapter: 1 },
+          { bookId: 'DAN', chapter: 9 },
           { bookId: 'PSA', chapter: 51 },
         ],
       },

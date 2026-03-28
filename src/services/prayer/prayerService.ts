@@ -101,7 +101,7 @@ export async function createPrayerRequest(
   content: string
 ): Promise<PrayerServiceResult<PrayerRequest>> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {
@@ -149,7 +149,7 @@ export async function updatePrayerRequest(
   content: string
 ): Promise<PrayerServiceResult<PrayerRequest>> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {
@@ -192,7 +192,7 @@ export async function markPrayerAnswered(
   requestId: string
 ): Promise<PrayerServiceResult<PrayerRequest>> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {
@@ -235,7 +235,7 @@ export async function markPrayerAnswered(
 // Deletes a prayer request. RLS ensures only the original author can delete.
 export async function deletePrayerRequest(requestId: string): Promise<PrayerServiceResult> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {
@@ -279,7 +279,7 @@ export async function addInteraction(
   type: 'prayed' | 'encouraged'
 ): Promise<PrayerServiceResult<PrayerInteraction>> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {
@@ -324,7 +324,7 @@ export async function removeInteraction(
   type: 'prayed' | 'encouraged'
 ): Promise<PrayerServiceResult> {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   const {

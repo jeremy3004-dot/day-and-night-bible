@@ -1,4 +1,4 @@
-Every Bible - Read the Bible daily with beautiful design and progress tracking.
+Selah: Bible Meditate and Prayer - Read the Bible daily with beautiful design, prayer studies, and progress tracking.
 
 FEATURES:
 
@@ -29,4 +29,9 @@ Offline Access
 - Read anywhere, anytime
 - No internet required for reading
 
-Start your Bible reading journey today with Every Bible.
+Prayer Studies
+- Pray through the words of Jesus
+- Learn from apostolic prayers
+- Meditate with biblical figures at prayer
+
+Start your Bible reading journey today with Selah.

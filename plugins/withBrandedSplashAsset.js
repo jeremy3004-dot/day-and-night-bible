@@ -7,7 +7,7 @@ const { withDangerousMod, withInfoPlist } = require('expo/config-plugins');
 const LEGACY_SPLASH_ASSET_NAME = 'SplashScreenLegacy';
 const BRANDED_SPLASH_ASSET_NAME = 'SplashScreenBrand';
 const DEFAULT_LAUNCH_STORYBOARD_NAME = 'SplashScreen';
-const BRANDED_LAUNCH_STORYBOARD_NAME = 'EveryBibleLaunchScreen';
+const BRANDED_LAUNCH_STORYBOARD_NAME = 'DayAndNightBibleLaunchScreen';
 const DISCREET_APP_ICON_NAME = 'DiscreetAppIcon';
 const DISCREET_APP_ICON_SPECS = [
   { filename: `${DISCREET_APP_ICON_NAME}-60x60@2x.png`, idiom: 'iphone', size: '60x60', scale: '2x' },

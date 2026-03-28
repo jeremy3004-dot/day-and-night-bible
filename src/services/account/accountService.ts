@@ -7,7 +7,7 @@ export interface AccountActionResult {
 
 export const deleteCurrentAccount = async (): Promise<AccountActionResult> => {
   if (!isSupabaseConfigured()) {
-    return { success: false, error: 'Day and Night Bible backend is not configured for this build yet.' };
+    return { success: false, error: 'Selah backend is not configured for this build yet.' };
   }
 
   try {

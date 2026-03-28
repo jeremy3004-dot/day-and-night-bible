@@ -1,8 +1,8 @@
-# Day and Night Bible Project Guide
+# Selah Project Guide
 
 ## Project Overview
 
-Day and Night Bible is a mobile Bible study app built with Expo/React Native. It provides offline Bible reading, audio playback, discipleship courses (Four Fields), group study features, and multi-language support (EN, ES, NE, HI). The app uses Supabase for backend services and supports Apple/Google OAuth authentication.
+Selah is a mobile Bible meditation and prayer app built with Expo/React Native. It provides offline Bible reading, audio playback, guided prayer studies, discipleship courses (Four Fields), group study features, and multi-language support (EN, ES, NE, HI). The app uses Supabase for backend services and supports Apple/Google OAuth authentication.
 
 **Tech Stack:** React Native 0.81, Expo SDK 54, TypeScript, Zustand, Supabase, React Navigation, i18next, SQLite
 **Current Phase:** Production - App is live on iOS/Android

@@ -183,7 +183,7 @@ const writeMonochromeOutput = async () => {
 async function generateIcons() {
   await ensureSourceIconExists();
 
-  console.log('Generating Day and Night Bible brand icons from assets/icon-source.jpg...\n');
+  console.log('Generating Selah brand icons from assets/icon-source.jpg...\n');
 
   await writeRasterOutput(generatedIconPath, 1024, 'png');
   await writeRasterOutput(generatedAdaptivePath, 432, 'png');

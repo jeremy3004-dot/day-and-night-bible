@@ -1,13 +1,14 @@
-# Day and Night Bible
+# Selah: Bible Meditate and Prayer
 
-A mobile Bible study app with offline access, audio playback, discipleship training, and group study features.
+A mobile Bible app with offline access, audio playback, guided prayer studies, discipleship training, and group study features.
 
 ## Overview
 
-Day and Night Bible is a comprehensive Bible study application built with React Native and Expo. It provides:
+Selah is a Bible meditation and prayer application built with React Native and Expo. It provides:
 
 - **Offline Bible Reading:** Complete Berean Standard Bible (BSB) stored locally in SQLite
 - **Audio Bible:** Stream and download public-domain BSB and WEB chapter audio without extra credentials
+- **Prayer Studies:** Scriptural prayer collections rooted in Jesus, the apostles, and biblical figures
 - **Four Fields Discipleship:** Training courses based on the Four Fields model
 - **Group Study:** Create and manage study groups with progress tracking
 - **Multi-language Support:** English, Spanish, Nepali, and Hindi

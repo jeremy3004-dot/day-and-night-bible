@@ -62,7 +62,7 @@ test('mapProviderIdTokenAuthError maps disabled provider errors to provider_unav
   });
 
   assert.equal(result.code, 'provider_unavailable');
-  assert.equal(result.error, 'Google sign in is not enabled on the Day and Night Bible backend yet.');
+  assert.equal(result.error, 'Google sign in is not enabled on the Selah backend yet.');
 });
 
 test('mapProviderIdTokenAuthError maps audience mismatch to provider_unavailable', () => {

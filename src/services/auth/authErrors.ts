@@ -70,9 +70,9 @@ export const authFailure = (
 });
 
 export const configurationAuthError = (
-  error: unknown = 'Day and Night Bible backend is not configured for this build yet.'
+  error: unknown = 'Selah backend is not configured for this build yet.'
 ): AuthFailure =>
-  authFailure('configuration', error, 'Day and Night Bible backend is not configured for this build yet.');
+  authFailure('configuration', error, 'Selah backend is not configured for this build yet.');
 
 export const providerUnavailableAuthError = (error: unknown): AuthFailure =>
   authFailure('provider_unavailable', error);
@@ -98,7 +98,7 @@ export const mapSupabaseAuthError = (error: unknown): AuthFailure => {
     message.includes('network error')
   ) {
     return serviceUnavailableAuthError(
-      'Day and Night Bible could not reach the backend right now. Please try again in a moment.'
+      'Selah could not reach the backend right now. Please try again in a moment.'
     );
   }
 
@@ -120,7 +120,7 @@ export const mapProviderIdTokenAuthError = (
       message.includes('oidc provider is not enabled'))
   ) {
     return providerUnavailableAuthError(
-      `${providerName} sign in is not enabled on the Day and Night Bible backend yet.`
+      `${providerName} sign in is not enabled on the Selah backend yet.`
     );
   }
 

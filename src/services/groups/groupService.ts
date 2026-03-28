@@ -88,7 +88,7 @@ export async function createSyncedGroup(
   }
 ): Promise<SyncedGroup> {
   if (!isSupabaseConfigured()) {
-    throw new Error('Day and Night Bible backend is not configured for this build yet.');
+    throw new Error('Selah backend is not configured for this build yet.');
   }
 
   const {
@@ -153,7 +153,7 @@ export async function createSyncedGroup(
 
 export async function joinSyncedGroup(joinCode: string): Promise<SyncedGroup | null> {
   if (!isSupabaseConfigured()) {
-    throw new Error('Day and Night Bible backend is not configured for this build yet.');
+    throw new Error('Selah backend is not configured for this build yet.');
   }
 
   const normalizedCode = joinCode.trim().toUpperCase();
@@ -174,7 +174,7 @@ export async function joinSyncedGroup(joinCode: string): Promise<SyncedGroup | n
 
 export async function leaveSyncedGroup(groupId: string): Promise<void> {
   if (!isSupabaseConfigured()) {
-    throw new Error('Day and Night Bible backend is not configured for this build yet.');
+    throw new Error('Selah backend is not configured for this build yet.');
   }
 
   const { error } = await supabase.rpc('leave_group', {
