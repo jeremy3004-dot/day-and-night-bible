@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import type { PrivacyAppIconMode, StoredPrivacySettings } from '../../types';
 import { setPrivacyAppIcon } from './appIcon';
 
-const privacySettingsKey = 'everybible.privacy.settings';
+const privacySettingsKey = 'dayandnightbible.privacy.settings';
 
 const defaultPrivacySettings: StoredPrivacySettings = {
   mode: 'standard',

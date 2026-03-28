@@ -109,7 +109,7 @@ test('mapCatalogEntryToBibleTranslation carries backend catalog delivery metadat
       updatedAt: '2026-03-26T12:00:00.000Z',
       audio: {
         strategy: 'stream-template',
-        baseUrl: 'https://media.everybible.app/audio/bsb/v2026-03-26-1',
+        baseUrl: 'https://media.dayandnightbible.app/audio/bsb/v2026-03-26-1',
         chapterPathTemplate: 'chapters/{bookId}/{chapter}.m4a',
         fileExtension: 'm4a',
         mimeType: 'audio/mp4',

@@ -71,16 +71,22 @@ test('parseBibleDeepLink resolves 3john to 3JN', () => {
 
 // DEEP-04: buildBibleDeepLink — chapter + verse
 test('buildBibleDeepLink returns correct URL for JHN 3:16', () => {
-  assert.equal(buildBibleDeepLink('JHN', 3, 16), 'com.everybible.app://bible/john/3/16');
+  assert.equal(
+    buildBibleDeepLink('JHN', 3, 16),
+    'com.dayandnightbible.app://bible/john/3/16'
+  );
 });
 
 // DEEP-05: buildBibleDeepLink — chapter only
 test('buildBibleDeepLink returns correct URL for JHN 3 (no verse)', () => {
-  assert.equal(buildBibleDeepLink('JHN', 3), 'com.everybible.app://bible/john/3');
+  assert.equal(buildBibleDeepLink('JHN', 3), 'com.dayandnightbible.app://bible/john/3');
 });
 
 test('buildBibleDeepLink returns correct URL for 1CO 13', () => {
-  assert.equal(buildBibleDeepLink('1CO', 13), 'com.everybible.app://bible/1corinthians/13');
+  assert.equal(
+    buildBibleDeepLink('1CO', 13),
+    'com.dayandnightbible.app://bible/1corinthians/13'
+  );
 });
 
 test('buildBibleDeepLink returns empty string for unknown bookId', () => {
@@ -98,7 +104,7 @@ test('round-trip: buildBibleDeepLink -> parseBibleDeepLink for all 66 books', ()
     );
 
     // Extract path portion after the scheme
-    const path = url.replace('com.everybible.app:/', '');
+    const path = url.replace('com.dayandnightbible.app:/', '');
     const parsed = parseBibleDeepLink(path);
     assert.notEqual(
       parsed,

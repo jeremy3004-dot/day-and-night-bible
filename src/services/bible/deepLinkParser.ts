@@ -58,14 +58,14 @@ export const parseBibleDeepLink = (path: string): BibleDeepLinkTarget | null => 
  * Returns '' if the bookId is not recognized.
  *
  * Example usage:
- *   buildBibleDeepLink('JHN', 3, 16)  => 'com.everybible.app://bible/john/3/16'
- *   buildBibleDeepLink('JHN', 3)      => 'com.everybible.app://bible/john/3'
- *   buildBibleDeepLink('1CO', 13)     => 'com.everybible.app://bible/1corinthians/13'
+ *   buildBibleDeepLink('JHN', 3, 16)  => 'com.dayandnightbible.app://bible/john/3/16'
+ *   buildBibleDeepLink('JHN', 3)      => 'com.dayandnightbible.app://bible/john/3'
+ *   buildBibleDeepLink('1CO', 13)     => 'com.dayandnightbible.app://bible/1corinthians/13'
  *   buildBibleDeepLink('INVALID', 1)  => ''
  */
 export const buildBibleDeepLink = (bookId: string, chapter: number, verse?: number): string => {
   const slug = BOOK_ID_TO_SLUG[bookId];
   if (!slug) return '';
-  const base = `com.everybible.app://bible/${slug}/${chapter}`;
+  const base = `com.dayandnightbible.app://bible/${slug}/${chapter}`;
   return verse !== undefined ? `${base}/${verse}` : base;
 };

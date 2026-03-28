@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "scheme": "com.everybible.app",
+    "scheme": "com.dayandnightbible.app",
     "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.everybible.app",
+      "bundleIdentifier": "com.dayandnightbible.app",
       "buildNumber": "176",
       "usesAppleSignIn": true,
       "infoPlist": {
@@ -34,7 +34,7 @@
         "monochromeImage": "./assets/monochrome-icon.png",
         "backgroundColor": "#101113"
       },
-      "package": "com.everybible.app",
+      "package": "com.dayandnightbible.app",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [

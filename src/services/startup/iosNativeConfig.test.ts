@@ -39,7 +39,7 @@ const getBundledAssetEntries = (plugins: ExpoPlugin[] | undefined): string[] => 
 
 test('ios Info.plist keeps configured background modes aligned with app config', () => {
   const appConfig = readRootJson<AppConfig>('app.json');
-  const infoPlist = readRootFile('ios/EveryBible/Info.plist');
+  const infoPlist = readRootFile('ios/DayAndNightBible/Info.plist');
   const expectedBackgroundModes = appConfig.expo.ios?.infoPlist?.UIBackgroundModes ?? [];
 
   assert.ok(
@@ -51,14 +51,14 @@ test('ios Info.plist keeps configured background modes aligned with app config',
     assert.match(
       infoPlist,
       new RegExp(`<string>${escapeForRegex(mode)}</string>`),
-      `Expected ios/EveryBible/Info.plist to include the ${mode} background mode from app.json`
+      `Expected ios/DayAndNightBible/Info.plist to include the ${mode} background mode from app.json`
     );
   }
 });
 
 test('ios Xcode project bundles the configured bible SQLite asset', () => {
   const appConfig = readRootJson<AppConfig>('app.json');
-  const pbxproj = readRootFile('ios/EveryBible.xcodeproj/project.pbxproj');
+  const pbxproj = readRootFile('ios/DayAndNightBible.xcodeproj/project.pbxproj');
   const configuredBundledAssets = getBundledAssetEntries(appConfig.expo.plugins);
 
   assert.ok(

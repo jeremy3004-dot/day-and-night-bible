@@ -17,7 +17,7 @@ interface ImageConfig {
   description: string;
 }
 
-const OUTPUT_DIR = '/Users/dev/Projects/EveryBible/assets/tibetan';
+const OUTPUT_DIR = `${process.cwd()}/assets/tibetan`;
 const DELAY_MS = 2000; // 2 second delay between calls for rate limiting
 
 // Image configurations with culturally appropriate prompts

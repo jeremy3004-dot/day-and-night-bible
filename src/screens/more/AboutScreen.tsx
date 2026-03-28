@@ -67,7 +67,7 @@ export function AboutScreen() {
 
           <TouchableOpacity
             style={styles.linkItem}
-            onPress={() => handleLink('mailto:support@everybible.app')}
+            onPress={() => handleLink('mailto:support@dayandnightbible.app')}
           >
             <Ionicons name="mail-outline" size={24} color={colors.secondaryText} />
             <Text style={styles.linkText}>{t('about.contactSupport')}</Text>
@@ -76,7 +76,7 @@ export function AboutScreen() {
 
           <TouchableOpacity
             style={styles.linkItem}
-            onPress={() => handleLink('https://everybible.app/privacy')}
+            onPress={() => handleLink('https://dayandnightbible.app/privacy')}
           >
             <Ionicons name="shield-outline" size={24} color={colors.secondaryText} />
             <Text style={styles.linkText}>{t('about.privacyPolicy')}</Text>
@@ -85,7 +85,7 @@ export function AboutScreen() {
 
           <TouchableOpacity
             style={[styles.linkItem, styles.linkItemLast]}
-            onPress={() => handleLink('https://everybible.app/terms')}
+            onPress={() => handleLink('https://dayandnightbible.app/terms')}
           >
             <Ionicons name="document-text-outline" size={24} color={colors.secondaryText} />
             <Text style={styles.linkText}>{t('about.termsOfService')}</Text>

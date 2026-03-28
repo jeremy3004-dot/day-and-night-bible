@@ -53,7 +53,7 @@ if [[ -z "$BUNDLE_ID" || -z "$SHORT_VERSION" || -z "$BUILD_NUMBER" ]]; then
   exit 1
 fi
 
-if [[ "$BUNDLE_ID" != "com.everybible.app" ]]; then
+if [[ "$BUNDLE_ID" != "com.dayandnightbible.app" ]]; then
   echo "Unexpected bundle identifier: $BUNDLE_ID" >&2
   exit 1
 fi

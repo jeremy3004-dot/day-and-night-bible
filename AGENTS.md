@@ -578,13 +578,13 @@ eas submit --platform android --profile production
 
 ### App Store Configuration
 **iOS:**
-- Bundle ID: com.everybible.app
+- Bundle ID: com.dayandnightbible.app
 - Apple ID: curryj@protonmail.com
 - Team ID: NVC9N47PRH
-- App Store ID: 6758254335
+- App Store ID: TODO
 
 **Android:**
-- Package: com.everybible.app
+- Package: com.dayandnightbible.app
 - Service account: every-bible-485319-82e2f287e3f8.json
 - Uploads to internal track as draft
 
@@ -609,8 +609,8 @@ This mistake has been made 4 times (builds 113, 115, 138, 142). Do not skip.
 **Step 3 — Submit for external review** via POST `/v1/betaAppReviewSubmissions`
 **Step 4 — Verify** `internalBuildState=IN_BETA_TESTING` before telling user anything
 
-Use the Python JWT script in `~/.Codex/projects/-Users-dev-Projects-EveryBible/memory/feedback_testflight_distribution.md`.
-ASC key: `~/.asc/AuthKey_766CTDMG96.p8` | App ID: `6758254335`
+Use the Python JWT script in `~/.Codex/projects/-Users-dev-Projects-Day-and-Night-Bible/memory/feedback_testflight_distribution.md`.
+ASC key: `~/.asc/AuthKey_766CTDMG96.p8` | App ID: `TODO`
 
 ---
 

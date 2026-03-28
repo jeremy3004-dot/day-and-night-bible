@@ -95,7 +95,10 @@ test('ios background modes stay aligned with notification delivery requirements'
   };
   const expectedModes = ['audio', 'fetch', 'remote-notification'];
   const configuredModes = appConfig.expo.ios?.infoPlist?.UIBackgroundModes ?? [];
-  const infoPlistModes = readPlistStringArray(readRootFile('ios/EveryBible/Info.plist'), 'UIBackgroundModes');
+  const infoPlistModes = readPlistStringArray(
+    readRootFile('ios/DayAndNightBible/Info.plist'),
+    'UIBackgroundModes'
+  );
 
   assert.deepEqual(configuredModes, expectedModes);
   assert.deepEqual(infoPlistModes, expectedModes);

@@ -8,7 +8,7 @@ const iosGeneratedAssetsRoot = path.join(projectRoot, 'assets', 'discreet-icons'
 const iosIconSetPath = path.join(
   projectRoot,
   'ios',
-  'EveryBible',
+  'DayAndNightBible',
   'Images.xcassets',
   'DiscreetAppIcon.appiconset'
 );

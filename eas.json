@@ -38,7 +38,6 @@
     "production": {
       "ios": {
         "appleId": "curryj@protonmail.com",
-        "ascAppId": "6758254335",
         "appleTeamId": "NVC9N47PRH"
       },
       "android": {

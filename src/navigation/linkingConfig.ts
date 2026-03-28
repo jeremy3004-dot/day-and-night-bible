@@ -9,10 +9,10 @@ export { buildBibleNavState, resolveTextReferenceNavState } from './buildBibleNa
 const prefix = Linking.createURL('/');
 
 /**
- * React Navigation linking config for deep links using the com.everybible.app:// scheme.
+ * React Navigation linking config for deep links using the com.dayandnightbible.app:// scheme.
  *
  * Handles paths of the form:
- *   com.everybible.app://bible/{bookSlug}/{chapter}/{verse?}
+ *   com.dayandnightbible.app://bible/{bookSlug}/{chapter}/{verse?}
  *
  * Uses a custom getStateFromPath that delegates to buildBibleNavState to translate
  * book slugs (e.g. 'john') to internal book IDs (e.g. 'JHN') via parseBibleDeepLink,
@@ -20,7 +20,7 @@ const prefix = Linking.createURL('/');
  * Navigation's default state builder.
  */
 export const linkingConfig: LinkingOptions<RootTabParamList> = {
-  prefixes: [prefix, 'com.everybible.app://'],
+  prefixes: [prefix, 'com.dayandnightbible.app://'],
   config: {
     screens: {
       Bible: {

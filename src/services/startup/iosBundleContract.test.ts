@@ -10,7 +10,7 @@ const readRootFile = (relativePathFromRepoRoot: string): string =>
   readFileSync(path.join(REPO_ROOT, relativePathFromRepoRoot), 'utf8');
 
 test('ios AppDelegate only uses Metro for DEBUG and falls back to embedded main.jsbundle for release', () => {
-  const appDelegate = readRootFile('ios/EveryBible/AppDelegate.swift');
+  const appDelegate = readRootFile('ios/DayAndNightBible/AppDelegate.swift');
 
   assert.match(
     appDelegate,

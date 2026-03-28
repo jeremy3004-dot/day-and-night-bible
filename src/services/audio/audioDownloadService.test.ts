@@ -74,7 +74,7 @@ test('audio download job store persists records across store instances', async (
   const { fileSystem } = createPersistentFileSystemDouble();
   const store = await createAudioDownloadJobStore({
     fileSystem,
-    rootUri: 'file:///tmp/everybible-audio/',
+    rootUri: 'file:///tmp/dayandnightbible-audio/',
   });
 
   await store.upsertJob({
@@ -90,7 +90,7 @@ test('audio download job store persists records across store instances', async (
 
   const reloadedStore = await createAudioDownloadJobStore({
     fileSystem,
-    rootUri: 'file:///tmp/everybible-audio/',
+    rootUri: 'file:///tmp/dayandnightbible-audio/',
   });
   const jobs = await reloadedStore.listJobs();
 
@@ -110,7 +110,7 @@ test('audio download job store persists records across store instances', async (
 
 test('audio download job lifecycle exposes start, reattach, and failure hooks', async () => {
   const { fileSystem } = createPersistentFileSystemDouble();
-  const rootUri = 'file:///tmp/everybible-audio-lifecycle/';
+  const rootUri = 'file:///tmp/dayandnightbible-audio-lifecycle/';
   const store = await createAudioDownloadJobStore({
     fileSystem,
     rootUri,
@@ -179,7 +179,7 @@ test('getChapterAudioFileUri uses the configured remote audio file extension', (
       fileExtension: 'm4a',
       audio: {
         strategy: 'stream-template',
-        baseUrl: 'https://media.everybible.app/audio/bsb',
+        baseUrl: 'https://media.dayandnightbible.app/audio/bsb',
         chapterPathTemplate: '{bookId}/{chapter}.m4a',
       },
     };
@@ -187,7 +187,7 @@ test('getChapterAudioFileUri uses the configured remote audio file extension', (
 
   assert.equal(
     getChapterAudioFileUri('bsb', 'JHN', 3),
-    'file:///everybible-audio/bsb/JHN/3.m4a'
+    'file:///dayandnightbible-audio/bsb/JHN/3.m4a'
   );
 });
 
@@ -203,18 +203,18 @@ test('getDownloadedChapterAudioUri falls back to legacy mp3 file names for exist
       fileExtension: 'm4a',
       audio: {
         strategy: 'stream-template',
-        baseUrl: 'https://media.everybible.app/audio/bsb',
+        baseUrl: 'https://media.dayandnightbible.app/audio/bsb',
         chapterPathTemplate: '{bookId}/{chapter}.m4a',
       },
     };
   });
 
   const { fileSystem, files } = createFileSystemDouble();
-  files.add('file:///everybible-audio/bsb/JHN/3.mp3');
+  files.add('file:///dayandnightbible-audio/bsb/JHN/3.mp3');
 
   const localUri = await getDownloadedChapterAudioUri('bsb', 'JHN', 3, fileSystem);
 
-  assert.equal(localUri, 'file:///everybible-audio/bsb/JHN/3.mp3');
+  assert.equal(localUri, 'file:///dayandnightbible-audio/bsb/JHN/3.mp3');
 });
 
 test('downloadAudioBook downloads each chapter once and creates the book directory', async () => {

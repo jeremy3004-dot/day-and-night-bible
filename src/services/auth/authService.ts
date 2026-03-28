@@ -252,7 +252,7 @@ export const resetPassword = async (
 
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'com.everybible.app://reset-password',
+      redirectTo: 'com.dayandnightbible.app://reset-password',
     });
 
     if (error) {

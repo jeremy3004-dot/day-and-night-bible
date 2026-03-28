@@ -15,7 +15,7 @@ const generatedSplashPath = path.join(assetsDir, 'splash-icon.png');
 const iosIconPath = path.join(
   projectRoot,
   'ios',
-  'EveryBible',
+  'DayAndNightBible',
   'Images.xcassets',
   'AppIcon.appiconset',
   'App-Icon-1024x1024@1x.png'
@@ -23,7 +23,7 @@ const iosIconPath = path.join(
 const iosSplashDir = path.join(
   projectRoot,
   'ios',
-  'EveryBible',
+  'DayAndNightBible',
   'Images.xcassets',
   'SplashScreenBrand.imageset'
 );
@@ -183,7 +183,7 @@ const writeMonochromeOutput = async () => {
 async function generateIcons() {
   await ensureSourceIconExists();
 
-  console.log('Generating Every Bible brand icons from assets/icon-source.jpg...\n');
+  console.log('Generating Day and Night Bible brand icons from assets/icon-source.jpg...\n');
 
   await writeRasterOutput(generatedIconPath, 1024, 'png');
   await writeRasterOutput(generatedAdaptivePath, 432, 'png');
@@ -222,8 +222,8 @@ async function generateIcons() {
   console.log('- assets/monochrome-icon.png');
   console.log('- assets/favicon.png');
   console.log('- assets/splash-icon.png');
-  console.log('- ios/EveryBible/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png');
-  console.log('- ios/EveryBible/Images.xcassets/SplashScreenBrand.imageset/image*.png');
+  console.log('- ios/DayAndNightBible/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png');
+  console.log('- ios/DayAndNightBible/Images.xcassets/SplashScreenBrand.imageset/image*.png');
   console.log('- android/app/src/main/res/drawable-*/splashscreen_logo.png');
   console.log('- android/app/src/main/res/mipmap-*/ic_launcher*.webp');
 }

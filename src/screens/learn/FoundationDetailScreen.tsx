@@ -73,7 +73,7 @@ export function FoundationDetailScreen({ route, navigation }: FoundationDetailSc
   const handleShareInvitation = async () => {
     try {
       await Share.share({
-        message: t('gather.invitationDescription') + '\nhttps://everybible.app',
+        message: t('gather.invitationDescription') + '\nhttps://dayandnightbible.app',
       });
     } catch {
       // Ignore share errors

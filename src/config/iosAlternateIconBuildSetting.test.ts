@@ -5,7 +5,7 @@ import path from 'node:path';
 
 test('ios project compiles the discreet alternate icon asset catalog', () => {
   const projectFile = fs.readFileSync(
-    path.join(process.cwd(), 'ios/EveryBible.xcodeproj/project.pbxproj'),
+    path.join(process.cwd(), 'ios/DayAndNightBible.xcodeproj/project.pbxproj'),
     'utf8',
   );
 

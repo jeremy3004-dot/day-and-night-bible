@@ -12,7 +12,7 @@ const sourceUrl = 'https://eBible.org/Scriptures/engwebpb_vpl.zip';
 const sourceEntry = 'engwebpb_vpl.sql';
 const outputPath = path.join(__dirname, '../data/web_processed.json');
 
-const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'everybible-web-'));
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dayandnightbible-web-'));
 const archivePath = path.join(tempDir, 'engwebpb_vpl.zip');
 const sqlPath = path.join(tempDir, sourceEntry);
 

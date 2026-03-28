@@ -59,8 +59,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.everybible.app</string>
-          <string>com.everybible.app</string>
+          <string>com.dayandnightbible.app</string>
+          <string>com.dayandnightbible.app</string>
         </array>
       </dict>
     </array>

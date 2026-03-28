@@ -1,13 +1,13 @@
 import { NativeModules } from 'react-native';
 import type { PrivacyAppIconMode } from '../../types';
 
-interface EveryBiblePrivacyModule {
+interface DayAndNightBiblePrivacyModule {
   getCurrentAppIcon: () => Promise<PrivacyAppIconMode>;
   setAppIcon: (mode: PrivacyAppIconMode) => Promise<boolean>;
 }
 
-const nativePrivacyModule = NativeModules.EveryBiblePrivacyModule as
-  | EveryBiblePrivacyModule
+const nativePrivacyModule = NativeModules.DayAndNightBiblePrivacyModule as
+  | DayAndNightBiblePrivacyModule
   | undefined;
 
 export const supportsDynamicAppIcon = (): boolean => {

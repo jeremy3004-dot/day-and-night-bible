@@ -8,7 +8,7 @@ import type {
 
 export const AUDIO_DOWNLOAD_ROOT_URI = `${
   FileSystem.documentDirectory ?? FileSystem.cacheDirectory ?? 'file:///'
-}everybible-audio/`;
+}dayandnightbible-audio/`;
 
 export const AUDIO_DOWNLOAD_JOB_REGISTRY_FILENAME = 'download-jobs.json';
 

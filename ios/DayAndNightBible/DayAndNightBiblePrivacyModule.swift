@@ -1,8 +1,8 @@
 import Foundation
 import UIKit
 
-@objc(EveryBiblePrivacyModule)
-class EveryBiblePrivacyModule: NSObject {
+@objc(DayAndNightBiblePrivacyModule)
+class DayAndNightBiblePrivacyModule: NSObject {
   private let discreetIconName = "DiscreetAppIcon"
 
   @objc

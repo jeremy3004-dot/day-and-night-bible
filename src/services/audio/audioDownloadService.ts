@@ -2,7 +2,7 @@ import type { BibleBook } from '../../constants/books';
 import { buildAudioChapterTargets } from './audioDownloads';
 import { getRemoteAudioFileExtension } from './audioRemote';
 
-const DEFAULT_AUDIO_ROOT_URI = 'file:///everybible-audio/';
+const DEFAULT_AUDIO_ROOT_URI = 'file:///dayandnightbible-audio/';
 const DEFAULT_CHAPTER_DOWNLOAD_CONCURRENCY = 4;
 const DEFAULT_BOOK_DOWNLOAD_CONCURRENCY = 2;
 

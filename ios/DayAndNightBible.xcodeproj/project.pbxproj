@@ -10,9 +10,9 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B9648EC37BCFE93DE0C96C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1860AD1B82CBE66BD57B62D3 /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* DayAndNightBibleLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* DayAndNightBibleLaunchScreen.storyboard */; };
-		94D921C656518F7722FB3C8A /* libPods-EveryBible.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCD1DB46F8E5917E4BD96A /* libPods-EveryBible.a */; };
-		A81F47F92E005D920044C1D9 /* EveryBiblePrivacyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A81F47F72E005D920044C1D9 /* EveryBiblePrivacyModule.m */; };
-		A81F47FA2E005D920044C1D9 /* EveryBiblePrivacyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F47F82E005D920044C1D9 /* EveryBiblePrivacyModule.swift */; };
+		94D921C656518F7722FB3C8A /* libPods-DayAndNightBible.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCD1DB46F8E5917E4BD96A /* libPods-DayAndNightBible.a */; };
+		A81F47F92E005D920044C1D9 /* DayAndNightBiblePrivacyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A81F47F72E005D920044C1D9 /* DayAndNightBiblePrivacyModule.m */; };
+		A81F47FA2E005D920044C1D9 /* DayAndNightBiblePrivacyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81F47F82E005D920044C1D9 /* DayAndNightBiblePrivacyModule.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		E32ABEF1BEED1903ECDCC71D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DDAF5C60B8FCDE3C52D246C /* ExpoModulesProvider.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
@@ -20,24 +20,24 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0DDAF5C60B8FCDE3C52D246C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-EveryBible/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* EveryBible.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EveryBible.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = EveryBible/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = EveryBible/Info.plist; sourceTree = "<group>"; };
-		1860AD1B82CBE66BD57B62D3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = EveryBible/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		49EB93B7FA9C4B188E8E42ED /* DayAndNightBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = DayAndNightBibleLaunchScreen.storyboard; path = EveryBible/DayAndNightBibleLaunchScreen.storyboard; sourceTree = "<group>"; };
-		60C42BB278DA4F4EA5228AEF /* SplashScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SplashScreen.storyboard; path = EveryBible/SplashScreen.storyboard; sourceTree = "<group>"; };
-		8551957541ECB0F8F03D4566 /* Pods-EveryBible.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EveryBible.release.xcconfig"; path = "Target Support Files/Pods-EveryBible/Pods-EveryBible.release.xcconfig"; sourceTree = "<group>"; };
-		97CCD1DB46F8E5917E4BD96A /* libPods-EveryBible.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-EveryBible.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9CF29617BF0C44E6B1F3E753 /* DayAndNightBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = DayAndNightBibleLaunchScreen.storyboard; path = EveryBible/DayAndNightBibleLaunchScreen.storyboard; sourceTree = "<group>"; };
-		A81F47F72E005D920044C1D9 /* EveryBiblePrivacyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = EveryBiblePrivacyModule.m; path = EveryBible/EveryBiblePrivacyModule.m; sourceTree = "<group>"; };
-		A81F47F82E005D920044C1D9 /* EveryBiblePrivacyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EveryBiblePrivacyModule.swift; path = EveryBible/EveryBiblePrivacyModule.swift; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* DayAndNightBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = DayAndNightBibleLaunchScreen.storyboard; path = EveryBible/DayAndNightBibleLaunchScreen.storyboard; sourceTree = "<group>"; };
+		0DDAF5C60B8FCDE3C52D246C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DayAndNightBible/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* DayAndNightBible.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayAndNightBible.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DayAndNightBible/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DayAndNightBible/Info.plist; sourceTree = "<group>"; };
+		1860AD1B82CBE66BD57B62D3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DayAndNightBible/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		49EB93B7FA9C4B188E8E42ED /* DayAndNightBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = DayAndNightBibleLaunchScreen.storyboard; path = DayAndNightBible/DayAndNightBibleLaunchScreen.storyboard; sourceTree = "<group>"; };
+		60C42BB278DA4F4EA5228AEF /* SplashScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = SplashScreen.storyboard; path = DayAndNightBible/SplashScreen.storyboard; sourceTree = "<group>"; };
+		8551957541ECB0F8F03D4566 /* Pods-DayAndNightBible.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DayAndNightBible.release.xcconfig"; path = "Target Support Files/Pods-DayAndNightBible/Pods-DayAndNightBible.release.xcconfig"; sourceTree = "<group>"; };
+		97CCD1DB46F8E5917E4BD96A /* libPods-DayAndNightBible.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DayAndNightBible.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CF29617BF0C44E6B1F3E753 /* DayAndNightBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = DayAndNightBibleLaunchScreen.storyboard; path = DayAndNightBible/DayAndNightBibleLaunchScreen.storyboard; sourceTree = "<group>"; };
+		A81F47F72E005D920044C1D9 /* DayAndNightBiblePrivacyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DayAndNightBiblePrivacyModule.m; path = DayAndNightBible/DayAndNightBiblePrivacyModule.m; sourceTree = "<group>"; };
+		A81F47F82E005D920044C1D9 /* DayAndNightBiblePrivacyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DayAndNightBiblePrivacyModule.swift; path = DayAndNightBible/DayAndNightBiblePrivacyModule.swift; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* DayAndNightBibleLaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = DayAndNightBibleLaunchScreen.storyboard; path = DayAndNightBible/DayAndNightBibleLaunchScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C38B1E7F79671F1E5CDEE3CC /* Pods-EveryBible.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EveryBible.debug.xcconfig"; path = "Target Support Files/Pods-EveryBible/Pods-EveryBible.debug.xcconfig"; sourceTree = "<group>"; };
+		C38B1E7F79671F1E5CDEE3CC /* Pods-DayAndNightBible.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DayAndNightBible.debug.xcconfig"; path = "Target Support Files/Pods-DayAndNightBible/Pods-DayAndNightBible.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = EveryBible/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* EveryBible-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "EveryBible-Bridging-Header.h"; path = "EveryBible/EveryBible-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DayAndNightBible/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* DayAndNightBible-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "DayAndNightBible-Bridging-Header.h"; path = "DayAndNightBible/DayAndNightBible-Bridging-Header.h"; sourceTree = "<group>"; };
 		EB03F0E6BD374FD099D01177 /* bible-bsb-v2.db */ = {isa = PBXFileReference; name = "bible-bsb-v2.db"; path = "../assets/databases/bible-bsb-v2.db"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
@@ -46,20 +46,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94D921C656518F7722FB3C8A /* libPods-EveryBible.a in Frameworks */,
+				94D921C656518F7722FB3C8A /* libPods-DayAndNightBible.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* EveryBible */ = {
+		13B07FAE1A68108700A75B9A /* DayAndNightBible */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* EveryBible-Bridging-Header.h */,
-				A81F47F82E005D920044C1D9 /* EveryBiblePrivacyModule.swift */,
-				A81F47F72E005D920044C1D9 /* EveryBiblePrivacyModule.m */,
+				F11748442D0722820044C1D9 /* DayAndNightBible-Bridging-Header.h */,
+				A81F47F82E005D920044C1D9 /* DayAndNightBiblePrivacyModule.swift */,
+				A81F47F72E005D920044C1D9 /* DayAndNightBiblePrivacyModule.m */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -69,14 +69,14 @@
 				9CF29617BF0C44E6B1F3E753 /* DayAndNightBibleLaunchScreen.storyboard */,
 				60C42BB278DA4F4EA5228AEF /* SplashScreen.storyboard */,
 			);
-			name = EveryBible;
+			name = DayAndNightBible;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				97CCD1DB46F8E5917E4BD96A /* libPods-EveryBible.a */,
+				97CCD1DB46F8E5917E4BD96A /* libPods-DayAndNightBible.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -84,17 +84,17 @@
 		4A289FA5A0B45F4E895C6A56 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				4E67832265289D6AB6752FA4 /* EveryBible */,
+				4E67832265289D6AB6752FA4 /* DayAndNightBible */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
-		4E67832265289D6AB6752FA4 /* EveryBible */ = {
+		4E67832265289D6AB6752FA4 /* DayAndNightBible */ = {
 			isa = PBXGroup;
 			children = (
 				0DDAF5C60B8FCDE3C52D246C /* ExpoModulesProvider.swift */,
 			);
-			name = EveryBible;
+			name = DayAndNightBible;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -107,7 +107,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* EveryBible */,
+				13B07FAE1A68108700A75B9A /* DayAndNightBible */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -123,7 +123,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* EveryBible.app */,
+				13B07F961A680F5B00A75B9A /* DayAndNightBible.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,8 +131,8 @@
 		9FDC08E48497F68CFEF901E7 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C38B1E7F79671F1E5CDEE3CC /* Pods-EveryBible.debug.xcconfig */,
-				8551957541ECB0F8F03D4566 /* Pods-EveryBible.release.xcconfig */,
+				C38B1E7F79671F1E5CDEE3CC /* Pods-DayAndNightBible.debug.xcconfig */,
+				8551957541ECB0F8F03D4566 /* Pods-DayAndNightBible.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -144,7 +144,7 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = EveryBible/Supporting;
+			path = DayAndNightBible/Supporting;
 			sourceTree = "<group>";
 		};
 		D069371DE46C4D9B846A964A /* Resources */ = {
@@ -159,9 +159,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* EveryBible */ = {
+		13B07F861A680F5B00A75B9A /* DayAndNightBible */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "EveryBible" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DayAndNightBible" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				2EBB7C00D9765588CDD6EDA3 /* [Expo] Configure project */,
@@ -176,9 +176,9 @@
 			);
 			dependencies = (
 			);
-			name = EveryBible;
-			productName = EveryBible;
-			productReference = 13B07F961A680F5B00A75B9A /* EveryBible.app */;
+			name = DayAndNightBible;
+			productName = DayAndNightBible;
+			productReference = 13B07F961A680F5B00A75B9A /* DayAndNightBible.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -196,7 +196,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "EveryBible" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "DayAndNightBible" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -209,7 +209,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* EveryBible */,
+				13B07F861A680F5B00A75B9A /* DayAndNightBible */,
 			);
 		};
 /* End PBXProject section */
@@ -262,7 +262,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-EveryBible-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-DayAndNightBible-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -280,18 +280,18 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/EveryBible/EveryBible.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-EveryBible/expo-configure-project.sh",
+				"$(SRCROOT)/DayAndNightBible/DayAndNightBible.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-DayAndNightBible/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-EveryBible/ExpoModulesProvider.swift",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-DayAndNightBible/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-EveryBible/expo-configure-project.sh\"\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DayAndNightBible/expo-configure-project.sh\"\n";
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -299,7 +299,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-EveryBible/Pods-EveryBible-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DayAndNightBible/Pods-DayAndNightBible-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/AppAuth/AppAuthCore_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
@@ -344,7 +344,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EveryBible/Pods-EveryBible-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DayAndNightBible/Pods-DayAndNightBible-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EE88B553358FC8DB381A8EFE /* [CP] Embed Pods Frameworks */ = {
@@ -353,7 +353,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-EveryBible/Pods-EveryBible-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-DayAndNightBible/Pods-DayAndNightBible-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -362,7 +362,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EveryBible/Pods-EveryBible-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DayAndNightBible/Pods-DayAndNightBible-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -373,8 +373,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				A81F47FA2E005D920044C1D9 /* EveryBiblePrivacyModule.swift in Sources */,
-				A81F47F92E005D920044C1D9 /* EveryBiblePrivacyModule.m in Sources */,
+				A81F47FA2E005D920044C1D9 /* DayAndNightBiblePrivacyModule.swift in Sources */,
+				A81F47F92E005D920044C1D9 /* DayAndNightBiblePrivacyModule.m in Sources */,
 				E32ABEF1BEED1903ECDCC71D /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -384,12 +384,12 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C38B1E7F79671F1E5CDEE3CC /* Pods-EveryBible.debug.xcconfig */;
+			baseConfigurationReference = C38B1E7F79671F1E5CDEE3CC /* Pods-DayAndNightBible.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = DiscreetAppIcon;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = EveryBible/EveryBible.entitlements;
+				CODE_SIGN_ENTITLEMENTS = DayAndNightBible/DayAndNightBible.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 176;
@@ -399,7 +399,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = EveryBible/Info.plist;
+				INFOPLIST_FILE = DayAndNightBible/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -412,9 +412,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.everybible.app;
-				PRODUCT_NAME = EveryBible;
-				SWIFT_OBJC_BRIDGING_HEADER = "EveryBible/EveryBible-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dayandnightbible.app;
+				PRODUCT_NAME = DayAndNightBible;
+				SWIFT_OBJC_BRIDGING_HEADER = "DayAndNightBible/DayAndNightBible-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -424,17 +424,17 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8551957541ECB0F8F03D4566 /* Pods-EveryBible.release.xcconfig */;
+			baseConfigurationReference = 8551957541ECB0F8F03D4566 /* Pods-DayAndNightBible.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = DiscreetAppIcon;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = EveryBible/EveryBible.entitlements;
+				CODE_SIGN_ENTITLEMENTS = DayAndNightBible/DayAndNightBible.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 176;
 				DEVELOPMENT_TEAM = NVC9N47PRH;
-				INFOPLIST_FILE = EveryBible/Info.plist;
+				INFOPLIST_FILE = DayAndNightBible/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -447,9 +447,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.everybible.app;
-				PRODUCT_NAME = EveryBible;
-				SWIFT_OBJC_BRIDGING_HEADER = "EveryBible/EveryBible-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dayandnightbible.app;
+				PRODUCT_NAME = DayAndNightBible;
+				SWIFT_OBJC_BRIDGING_HEADER = "DayAndNightBible/DayAndNightBible-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -575,7 +575,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "EveryBible" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DayAndNightBible" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -584,7 +584,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "EveryBible" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "DayAndNightBible" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

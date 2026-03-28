@@ -27,7 +27,7 @@ API_BASE = "https://api.getbible.net/v2/asv/{book_num}.json"
 
 def fetch_book(book_num: int, book_id: str) -> list[dict]:
     url = API_BASE.format(book_num=book_num)
-    req = urllib.request.Request(url, headers={"User-Agent": "EveryBible/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "DayAndNightBible/1.0"})
     with urllib.request.urlopen(req, timeout=30) as resp:
         data = json.loads(resp.read())
 

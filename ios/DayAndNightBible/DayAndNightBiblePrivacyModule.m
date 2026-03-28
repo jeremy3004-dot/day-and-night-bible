@@ -1,6 +1,6 @@
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(EveryBiblePrivacyModule, NSObject)
+@interface RCT_EXTERN_MODULE(DayAndNightBiblePrivacyModule, NSObject)
 
 RCT_EXTERN_METHOD(
   getCurrentAppIcon:(RCTPromiseResolveBlock)resolve

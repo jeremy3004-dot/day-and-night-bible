@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "EveryBible.app"
-               BlueprintName = "EveryBible"
-               ReferencedContainer = "container:EveryBible.xcodeproj">
+               BuildableName = "DayAndNightBible.app"
+               BlueprintName = "DayAndNightBible"
+               ReferencedContainer = "container:DayAndNightBible.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "EveryBibleTests.xctest"
-               BlueprintName = "EveryBibleTests"
-               ReferencedContainer = "container:EveryBible.xcodeproj">
+               BuildableName = "DayAndNightBibleTests.xctest"
+               BlueprintName = "DayAndNightBibleTests"
+               ReferencedContainer = "container:DayAndNightBible.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "EveryBible.app"
-            BlueprintName = "EveryBible"
-            ReferencedContainer = "container:EveryBible.xcodeproj">
+            BuildableName = "DayAndNightBible.app"
+            BlueprintName = "DayAndNightBible"
+            ReferencedContainer = "container:DayAndNightBible.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "EveryBible.app"
-            BlueprintName = "EveryBible"
-            ReferencedContainer = "container:EveryBible.xcodeproj">
+            BuildableName = "DayAndNightBible.app"
+            BlueprintName = "DayAndNightBible"
+            ReferencedContainer = "container:DayAndNightBible.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

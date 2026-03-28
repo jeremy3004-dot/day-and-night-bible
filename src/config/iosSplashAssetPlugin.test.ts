@@ -46,7 +46,7 @@ test('rewrites the generated splash storyboard to a branded asset name', () => {
 
 test('rewrites the generated launch storyboard filename to a branded name', () => {
   const projectFile = `
-    path = EveryBible/SplashScreen.storyboard;
+    path = DayAndNightBible/SplashScreen.storyboard;
     name = SplashScreen.storyboard;
   `;
 
@@ -89,11 +89,11 @@ test('adds the alternate app icon build setting to Xcode configs', () => {
   const projectFile = `
       buildSettings = {
         ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-        PRODUCT_BUNDLE_IDENTIFIER = com.everybible.app;
+        PRODUCT_BUNDLE_IDENTIFIER = com.dayandnightbible.app;
       };
       buildSettings = {
         ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-        PRODUCT_BUNDLE_IDENTIFIER = com.everybible.app;
+        PRODUCT_BUNDLE_IDENTIFIER = com.dayandnightbible.app;
       };
   `;
 
@@ -117,8 +117,8 @@ test('adds the alternate app icon build setting to Xcode configs', () => {
 });
 
 test('recreates the discreet alternate icon asset set during prebuild', async () => {
-  const iosRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'everybible-plugin-test-'));
-  const projectName = 'EveryBible';
+  const iosRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'dayandnightbible-plugin-test-'));
+  const projectName = 'DayAndNightBible';
   const imagesRoot = path.join(iosRoot, projectName, 'Images.xcassets');
   const discreetIconSetPath = path.join(imagesRoot, `${DISCREET_APP_ICON_NAME}.appiconset`);
 

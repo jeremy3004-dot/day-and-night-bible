@@ -78,8 +78,8 @@ test('release metadata stays aligned across tracked config and generated native 
   const packageJson = readRootJson<PackageJson>('package.json');
   const appConfig = readRootJson<AppConfig>('app.json');
   const easConfig = readRootJson<EasConfig>('eas.json');
-  const infoPlist = readOptionalRootFile('ios/EveryBible/Info.plist');
-  const pbxproj = readRootFile('ios/EveryBible.xcodeproj/project.pbxproj');
+  const infoPlist = readOptionalRootFile('ios/DayAndNightBible/Info.plist');
+  const pbxproj = readRootFile('ios/DayAndNightBible.xcodeproj/project.pbxproj');
   const androidGradle = readOptionalRootFile('android/app/build.gradle');
 
   const appVersion = appConfig.expo.version;
@@ -111,7 +111,7 @@ test('release metadata stays aligned across tracked config and generated native 
 });
 
 test('ios bundle phase canonicalizes the project root for local EAS workdirs', () => {
-  const pbxproj = readRootFile('ios/EveryBible.xcodeproj/project.pbxproj');
+  const pbxproj = readRootFile('ios/DayAndNightBible.xcodeproj/project.pbxproj');
 
   assert.match(
     pbxproj,
