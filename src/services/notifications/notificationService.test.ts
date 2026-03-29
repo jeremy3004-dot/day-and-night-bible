@@ -278,7 +278,7 @@ const mockSupabaseClient = {
 const mockConstants = {
   expoConfig: {
     extra: {
-      eas: { projectId: 'cfbf2bac-d680-448f-b2aa-33c4c01ad15b' },
+      eas: { projectId: 'test-eas-project-id' },
     },
   },
 };
