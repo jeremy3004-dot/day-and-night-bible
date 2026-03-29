@@ -6,6 +6,20 @@ import { fileURLToPath } from 'node:url';
 
 interface AppConfig {
   expo: {
+    android?: {
+      package?: string;
+    };
+    extra?: {
+      eas?: {
+        projectId?: string;
+      };
+    };
+    ios?: {
+      bundleIdentifier?: string;
+    };
+    owner?: string;
+    scheme?: string;
+    slug?: string;
     version: string;
   };
 }
@@ -59,10 +73,19 @@ const readGradleNumber = (contents: string, key: string): string => {
 };
 
 const readGradleString = (contents: string, key: string): string => {
-  const match = contents.match(new RegExp(`${key}\\s+"([^"]+)"`));
+  const match = contents.match(new RegExp(`${key}\\s+['"]([^'"]+)['"]`));
   assert.ok(match, `Expected ${key} in build.gradle`);
   return match[1];
 };
+
+const readKotlinPackage = (contents: string): string => {
+  const match = contents.match(/^package\s+([A-Za-z0-9_.]+)$/m);
+  assert.ok(match, 'Expected Kotlin package declaration');
+  return match[1];
+};
+
+const readAndroidManifestSchemes = (contents: string): string[] =>
+  Array.from(contents.matchAll(/<data android:scheme="([^"]+)"/g)).map((match) => match[1]);
 
 const readPbxprojValue = (contents: string, key: string): string => {
   const matches = Array.from(contents.matchAll(new RegExp(`${key} = ([^;]+);`, 'g'))).map((match) =>
@@ -108,6 +131,63 @@ test('release metadata stays aligned across tracked config and generated native 
     const androidVersionName = readGradleString(androidGradle, 'versionName');
     assert.equal(androidVersionName, appVersion);
   }
+});
+
+test('expo identity stays aligned with native bundle IDs, Android wiring, and EAS linkage', () => {
+  const appConfig = readRootJson<AppConfig>('app.json');
+  const androidGradle = readOptionalRootFile('android/app/build.gradle');
+  const androidManifest = readOptionalRootFile('android/app/src/main/AndroidManifest.xml');
+  const mainActivity = readOptionalRootFile(
+    'android/app/src/main/java/com/dayandnightbible/app/MainActivity.kt'
+  );
+  const mainApplication = readOptionalRootFile(
+    'android/app/src/main/java/com/dayandnightbible/app/MainApplication.kt'
+  );
+  const privacyModule = readOptionalRootFile(
+    'android/app/src/main/java/com/dayandnightbible/app/DayAndNightBiblePrivacyModule.kt'
+  );
+  const privacyPackage = readOptionalRootFile(
+    'android/app/src/main/java/com/dayandnightbible/app/DayAndNightBiblePrivacyPackage.kt'
+  );
+
+  assert.equal(appConfig.expo.owner, 'jeremy1001');
+  assert.equal(appConfig.expo.slug, 'day-and-night-bible');
+  assert.equal(appConfig.expo.scheme, 'com.dayandnightbible.app');
+  assert.equal(appConfig.expo.ios?.bundleIdentifier, 'com.dayandnightbible.app');
+  assert.equal(appConfig.expo.android?.package, 'com.dayandnightbible.app');
+  assert.match(
+    appConfig.expo.extra?.eas?.projectId ?? '',
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+  );
+  assert.notEqual(appConfig.expo.extra?.eas?.projectId, 'cfbf2bac-d680-448f-b2aa-33c4c01ad15b');
+
+  if (
+    !androidGradle ||
+    !androidManifest ||
+    !mainActivity ||
+    !mainApplication ||
+    !privacyModule ||
+    !privacyPackage
+  ) {
+    return;
+  }
+
+  const androidPackage = appConfig.expo.android?.package ?? '';
+  assert.equal(readGradleString(androidGradle, 'namespace'), androidPackage);
+  assert.equal(readGradleString(androidGradle, 'applicationId'), androidPackage);
+
+  const manifestSchemes = readAndroidManifestSchemes(androidManifest);
+  assert.ok(manifestSchemes.includes(appConfig.expo.scheme ?? ''));
+  assert.ok(manifestSchemes.includes(`exp+${appConfig.expo.slug}`));
+
+  const expectedKotlinPackage = appConfig.expo.android?.package ?? '';
+  assert.equal(readKotlinPackage(mainActivity), expectedKotlinPackage);
+  assert.equal(readKotlinPackage(mainApplication), expectedKotlinPackage);
+  assert.equal(readKotlinPackage(privacyModule), expectedKotlinPackage);
+  assert.equal(readKotlinPackage(privacyPackage), expectedKotlinPackage);
+
+  assert.match(privacyModule, /override fun getName\(\): String = "DayAndNightBiblePrivacyModule"/);
+  assert.match(mainApplication, /add\(DayAndNightBiblePrivacyPackage\(\)\)/);
 });
 
 test('ios bundle phase canonicalizes the project root for local EAS workdirs', () => {
